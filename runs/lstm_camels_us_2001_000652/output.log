@@ -1,0 +1,62 @@
+2026-01-20 00:06:52,101: Logging to runs/lstm_camels_us_2001_000652/output.log initialized.
+2026-01-20 00:06:52,101: ### Folder structure created at runs/lstm_camels_us_2001_000652
+2026-01-20 00:06:52,101: ### Run configurations for lstm_camels_us
+2026-01-20 00:06:52,101: experiment_name: lstm_camels_us
+2026-01-20 00:06:52,101: run_dir: runs/lstm_camels_us_2001_000652
+2026-01-20 00:06:52,101: train_basin_file: experiments/1_basin.txt
+2026-01-20 00:06:52,101: validation_basin_file: experiments/1_basin.txt
+2026-01-20 00:06:52,101: test_basin_file: experiments/1_basin.txt
+2026-01-20 00:06:52,102: train_start_date: 1990-01-01 00:00:00
+2026-01-20 00:06:52,102: train_end_date: 1999-12-31 00:00:00
+2026-01-20 00:06:52,102: validation_start_date: 2000-01-01 00:00:00
+2026-01-20 00:06:52,102: validation_end_date: 2004-12-31 00:00:00
+2026-01-20 00:06:52,102: test_start_date: 2005-01-01 00:00:00
+2026-01-20 00:06:52,102: test_end_date: 2010-12-31 00:00:00
+2026-01-20 00:06:52,102: device: cpu
+2026-01-20 00:06:52,102: validate_every: 1
+2026-01-20 00:06:52,102: validate_n_random_basins: 1
+2026-01-20 00:06:52,102: metrics: ['NSE']
+2026-01-20 00:06:52,102: model: lstm
+2026-01-20 00:06:52,102: head: regression
+2026-01-20 00:06:52,102: output_activation: linear
+2026-01-20 00:06:52,102: hidden_size: 64
+2026-01-20 00:06:52,102: initial_forget_bias: 3
+2026-01-20 00:06:52,102: output_dropout: 0.4
+2026-01-20 00:06:52,102: optimizer: Adam
+2026-01-20 00:06:52,102: loss: MSE
+2026-01-20 00:06:52,102: learning_rate: {0: 0.001}
+2026-01-20 00:06:52,102: batch_size: 32
+2026-01-20 00:06:52,102: epochs: 5
+2026-01-20 00:06:52,102: clip_gradient_norm: 1
+2026-01-20 00:06:52,102: predict_last_n: 1
+2026-01-20 00:06:52,102: seq_length: 30
+2026-01-20 00:06:52,103: num_workers: 4
+2026-01-20 00:06:52,103: log_interval: 5
+2026-01-20 00:06:52,103: log_tensorboard: False
+2026-01-20 00:06:52,103: dataset: camels_us
+2026-01-20 00:06:52,103: data_dir: datasets/camels_us
+2026-01-20 00:06:52,103: forcings: ['maurer']
+2026-01-20 00:06:52,103: dynamic_inputs: ['PRCP(mm/day)', 'SRAD(W/m2)', 'Tmax(C)', 'Tmin(C)', 'Vp(Pa)']
+2026-01-20 00:06:52,103: target_variables: ['QObs(mm/d)']
+2026-01-20 00:06:52,103: clip_targets_to_zero: ['QObs(mm/d)']
+2026-01-20 00:06:52,103: static_attributes: ['elev_mean', 'area_gages2', 'slope_mean', 'p_mean', 'pet_mean']
+2026-01-20 00:06:52,103: number_of_basins: 10
+2026-01-20 00:06:52,103: train_dir: runs/lstm_camels_us_2001_000652/train_data
+2026-01-20 00:06:52,103: img_log_dir: runs/lstm_camels_us_2001_000652/img_log
+2026-01-20 00:06:52,105: ### Device cpu will be used for training
+2026-01-20 00:06:52,143: Loading basin data into xarray data set.
+2026-01-20 00:06:52,807: Create lookup table and convert to pytorch tensor
+2026-01-20 00:07:34,637: Epoch 1 average loss: avg_loss: 0.31389, avg_total_loss: 0.31389
+2026-01-20 00:07:35,430: Epoch 1 average validation loss: 0.50749 -- Median validation metrics: avg_loss: 0.50749, NSE: 0.42759
+2026-01-20 00:08:15,053: Epoch 2 average loss: avg_loss: 0.21099, avg_total_loss: 0.21099
+2026-01-20 00:08:15,628: Epoch 2 average validation loss: 0.05375 -- Median validation metrics: avg_loss: 0.05375, NSE: 0.61308
+2026-01-20 00:08:56,634: Epoch 3 average loss: avg_loss: 0.17206, avg_total_loss: 0.17206
+2026-01-20 00:08:57,231: Epoch 3 average validation loss: 0.03712 -- Median validation metrics: avg_loss: 0.03712, NSE: 0.81960
+2026-01-20 00:09:37,667: Epoch 4 average loss: avg_loss: 0.15468, avg_total_loss: 0.15468
+2026-01-20 00:09:38,247: Epoch 4 average validation loss: 0.10865 -- Median validation metrics: avg_loss: 0.10865, NSE: 0.59807
+2026-01-20 00:10:18,309: Epoch 5 average loss: avg_loss: 0.14237, avg_total_loss: 0.14237
+2026-01-20 00:10:18,763: Epoch 5 average validation loss: 0.03253 -- Median validation metrics: avg_loss: 0.03253, NSE: 0.84261
+2026-01-20 00:10:42,710: Logging to runs/lstm_camels_us_2001_000652/output.log initialized.
+2026-01-20 00:10:42,736: Using the model weights from runs/lstm_camels_us_2001_000652/model_epoch005.pt
+2026-01-20 00:10:49,687: Stored metrics at runs/lstm_camels_us_2001_000652/test/model_epoch005/test_metrics.csv
+2026-01-20 00:10:49,689: Stored results at runs/lstm_camels_us_2001_000652/test/model_epoch005/test_results.p

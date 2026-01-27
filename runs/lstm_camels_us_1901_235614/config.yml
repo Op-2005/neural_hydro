@@ -1,0 +1,60 @@
+batch_size: 32
+clip_gradient_norm: 1
+clip_targets_to_zero:
+- QObs(mm/d)
+commit_hash:
+data_dir: datasets/camels_us
+dataset: camels_us
+device: cpu
+dynamic_inputs:
+- PRCP(mm/day)
+- SRAD(W/m2)
+- Tmax(C)
+- Tmin(C)
+- Vp(Pa)
+epochs: 5
+experiment_name: lstm_camels_us
+forcings:
+- maurer
+head: regression
+hidden_size: 64
+img_log_dir: runs/lstm_camels_us_1901_235614/img_log
+initial_forget_bias: 3
+learning_rate:
+  0: 0.001
+log_interval: 5
+log_tensorboard: false
+loss: MSE
+metrics:
+- NSE
+model: lstm
+num_workers: 4
+number_of_basins: 10
+optimizer: Adam
+output_activation: linear
+output_dropout: 0.4
+package_version: 1.12.0
+predict_last_n: 1
+run_dir: runs/lstm_camels_us_1901_235614
+seed: 722137
+seq_length: 30
+static_attributes:
+- elev_mean
+- area_gages2
+- slope_mean
+- p_mean
+- pet_mean
+target_variables:
+- QObs(mm/d)
+test_basin_file: experiments/1_basin.txt
+test_end_date: 31/12/2010
+test_start_date: 01/01/2005
+train_basin_file: experiments/1_basin.txt
+train_dir: runs/lstm_camels_us_1901_235614/train_data
+train_end_date: 31/12/1999
+train_start_date: 01/01/1990
+validate_every: 1
+validate_n_random_basins: 1
+validation_basin_file: experiments/1_basin.txt
+validation_end_date: 31/12/2004
+validation_start_date: 01/01/2000

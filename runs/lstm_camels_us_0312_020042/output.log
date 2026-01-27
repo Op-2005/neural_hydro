@@ -1,0 +1,58 @@
+2025-12-03 02:00:42,605: Logging to runs/lstm_camels_us_0312_020042/output.log initialized.
+2025-12-03 02:00:42,605: ### Folder structure created at runs/lstm_camels_us_0312_020042
+2025-12-03 02:00:42,605: ### Run configurations for lstm_camels_us
+2025-12-03 02:00:42,605: experiment_name: lstm_camels_us
+2025-12-03 02:00:42,605: run_dir: runs/lstm_camels_us_0312_020042
+2025-12-03 02:00:42,605: train_basin_file: experiments/1_basin.txt
+2025-12-03 02:00:42,605: validation_basin_file: experiments/1_basin.txt
+2025-12-03 02:00:42,605: test_basin_file: experiments/1_basin.txt
+2025-12-03 02:00:42,605: train_start_date: 1990-01-01 00:00:00
+2025-12-03 02:00:42,605: train_end_date: 1999-12-31 00:00:00
+2025-12-03 02:00:42,605: validation_start_date: 2000-01-01 00:00:00
+2025-12-03 02:00:42,605: validation_end_date: 2004-12-31 00:00:00
+2025-12-03 02:00:42,605: test_start_date: 2005-01-01 00:00:00
+2025-12-03 02:00:42,605: test_end_date: 2010-12-31 00:00:00
+2025-12-03 02:00:42,605: device: cpu
+2025-12-03 02:00:42,605: validate_every: 1
+2025-12-03 02:00:42,605: validate_n_random_basins: 1
+2025-12-03 02:00:42,605: metrics: ['NSE']
+2025-12-03 02:00:42,605: model: lstm
+2025-12-03 02:00:42,605: head: regression
+2025-12-03 02:00:42,605: output_activation: linear
+2025-12-03 02:00:42,606: hidden_size: 64
+2025-12-03 02:00:42,606: initial_forget_bias: 3
+2025-12-03 02:00:42,606: output_dropout: 0.4
+2025-12-03 02:00:42,606: optimizer: Adam
+2025-12-03 02:00:42,606: loss: MSE
+2025-12-03 02:00:42,606: learning_rate: {0: 0.001}
+2025-12-03 02:00:42,606: batch_size: 128
+2025-12-03 02:00:42,606: epochs: 5
+2025-12-03 02:00:42,606: clip_gradient_norm: 1
+2025-12-03 02:00:42,606: predict_last_n: 1
+2025-12-03 02:00:42,606: seq_length: 30
+2025-12-03 02:00:42,606: num_workers: 4
+2025-12-03 02:00:42,606: log_interval: 5
+2025-12-03 02:00:42,606: log_tensorboard: False
+2025-12-03 02:00:42,606: dataset: camels_us
+2025-12-03 02:00:42,606: data_dir: datasets/camels_us
+2025-12-03 02:00:42,606: forcings: ['maurer']
+2025-12-03 02:00:42,606: dynamic_inputs: ['PRCP(mm/day)', 'SRAD(W/m2)', 'Tmax(C)', 'Tmin(C)', 'Vp(Pa)']
+2025-12-03 02:00:42,606: target_variables: ['QObs(mm/d)']
+2025-12-03 02:00:42,606: clip_targets_to_zero: ['QObs(mm/d)']
+2025-12-03 02:00:42,606: static_attributes: ['elev_mean', 'area_gages2', 'slope_mean', 'p_mean', 'pet_mean']
+2025-12-03 02:00:42,606: number_of_basins: 10
+2025-12-03 02:00:42,606: train_dir: runs/lstm_camels_us_0312_020042/train_data
+2025-12-03 02:00:42,606: img_log_dir: runs/lstm_camels_us_0312_020042/img_log
+2025-12-03 02:00:42,607: ### Device cpu will be used for training
+2025-12-03 02:00:42,638: Loading basin data into xarray data set.
+2025-12-03 02:00:43,149: Create lookup table and convert to pytorch tensor
+2025-12-03 02:01:08,842: Epoch 1 average loss: avg_loss: 0.37394, avg_total_loss: 0.37394
+2025-12-03 02:01:09,367: Epoch 1 average validation loss: 0.15122 -- Median validation metrics: avg_loss: 0.15122, NSE: 0.49749
+2025-12-03 02:01:29,571: Epoch 2 average loss: avg_loss: 0.26705, avg_total_loss: 0.26705
+2025-12-03 02:01:29,872: Epoch 2 average validation loss: 0.12071 -- Median validation metrics: avg_loss: 0.12071, NSE: 0.58618
+2025-12-03 02:01:50,022: Epoch 3 average loss: avg_loss: 0.22295, avg_total_loss: 0.22295
+2025-12-03 02:01:50,281: Epoch 3 average validation loss: 0.10878 -- Median validation metrics: avg_loss: 0.10878, NSE: 0.61817
+2025-12-03 02:02:10,741: Epoch 4 average loss: avg_loss: 0.19566, avg_total_loss: 0.19566
+2025-12-03 02:02:11,077: Epoch 4 average validation loss: 0.29086 -- Median validation metrics: avg_loss: 0.29086, NSE: 0.52544
+2025-12-03 02:02:31,045: Epoch 5 average loss: avg_loss: 0.17828, avg_total_loss: 0.17828
+2025-12-03 02:02:31,315: Epoch 5 average validation loss: 0.11989 -- Median validation metrics: avg_loss: 0.11989, NSE: 0.57692

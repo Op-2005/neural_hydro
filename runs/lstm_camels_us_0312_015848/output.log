@@ -1,0 +1,87 @@
+2025-12-03 01:58:48,009: Logging to runs/lstm_camels_us_0312_015848/output.log initialized.
+2025-12-03 01:58:48,009: ### Folder structure created at runs/lstm_camels_us_0312_015848
+2025-12-03 01:58:48,009: ### Run configurations for lstm_camels_us
+2025-12-03 01:58:48,009: experiment_name: lstm_camels_us
+2025-12-03 01:58:48,009: run_dir: runs/lstm_camels_us_0312_015848
+2025-12-03 01:58:48,009: train_basin_file: experiments/1_basin.txt
+2025-12-03 01:58:48,009: validation_basin_file: experiments/1_basin.txt
+2025-12-03 01:58:48,009: test_basin_file: experiments/1_basin.txt
+2025-12-03 01:58:48,010: train_start_date: 1990-01-01 00:00:00
+2025-12-03 01:58:48,010: train_end_date: 1999-12-31 00:00:00
+2025-12-03 01:58:48,010: validation_start_date: 2000-01-01 00:00:00
+2025-12-03 01:58:48,010: validation_end_date: 2004-12-31 00:00:00
+2025-12-03 01:58:48,010: test_start_date: 2005-01-01 00:00:00
+2025-12-03 01:58:48,010: test_end_date: 2010-12-31 00:00:00
+2025-12-03 01:58:48,010: device: cpu
+2025-12-03 01:58:48,010: validate_every: 1
+2025-12-03 01:58:48,010: validate_n_random_basins: 1
+2025-12-03 01:58:48,010: metrics: ['NSE']
+2025-12-03 01:58:48,010: model: lstm
+2025-12-03 01:58:48,010: head: regression
+2025-12-03 01:58:48,010: output_activation: linear
+2025-12-03 01:58:48,010: hidden_size: 64
+2025-12-03 01:58:48,010: initial_forget_bias: 3
+2025-12-03 01:58:48,010: output_dropout: 0.4
+2025-12-03 01:58:48,010: optimizer: Adam
+2025-12-03 01:58:48,010: loss: MSE
+2025-12-03 01:58:48,010: learning_rate: {0: 0.001}
+2025-12-03 01:58:48,010: batch_size: 128
+2025-12-03 01:58:48,010: epochs: 5
+2025-12-03 01:58:48,010: clip_gradient_norm: 1
+2025-12-03 01:58:48,010: predict_last_n: 1
+2025-12-03 01:58:48,010: seq_length: 30
+2025-12-03 01:58:48,010: num_workers: 4
+2025-12-03 01:58:48,010: log_interval: 5
+2025-12-03 01:58:48,010: log_tensorboard: False
+2025-12-03 01:58:48,010: dataset: camels_us
+2025-12-03 01:58:48,010: data_dir: datasets/camels_us
+2025-12-03 01:58:48,010: forcings: ['maurer']
+2025-12-03 01:58:48,011: dynamic_inputs: ['prcp(mm/day)', 'srad(W/m2)', 'tmax(C)', 'tmin(C)', 'vp(Pa)']
+2025-12-03 01:58:48,011: target_variables: ['QObs(mm/d)']
+2025-12-03 01:58:48,011: clip_targets_to_zero: ['QObs(mm/d)']
+2025-12-03 01:58:48,011: static_attributes: ['elev_mean', 'area_gages2', 'slope_mean', 'p_mean', 'pet_mean']
+2025-12-03 01:58:48,011: number_of_basins: 10
+2025-12-03 01:58:48,011: train_dir: runs/lstm_camels_us_0312_015848/train_data
+2025-12-03 01:58:48,011: img_log_dir: runs/lstm_camels_us_0312_015848/img_log
+2025-12-03 01:58:48,011: ### Device cpu will be used for training
+2025-12-03 01:58:48,043: Loading basin data into xarray data set.
+2025-12-03 01:58:48,486: Uncaught exception
+Traceback (most recent call last):
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/datasetzoo/basedataset.py", line 384, in _load_or_create_xarray_dataset
+    df = df[keep_cols]
+  File "/Applications/anaconda3/envs/nh/lib/python3.10/site-packages/pandas/core/frame.py", line 4119, in __getitem__
+    indexer = self.columns._get_indexer_strict(key, "columns")[1]
+  File "/Applications/anaconda3/envs/nh/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 6212, in _get_indexer_strict
+    self._raise_if_missing(keyarr, indexer, axis_name)
+  File "/Applications/anaconda3/envs/nh/lib/python3.10/site-packages/pandas/core/indexes/base.py", line 6264, in _raise_if_missing
+    raise KeyError(f"{not_found} not in index")
+KeyError: "['prcp(mm/day)', 'srad(W/m2)', 'tmax(C)', 'tmin(C)', 'vp(Pa)'] not in index"
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Applications/anaconda3/envs/nh/bin/nh-run", line 7, in <module>
+    sys.exit(_main())
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/nh_run.py", line 43, in _main
+    start_run(config_file=Path(args["config_file"]), gpu=args["gpu"])
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/nh_run.py", line 77, in start_run
+    start_training(config)
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/training/train.py", line 19, in start_training
+    trainer.initialize_training()
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/training/basetrainer.py", line 154, in initialize_training
+    ds = self._get_dataset()
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/training/basetrainer.py", line 87, in _get_dataset
+    return get_dataset(cfg=self.cfg, period="train", is_train=True, scaler=self._scaler)
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/datasetzoo/__init__.py", line 71, in get_dataset
+    return _datasetZooRegistry.instantiate_dataset(cfg, is_train, period, basin, additional_features, id_to_int, scaler)
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/datasetzoo/datasetregistry.py", line 92, in instantiate_dataset
+    return Dataset(cfg=cfg,
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/datasetzoo/camelsus.py", line 60, in __init__
+    super(CamelsUS, self).__init__(cfg=cfg,
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/datasetzoo/basedataset.py", line 142, in __init__
+    self._load_data()
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/datasetzoo/basedataset.py", line 747, in _load_data
+    xr = self._load_or_create_xarray_dataset()
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/datasetzoo/basedataset.py", line 391, in _load_or_create_xarray_dataset
+    raise KeyError("".join(msg))
+KeyError: "The following features are not available in the data: ['prcp(mm/day)', 'srad(W/m2)', 'tmax(C)', 'tmin(C)', 'vp(Pa)']. These are the available features: ['Year', 'Mnth', 'Day', 'Hr', 'Dayl(s)', 'PRCP(mm/day)', 'SRAD(W/m2)', 'SWE(mm)', 'Tmax(C)', 'Tmin(C)', 'Vp(Pa)', 'QObs(mm/d)']"
