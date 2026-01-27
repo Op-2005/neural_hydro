@@ -1,3 +1,8 @@
+This codebase is for my personal explorations and it is adapted from the neural hydrology github (more information below). I intend to use these tools to run experiments on different basins, exploring how deep learning can be used to predict watersheds for Baker Lab at UCLA.
+
+
+
+
 ![#](docs/source/_static/img/neural-hyd-logo-black.png)
 
 Python library to train neural networks with a strong focus on hydrological applications.
