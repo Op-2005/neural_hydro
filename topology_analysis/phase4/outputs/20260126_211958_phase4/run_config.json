@@ -1,0 +1,13 @@
+{
+  "seed": 42,
+  "epsilon": 0.05,
+  "perturbation_type": "additive_unit_vector",
+  "num_nodes": 10,
+  "source_node": "01013500",
+  "layers": [
+    1,
+    2
+  ],
+  "state_dim": 64,
+  "timestamp": "2026-01-26T21:19:58.824053"
+}

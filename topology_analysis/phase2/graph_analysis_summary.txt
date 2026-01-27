@@ -12,36 +12,36 @@ Component Details:
     Size: 1 nodes
     Max Path Length: 0
     Avg Path Length: 0.00
-    Roots: ['01054200']
-    Leaves: ['01054200']
+    Roots: ['01055000']
+    Leaves: ['01055000']
 
   Component 1:
+    Size: 1 nodes
+    Max Path Length: 0
+    Avg Path Length: 0.00
+    Roots: ['01030500']
+    Leaves: ['01030500']
+
+  Component 2:
     Size: 1 nodes
     Max Path Length: 0
     Avg Path Length: 0.00
     Roots: ['01073000']
     Leaves: ['01073000']
 
-  Component 2:
-    Size: 1 nodes
-    Max Path Length: 0
-    Avg Path Length: 0.00
-    Roots: ['01013500']
-    Leaves: ['01013500']
-
   Component 3:
     Size: 1 nodes
     Max Path Length: 0
     Avg Path Length: 0.00
-    Roots: ['01022500']
-    Leaves: ['01022500']
+    Roots: ['01047000']
+    Leaves: ['01047000']
 
   Component 4:
     Size: 1 nodes
     Max Path Length: 0
     Avg Path Length: 0.00
-    Roots: ['01057000']
-    Leaves: ['01057000']
+    Roots: ['01022500']
+    Leaves: ['01022500']
 
   Component 5:
     Size: 1 nodes
@@ -54,29 +54,29 @@ Component Details:
     Size: 1 nodes
     Max Path Length: 0
     Avg Path Length: 0.00
-    Roots: ['01047000']
-    Leaves: ['01047000']
+    Roots: ['01052500']
+    Leaves: ['01052500']
 
   Component 7:
     Size: 1 nodes
     Max Path Length: 0
     Avg Path Length: 0.00
-    Roots: ['01052500']
-    Leaves: ['01052500']
+    Roots: ['01054200']
+    Leaves: ['01054200']
 
   Component 8:
     Size: 1 nodes
     Max Path Length: 0
     Avg Path Length: 0.00
-    Roots: ['01055000']
-    Leaves: ['01055000']
+    Roots: ['01057000']
+    Leaves: ['01057000']
 
   Component 9:
     Size: 1 nodes
     Max Path Length: 0
     Avg Path Length: 0.00
-    Roots: ['01030500']
-    Leaves: ['01030500']
+    Roots: ['01013500']
+    Leaves: ['01013500']
 
 Bottleneck Candidates:
   None identified

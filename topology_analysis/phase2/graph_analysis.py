@@ -7,13 +7,14 @@ independent of any neural model.
 from typing import Dict, Set, List, Tuple, Optional
 from pathlib import Path
 from collections import defaultdict, deque
-import sys
+import importlib.util
 
-# Add phase1 to path to import BasinGraph
-_phase1_path = Path(__file__).parent.parent / "phase1"
-if str(_phase1_path) not in sys.path:
-    sys.path.insert(0, str(_phase1_path))
-from graph_structure import BasinGraph  # noqa: E402
+# Import BasinGraph from phase1
+_phase1_graph_module = Path(__file__).parent.parent / "phase1" / "graph_structure.py"
+spec = importlib.util.spec_from_file_location("graph_structure", _phase1_graph_module)
+graph_structure = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(graph_structure)
+BasinGraph = graph_structure.BasinGraph
 
 
 class GraphAnalyzer:
