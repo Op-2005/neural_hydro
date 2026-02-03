@@ -5,15 +5,8 @@ These are diagnostic scaffolds only, not real topology.
 """
 
 from typing import Dict, Set, List
-import importlib.util
-from pathlib import Path
 
-# Import BasinGraph from phase1
-_phase1_graph_module = Path(__file__).parent.parent / "phase1" / "graph_structure.py"
-spec = importlib.util.spec_from_file_location("graph_structure", _phase1_graph_module)
-graph_structure = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(graph_structure)
-BasinGraph = graph_structure.BasinGraph
+from basin_graph import BasinGraph
 
 
 def create_chain_graph(node_ids: List[str], length: int = None) -> BasinGraph:

@@ -1,4 +1,4 @@
-"""Phase 3: Minimal Invariant MPNN Implementation.
+"""Topology analysis: minimal invariant MPNN implementation.
 
 Implements a message passing neural network layer following:
 - Message: m_ij = φ_m(h_i, h_j)
@@ -11,15 +11,8 @@ Handles isolated nodes (empty neighborhoods) by returning zero vectors.
 import torch
 import torch.nn as nn
 from typing import Dict, Set
-import importlib.util
-from pathlib import Path
 
-# Import BasinGraph from phase1
-_phase1_graph_module = Path(__file__).parent.parent / "phase1" / "graph_structure.py"
-spec = importlib.util.spec_from_file_location("graph_structure", _phase1_graph_module)
-graph_structure = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(graph_structure)
-BasinGraph = graph_structure.BasinGraph
+from basin_graph import BasinGraph
 
 
 class MPNNLayer(nn.Module):

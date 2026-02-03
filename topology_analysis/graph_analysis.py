@@ -1,4 +1,4 @@
-"""Phase 2: Graph structure and bottleneck characterization.
+"""Topology analysis: graph structure and bottleneck characterization.
 
 Analyzes the basin graph to identify information-flow bottlenecks
 independent of any neural model.
@@ -7,14 +7,8 @@ independent of any neural model.
 from typing import Dict, Set, List, Tuple, Optional
 from pathlib import Path
 from collections import defaultdict, deque
-import importlib.util
 
-# Import BasinGraph from phase1
-_phase1_graph_module = Path(__file__).parent.parent / "phase1" / "graph_structure.py"
-spec = importlib.util.spec_from_file_location("graph_structure", _phase1_graph_module)
-graph_structure = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(graph_structure)
-BasinGraph = graph_structure.BasinGraph
+from basin_graph import BasinGraph
 
 
 class GraphAnalyzer:
@@ -336,7 +330,7 @@ def main():
     
     # Print summary
     print("=" * 60)
-    print("Phase 2: Graph Structure & Bottleneck Characterization")
+    print("Topology Analysis: Graph Structure & Bottleneck Characterization")
     print("=" * 60)
     print(f"\nGraph Summary:")
     print(f"  Nodes: {results['num_nodes']}")
@@ -367,7 +361,7 @@ def main():
     # Save summary to file
     output_file = Path(__file__).parent / "graph_analysis_summary.txt"
     with open(output_file, "w") as f:
-        f.write("Phase 2: Graph Structure & Bottleneck Characterization\n")
+        f.write("Topology Analysis: Graph Structure & Bottleneck Characterization\n")
         f.write("=" * 60 + "\n\n")
         f.write(f"Graph Summary:\n")
         f.write(f"  Nodes: {results['num_nodes']}\n")

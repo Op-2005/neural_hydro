@@ -78,8 +78,8 @@ def infer_parent_child_relationships(df: pd.DataFrame,
 
 def main():
     """Infer topology for Maine/NH basins."""
-    data_dir = Path(__file__).parent.parent.parent / "datasets" / "camels_us"
-    basin_file = Path(__file__).parent.parent.parent / "experiments" / "1_basin.txt"
+    data_dir = Path(__file__).parent.parent / "datasets" / "camels_us"
+    basin_file = Path(__file__).parent.parent / "experiments" / "1_basin.txt"
     
     # Load basin IDs
     with open(basin_file) as f:

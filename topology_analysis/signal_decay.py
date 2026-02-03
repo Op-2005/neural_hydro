@@ -1,4 +1,4 @@
-"""Phase 4: Signal decay analysis via perturbation experiments.
+"""Topology analysis: signal decay via perturbation experiments.
 
 Demonstrates information propagation limits (over-squashing) through
 perturbation protocol and hop-distance analysis.
@@ -13,24 +13,11 @@ from typing import Dict, List, Tuple, Optional
 from collections import defaultdict
 import json
 from datetime import datetime
-import importlib.util
 
-# Import dependencies
-_phase1_graph_module = Path(__file__).parent.parent / "phase1" / "graph_structure.py"
-spec = importlib.util.spec_from_file_location("graph_structure", _phase1_graph_module)
-graph_structure = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(graph_structure)
-BasinGraph = graph_structure.BasinGraph
-
+from basin_graph import BasinGraph
 from synthetic_graphs import create_chain_graph, create_tree_graph
 from hop_distance import compute_hop_distances, group_nodes_by_hop_distance
-
-# Import MPNNModel from phase3
-_phase3_mpnn_module = Path(__file__).parent.parent / "phase3" / "mpnn_layer.py"
-spec_mpnn = importlib.util.spec_from_file_location("mpnn_layer", _phase3_mpnn_module)
-mpnn_module = importlib.util.module_from_spec(spec_mpnn)
-spec_mpnn.loader.exec_module(mpnn_module)
-MPNNModel = mpnn_module.MPNNModel
+from mpnn import MPNNModel
 
 
 class PerturbationExperiment:
@@ -243,7 +230,7 @@ def run_phase4_experiment(output_dir: Path,
         List of layer counts to test
     """
     # Load basin IDs
-    basin_file = Path(__file__).parent.parent.parent / "experiments" / "1_basin.txt"
+    basin_file = Path(__file__).parent.parent / "experiments" / "1_basin.txt"
     with open(basin_file) as f:
         basin_ids = [line.strip() for line in f if line.strip()]
     
@@ -334,7 +321,7 @@ def run_phase4_experiment(output_dir: Path,
     
     # Create summary
     summary_lines = [
-        "# Phase 4: Signal Decay Analysis Summary",
+        "# Topology Analysis: Signal Decay Analysis Summary",
         "",
         f"**Run Configuration:**",
         f"- Seed: {seed}",

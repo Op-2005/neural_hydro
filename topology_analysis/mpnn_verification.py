@@ -1,4 +1,4 @@
-"""Phase 3: Verification tests for MPNN implementation.
+"""Topology analysis: verification tests for MPNN implementation.
 
 Tests:
 1. Stability + shape correctness on disconnected graph (10 nodes, 0 edges)
@@ -8,16 +8,9 @@ Tests:
 import torch
 import torch.nn as nn
 from pathlib import Path
-import importlib.util
 
-# Import BasinGraph from phase1
-_phase1_graph_module = Path(__file__).parent.parent / "phase1" / "graph_structure.py"
-spec = importlib.util.spec_from_file_location("graph_structure", _phase1_graph_module)
-graph_structure = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(graph_structure)
-BasinGraph = graph_structure.BasinGraph
-
-from mpnn_layer import MPNNLayer, MPNNModel
+from basin_graph import BasinGraph
+from mpnn import MPNNLayer, MPNNModel
 
 
 def test_disconnected_graph():

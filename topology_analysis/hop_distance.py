@@ -5,15 +5,8 @@ Computes shortest directed path lengths from source node to all other nodes.
 
 from typing import Dict, Set, Optional
 from collections import deque
-import importlib.util
-from pathlib import Path
 
-# Import BasinGraph from phase1
-_phase1_graph_module = Path(__file__).parent.parent / "phase1" / "graph_structure.py"
-spec = importlib.util.spec_from_file_location("graph_structure", _phase1_graph_module)
-graph_structure = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(graph_structure)
-BasinGraph = graph_structure.BasinGraph
+from basin_graph import BasinGraph
 
 
 def compute_hop_distances(graph: BasinGraph, source: str) -> Dict[str, Optional[int]]:
