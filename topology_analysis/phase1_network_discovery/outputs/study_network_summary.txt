@@ -1,0 +1,79 @@
+======================================================================
+CAMELS-US Study Network Summary
+======================================================================
+
+Source: Full CAMELS-US topology inference (671 basins, 1298 edges)
+Parameters: max_dist=150km, area_ratio>=1.5, elev_decreasing=True
+
+Selected component: 3
+Reason: Meets all criteria: 23 nodes, depth 3, HUC regions: 12
+
+Basins:     23
+Edges:      34
+Roots:      7
+Leaves:     9
+Max depth:  3
+HUC regions: 12
+
+Basin inventory:
+       Basin    Area_km2    Elev_m  Depth  Role
+       -----    --------    ------  -----  ----
+    08101000      1177.1     388.2      1  outlet
+    08103900        86.0     383.0      0  headwater
+    08104900       342.6     317.4      1  interior
+    08109700       610.1     143.1      1  interior
+    08150800       557.5     563.6      0  headwater
+    08155200       232.7     337.3      1  interior
+    08158700       320.3     368.0      1  interior
+    08158810        31.8     308.1      0  headwater
+    08164000      2124.0      73.1      3  outlet
+    08164300       861.5     102.7      2  interior
+    08165300       436.0     669.2      0  headwater
+    08171300      1067.5     379.2      1  outlet
+    08175000      1421.7     113.3      2  outlet
+    08176900       925.4      88.5      0  headwater
+    08178880       850.6     542.6      1  outlet
+    08189500      1808.3      67.3      3  outlet
+    08190000      1961.4     567.8      1  outlet
+    08190500      1799.1     590.4      1  outlet
+    08195000      1028.3     578.2      1  interior
+    08196000       327.0     536.8      0  headwater
+    08198500       624.4     439.4      1  outlet
+    08200000       249.1     464.3      0  headwater
+    08202700       434.8     399.0      1  interior
+
+Edge list:
+  08103900 -> 08104900  (area_ratio=3.98, elev_diff=65.5m, dist=45.8km)
+  08103900 -> 08109700  (area_ratio=7.09, elev_diff=239.9m, dist=125.6km)
+  08103900 -> 08155200  (area_ratio=2.71, elev_diff=45.6m, dist=69.2km)
+  08103900 -> 08158700  (area_ratio=3.72, elev_diff=15.0m, dist=92.2km)
+  08103900 -> 08171300  (area_ratio=12.41, elev_diff=3.7m, dist=104.4km)
+  08104900 -> 08109700  (area_ratio=1.78, elev_diff=174.4m, dist=81.8km)
+  08109700 -> 08175000  (area_ratio=2.33, elev_diff=29.8m, dist=135.6km)
+  08150800 -> 08101000  (area_ratio=2.11, elev_diff=175.4m, dist=135.7km)
+  08150800 -> 08171300  (area_ratio=1.91, elev_diff=184.4m, dist=135.7km)
+  08150800 -> 08178880  (area_ratio=1.53, elev_diff=21.1m, dist=102.3km)
+  08155200 -> 08109700  (area_ratio=2.62, elev_diff=194.3m, dist=98.1km)
+  08155200 -> 08164300  (area_ratio=3.70, elev_diff=234.6m, dist=141.5km)
+  08155200 -> 08175000  (area_ratio=6.11, elev_diff=224.1m, dist=128.7km)
+  08158700 -> 08109700  (area_ratio=1.90, elev_diff=224.9m, dist=109.8km)
+  08158700 -> 08164300  (area_ratio=2.69, elev_diff=265.2m, dist=134.1km)
+  08158700 -> 08175000  (area_ratio=4.44, elev_diff=254.7m, dist=110.6km)
+  08158810 -> 08109700  (area_ratio=19.19, elev_diff=165.0m, dist=101.5km)
+  08158810 -> 08164300  (area_ratio=27.10, elev_diff=205.3m, dist=133.0km)
+  08158810 -> 08175000  (area_ratio=44.72, elev_diff=194.8m, dist=114.8km)
+  08164300 -> 08164000  (area_ratio=2.47, elev_diff=29.6m, dist=57.7km)
+  08164300 -> 08189500  (area_ratio=2.10, elev_diff=35.4m, dist=138.3km)
+  08165300 -> 08171300  (area_ratio=2.45, elev_diff=290.0m, dist=142.5km)
+  08165300 -> 08178880  (area_ratio=1.95, elev_diff=126.7m, dist=48.6km)
+  08165300 -> 08190000  (area_ratio=4.50, elev_diff=101.4m, dist=92.0km)
+  08165300 -> 08190500  (area_ratio=4.13, elev_diff=78.8m, dist=105.1km)
+  08165300 -> 08195000  (area_ratio=2.36, elev_diff=91.0m, dist=71.0km)
+  08176900 -> 08164000  (area_ratio=2.30, elev_diff=15.4m, dist=53.7km)
+  08176900 -> 08189500  (area_ratio=1.95, elev_diff=21.1m, dist=63.6km)
+  08195000 -> 08190000  (area_ratio=1.91, elev_diff=10.4m, dist=29.1km)
+  08196000 -> 08198500  (area_ratio=1.91, elev_diff=97.3m, dist=36.0km)
+  08200000 -> 08171300  (area_ratio=4.29, elev_diff=85.1m, dist=136.8km)
+  08200000 -> 08198500  (area_ratio=2.51, elev_diff=24.9m, dist=36.3km)
+  08200000 -> 08202700  (area_ratio=1.75, elev_diff=65.3m, dist=22.5km)
+  08202700 -> 08171300  (area_ratio=2.46, elev_diff=19.8m, dist=149.3km)
