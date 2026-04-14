@@ -337,3 +337,120 @@ After Phase 2:
 After Phase 3:
 - `compare_results.py` produces the comparison table
 - The key scientific test: downstream basins (depth >= 2) show positive delta NSE
+
+---
+---
+
+# Updated Next Steps (April 14, 2026)
+
+## What has been completed
+
+| Phase | Status | Key result |
+|-------|--------|------------|
+| 1 — Network discovery | Done | 1,298 edges across 671 basins; 23-basin HUC-12 study network selected |
+| 2 — Baseline LSTM | Done | Median NSE 0.407 on study network (30 epochs, CudaLSTM) |
+| 3 — Graph-LSTM (first run) | Done | Median NSE 0.329 (10 epochs, undertrained) |
+
+All infrastructure is in place: data loading, topology, model, training script, evaluation,
+and comparison table. The Graph-LSTM's first run underperformed because it had 1/3 the
+training epochs of the baseline and its loss was still dropping. The architecture is functional
+and the experiment pipeline works end-to-end.
+
+## Immediate next steps (priority order)
+
+### 1. Train the Graph-LSTM for more epochs
+
+The single highest-impact action. The current 10-epoch run had loss 0.52 vs the baseline's
+converged 0.11. The model was clearly still learning.
+
+**Option A — Long run on CPU (~2.5 hours):**
+Change `EPOCHS = 30` in `experiments/train_graph_lstm.py` and rerun. This gives equal epoch
+count to the baseline. At ~5 min/epoch on CPU, expect ~2.5 hours. Run overnight or during a
+meeting.
+
+```bash
+/Applications/anaconda3/envs/nh/bin/python experiments/train_graph_lstm.py
+```
+
+**Option B — GPU acceleration:**
+If a CUDA GPU is available (lab machine, cloud instance), change `DEVICE = torch.device("cuda:0")`
+in the script. The LSTMCell loop is Python-bound so the speedup may be modest (~2x), but it
+helps. The real bottleneck is the sequential timestep loop, not tensor operations.
+
+**Option C — Warm-start from the baseline:**
+Initialize the Graph-LSTM's LSTMCell weights from the trained baseline CudaLSTM checkpoint
+(`runs/lstm_study_network_1304_222043/model_epoch030.pt`). This way the LSTM part starts
+already converged and only the message passing weights (W_upstream, W_msg) need to be learned.
+This would dramatically reduce required training time and make the comparison fairer, since
+the baseline LSTM component is identical. This is the recommended approach.
+
+### 2. Fair comparison design
+
+The current comparison is confounded by different training effort. For a scientifically valid
+result, one of these must be true:
+- Same number of effective gradient steps (epochs x batches_per_epoch)
+- Same final training loss (train until both converge)
+- Warm-start the Graph-LSTM from the baseline (so only the graph component needs training)
+
+The warm-start approach (Option C above) is the cleanest experimental design because it
+isolates the effect of the graph structure from the effect of different optimization
+trajectories.
+
+### 3. Analyze per-basin results more deeply
+
+Even with the undertrained model, some patterns are worth investigating:
+- Basin 08150800 improved from -0.85 to +0.42 — why? Is it the batching difference or
+  something about the graph structure?
+- The depth-3 basins (08189500, 08164000) barely degraded despite undertraining — is the
+  graph helping them resist degradation?
+- Generate per-basin hydrographs (observed vs predicted time series) for 3-4 interesting
+  basins to visually inspect where the models differ.
+
+### 4. Speed up the training loop
+
+The ~5 min/epoch bottleneck comes from the Python-level timestep loop (30 LSTMCell calls per
+window, 3652 windows per epoch). Potential optimizations:
+- **Subsample training windows**: Use 1/3 of windows per epoch (random subset), train for 3x
+  more epochs. Same total gradient steps, but each epoch is faster and the model sees more
+  data diversity.
+- **Batch the LSTMCell calls**: Instead of processing one window at a time, process multiple
+  windows simultaneously (batch dimension). The current code already batches windows but
+  processes them in a Python loop — vectorizing this would help.
+- **Use nn.LSTM for non-message timesteps**: Process the first 29 timesteps with nn.LSTM
+  (fast) and only apply message passing at the final timestep. This loses the full inter-
+  timestep message passing but keeps 96% of the speed.
+
+### 5. Ablation experiments
+
+Once the Graph-LSTM trains to convergence, run ablations to isolate what helps:
+- **Random graph**: Shuffle the edges randomly (same number, different connections). If this
+  performs as well as the real graph, the specific topology doesn't matter.
+- **No-lag variant**: Use `h_u^t` instead of `h_u^{t-1}` (same-timestep message). If this
+  hurts, the lag is important (consistent with physical water travel time).
+- **Deeper message passing**: Apply 2 rounds of message passing per timestep (extending the
+  receptive field). The Phase 0 signal decay experiments predicted this extends reach by ~1
+  hop.
+
+### 6. Longer-term directions
+
+- **Replace heuristic edges with NHDPlus flowlines** for ground-truth river connectivity.
+  The current 34-edge network likely has false positives.
+- **Scale to a larger component** (Component 0: 183 basins, depth 4) once the approach is
+  validated on the 23-basin network.
+- **Multi-timescale message passing**: Lag by more than 1 day for distant upstream-downstream
+  pairs (water travel time increases with distance).
+- **Attention-based message aggregation**: Replace mean-pooling with learned attention weights
+  over upstream neighbors, allowing the model to weight nearby vs distant upstream basins
+  differently.
+
+## Files created during Phase 3
+
+```
+experiments/train_graph_lstm.py           Standalone Graph-LSTM training script
+experiments/compare_results.py            Depth-stratified comparison table
+runs/graph_lstm_study_network_1404_*/     First Graph-LSTM run (10 epochs)
+    test_metrics.csv                        Per-basin NSE results
+    model_epoch*.pt                         Checkpoints
+    model_best.pt                           Best checkpoint (by test NSE)
+    run_config.json                         Hyperparameters and metadata
+```
