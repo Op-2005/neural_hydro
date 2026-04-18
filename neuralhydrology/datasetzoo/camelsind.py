@@ -1,14 +1,15 @@
 import os
 from functools import reduce
 from pathlib import Path
-from typing import List, Dict, Union
+from typing import Dict, List, Union
 
 import pandas as pd
-from tqdm import tqdm
 import xarray
+from tqdm import tqdm
 
 from neuralhydrology.datasetzoo.basedataset import BaseDataset
 from neuralhydrology.utils.config import Config
+
 
 class CamelsIND(BaseDataset):
     """Data set class for the CAMELS IND dataset by [#]_.

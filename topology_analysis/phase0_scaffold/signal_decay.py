@@ -4,20 +4,20 @@ Demonstrates information propagation limits (over-squashing) through
 perturbation protocol and hop-distance analysis.
 """
 
-import torch
-import torch.nn as nn
+import json
+from collections import defaultdict
+from datetime import datetime
+from pathlib import Path
+from typing import Dict, List, Optional, Tuple
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
-from typing import Dict, List, Tuple, Optional
-from collections import defaultdict
-import json
-from datetime import datetime
-
+import torch
+import torch.nn as nn
 from basin_graph import BasinGraph
-from synthetic_graphs import create_chain_graph, create_tree_graph
 from hop_distance import compute_hop_distances, group_nodes_by_hop_distance
 from mpnn import MPNNModel
+from synthetic_graphs import create_chain_graph, create_tree_graph
 
 
 class PerturbationExperiment:

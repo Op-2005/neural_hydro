@@ -8,12 +8,14 @@ from typing import List
 
 import numpy as np
 import pandas as pd
-import xarray as xr
+import xarray
 from tqdm import tqdm
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
-from neuralhydrology.datautils.utils import get_frequency_factor, sort_frequencies
-from neuralhydrology.evaluation.metrics import calculate_metrics, get_available_metrics
+from neuralhydrology.datautils.utils import (get_frequency_factor,
+                                             sort_frequencies)
+from neuralhydrology.evaluation.metrics import (calculate_metrics,
+                                                get_available_metrics)
 from neuralhydrology.evaluation.utils import metrics_to_dataframe
 from neuralhydrology.utils.config import Config
 from neuralhydrology.utils.errors import AllNaNError
@@ -124,7 +126,7 @@ def _create_ensemble(results_files: List[Path], frequencies: List[str], config: 
                 # clip predictions to zero
                 sim = ensemble_xr[f'{target_var}_sim']
                 if target_var in config.clip_targets_to_zero:
-                    sim = xr.where(sim < 0, 0, sim)
+                    sim = xarray.where(sim < 0, 0, sim)
 
                 # calculate metrics
                 metrics = config.metrics if isinstance(config.metrics, list) else config.metrics[target_var]

@@ -1,6 +1,7 @@
 from pathlib import Path
 
-from neuralhydrology.evaluation.tester import BaseTester, RegressionTester, UncertaintyTester
+from neuralhydrology.evaluation.tester import (BaseTester, RegressionTester,
+                                               UncertaintyTester)
 from neuralhydrology.utils.config import Config
 
 

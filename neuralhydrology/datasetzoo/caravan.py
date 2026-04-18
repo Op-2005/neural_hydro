@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Dict, Union, Optional
+from typing import Dict, List, Optional, Union
 
 import pandas as pd
 import xarray

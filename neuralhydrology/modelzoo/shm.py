@@ -1,5 +1,7 @@
-import torch
 from typing import Dict, Union
+
+import torch
+
 from neuralhydrology.modelzoo.baseconceptualmodel import BaseConceptualModel
 from neuralhydrology.utils.config import Config
 

@@ -4,33 +4,34 @@ import torch.nn as nn
 
 from neuralhydrology.modelzoo.arlstm import ARLSTM
 from neuralhydrology.modelzoo.cudalstm import CudaLSTM
-from neuralhydrology.modelzoo.mamba import Mamba
 from neuralhydrology.modelzoo.customlstm import CustomLSTM
 from neuralhydrology.modelzoo.ealstm import EALSTM
 from neuralhydrology.modelzoo.embcudalstm import EmbCudaLSTM
+from neuralhydrology.modelzoo.gru import GRU
 from neuralhydrology.modelzoo.handoff_forecast_lstm import HandoffForecastLSTM
 from neuralhydrology.modelzoo.hybridmodel import HybridModel
-from neuralhydrology.modelzoo.gru import GRU
+from neuralhydrology.modelzoo.mamba import Mamba
 from neuralhydrology.modelzoo.mclstm import MCLSTM
 from neuralhydrology.modelzoo.mtslstm import MTSLSTM
-from neuralhydrology.modelzoo.multihead_forecast_lstm import MultiHeadForecastLSTM
+from neuralhydrology.modelzoo.multihead_forecast_lstm import \
+    MultiHeadForecastLSTM
 from neuralhydrology.modelzoo.odelstm import ODELSTM
-from neuralhydrology.modelzoo.sequential_forecast_lstm import SequentialForecastLSTM
+from neuralhydrology.modelzoo.sequential_forecast_lstm import \
+    SequentialForecastLSTM
 from neuralhydrology.modelzoo.stacked_forecast_lstm import StackedForecastLSTM
 from neuralhydrology.modelzoo.transformer import Transformer
-from neuralhydrology.utils.config import Config
-
 from neuralhydrology.modelzoo.x_lstm import XLSTM
+from neuralhydrology.utils.config import Config
 
 SINGLE_FREQ_MODELS = [
     "cudalstm",
-    "ealstm", 
-    "customlstm", 
-    "embcudalstm", 
-    "gru", 
+    "ealstm",
+    "customlstm",
+    "embcudalstm",
+    "gru",
     "transformer",
     "mamba",
-    "mclstm", 
+    "mclstm",
     "arlstm",
     "handoff_forecast_lstm",
     "sequential_forecast_lstm",
@@ -38,7 +39,7 @@ SINGLE_FREQ_MODELS = [
     "stacked_forecast_lstm",
     "x_lstm"
 ]
-AUTOREGRESSIVE_MODELS = ['arlstm']
+AUTOREGRESSIVE_MODELS = ["arlstm"]
 
 
 def get_model(cfg: Config) -> nn.Module:

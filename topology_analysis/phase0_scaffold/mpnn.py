@@ -8,10 +8,10 @@ Implements a message passing neural network layer following:
 Handles isolated nodes (empty neighborhoods) by returning zero vectors.
 """
 
-import torch
-import torch.nn as nn
 from typing import Dict, Set
 
+import torch
+import torch.nn as nn
 from basin_graph import BasinGraph
 
 

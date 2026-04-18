@@ -3,7 +3,8 @@ from typing import Dict
 import pandas as pd
 import torch
 
-from neuralhydrology.datautils.utils import get_frequency_factor, sort_frequencies
+from neuralhydrology.datautils.utils import (get_frequency_factor,
+                                             sort_frequencies)
 from neuralhydrology.utils.config import Config
 
 

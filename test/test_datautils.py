@@ -2,8 +2,9 @@
 import pandas as pd
 import pytest
 
-from neuralhydrology.datautils.utils import (get_frequency_factor, infer_frequency, sort_frequencies, _ME_FREQ,
-                                             _QE_FREQ, _YE_FREQ)
+from neuralhydrology.datautils.utils import (_ME_FREQ, _QE_FREQ, _YE_FREQ,
+                                             get_frequency_factor,
+                                             infer_frequency, sort_frequencies)
 
 
 def test_sort_frequencies():

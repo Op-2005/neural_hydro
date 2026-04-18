@@ -18,11 +18,12 @@ from neuralhydrology.datautils.utils import load_basin_file, load_scaler
 from neuralhydrology.evaluation import get_tester
 from neuralhydrology.evaluation.tester import BaseTester
 from neuralhydrology.modelzoo import get_model
-from neuralhydrology.training import get_loss_obj, get_optimizer, get_regularization_obj
+from neuralhydrology.training import (get_loss_obj, get_optimizer,
+                                      get_regularization_obj)
+from neuralhydrology.training.earlystopper import EarlyStopper
 from neuralhydrology.training.logger import Logger
 from neuralhydrology.utils.config import Config
 from neuralhydrology.utils.logging_utils import setup_logging
-from neuralhydrology.training.earlystopper import EarlyStopper
 
 LOGGER = logging.getLogger(__name__)
 

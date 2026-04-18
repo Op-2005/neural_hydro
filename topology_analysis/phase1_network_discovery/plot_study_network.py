@@ -8,12 +8,13 @@ Usage:
     python topology_analysis/phase1_network_discovery/plot_study_network.py
 """
 
+from pathlib import Path
+
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import networkx as nx
 import numpy as np
 import pandas as pd
-import networkx as nx
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-from pathlib import Path
 
 ROOT = Path(__file__).parent.parent.parent
 DATA_DIR = ROOT / "datasets" / "camels_us"

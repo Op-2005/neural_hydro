@@ -4,7 +4,7 @@ Creates chain and tree graphs using existing basin node IDs.
 These are diagnostic scaffolds only, not real topology.
 """
 
-from typing import Dict, Set, List
+from typing import Dict, List, Set
 
 from basin_graph import BasinGraph
 

@@ -8,11 +8,12 @@ Usage:
     python topology_analysis/phase1_network_discovery/discover_network.py
 """
 
-import numpy as np
-import pandas as pd
-import networkx as nx
 from pathlib import Path
 from typing import Tuple
+
+import networkx as nx
+import numpy as np
+import pandas as pd
 
 ROOT = Path(__file__).parent.parent.parent
 DATA_DIR = ROOT / "datasets" / "camels_us"

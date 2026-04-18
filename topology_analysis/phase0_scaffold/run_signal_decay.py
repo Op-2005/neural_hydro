@@ -1,10 +1,11 @@
 """Phase 4: Main execution script for signal decay analysis."""
 
-from pathlib import Path
 from datetime import datetime
-from signal_decay import run_phase4_experiment
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import pandas as pd
+from signal_decay import run_phase4_experiment
 
 
 def create_plot(results_df: pd.DataFrame, output_dir: Path):

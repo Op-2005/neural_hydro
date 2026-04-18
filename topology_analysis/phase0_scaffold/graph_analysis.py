@@ -4,9 +4,9 @@ Analyzes the basin graph to identify information-flow bottlenecks
 independent of any neural model.
 """
 
-from typing import Dict, Set, List, Tuple, Optional
-from pathlib import Path
 from collections import defaultdict, deque
+from pathlib import Path
+from typing import Dict, List, Optional, Set, Tuple
 
 from basin_graph import BasinGraph
 

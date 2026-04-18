@@ -2,9 +2,8 @@ import warnings
 from datetime import datetime
 from typing import Dict, List, Tuple
 
-from dateutil.relativedelta import relativedelta
-
 import numpy as np
+from dateutil.relativedelta import relativedelta
 from numba import njit
 from xarray.core.dataarray import DataArray
 

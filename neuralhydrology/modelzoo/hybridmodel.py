@@ -1,19 +1,21 @@
 from typing import Dict
+
 import torch
 import torch.nn as nn
-from neuralhydrology.utils.config import Config
-from neuralhydrology.modelzoo.basemodel import BaseModel
+
 from neuralhydrology.modelzoo.baseconceptualmodel import BaseConceptualModel
+from neuralhydrology.modelzoo.basemodel import BaseModel
 from neuralhydrology.modelzoo.inputlayer import InputLayer
 from neuralhydrology.modelzoo.shm import SHM
+from neuralhydrology.utils.config import Config
 
 
 class HybridModel(BaseModel):
-    """Wrapper to combine a deep learning model with a conceptual hydrological models. 
-    
+    """Wrapper to combine a deep learning model with a conceptual hydrological models.
+
     In the current implementation, the deep learning model is always an LSTM. The conceptual model is configurable using the config
     argument `conceptual_model`. Currently supported is `['SHM']`.
-    
+
     Parameters
     ----------
     cfg : Config

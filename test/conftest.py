@@ -1,10 +1,10 @@
 from pathlib import Path
-from typing import List, Union, Dict, Callable
+from test import Fixture
+from typing import Callable, Dict, List, Union
 
 import pytest
 
 from neuralhydrology.utils.config import Config
-from test import Fixture
 
 
 def pytest_addoption(parser):

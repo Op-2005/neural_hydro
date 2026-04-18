@@ -4,10 +4,12 @@ Uses heuristics based on catchment area, elevation, and spatial proximity
 to construct a directed graph of upstream -> downstream relationships.
 """
 
-import pandas as pd
-import numpy as np
 from pathlib import Path
 from typing import Dict, Set, Tuple
+
+import numpy as np
+import pandas as pd
+
 
 def load_basin_attributes(basin_ids: list, data_dir: Path) -> pd.DataFrame:
     """Load topographic attributes for specified basins."""

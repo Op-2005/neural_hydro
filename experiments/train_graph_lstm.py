@@ -11,9 +11,9 @@ Usage:
     /Applications/anaconda3/envs/nh/bin/python experiments/train_graph_lstm.py
 """
 
-import sys
-import logging
 import json
+import logging
+import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -24,11 +24,11 @@ import torch.nn as nn
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from neuralhydrology.utils.config import Config
 from neuralhydrology.datasetzoo import get_dataset
-from neuralhydrology.modelzoo.inputlayer import InputLayer
-from neuralhydrology.modelzoo.head import get_head
 from neuralhydrology.evaluation.metrics import calculate_all_metrics
+from neuralhydrology.modelzoo.head import get_head
+from neuralhydrology.modelzoo.inputlayer import InputLayer
+from neuralhydrology.utils.config import Config
 
 # ---------------------------------------------------------------------------
 # Configuration

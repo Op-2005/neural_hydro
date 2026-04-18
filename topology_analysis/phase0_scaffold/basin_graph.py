@@ -3,8 +3,9 @@
 Represents the directed basin graph with node states and time indexing.
 """
 
-from typing import Dict, Set, List, Optional
 from pathlib import Path
+from typing import Dict, List, Optional, Set
+
 import numpy as np
 
 

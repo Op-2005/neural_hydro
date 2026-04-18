@@ -4,23 +4,23 @@ import re
 import sys
 import warnings
 from collections import defaultdict
-from typing import List, Dict, Union
+from typing import Dict, List, Union
 
 import numpy as np
 import pandas as pd
-from pandas.tseries.frequencies import to_offset
 import torch
 import xarray
-from numba import NumbaPendingDeprecationWarning
-from numba import njit, prange
+from numba import NumbaPendingDeprecationWarning, njit, prange
+from pandas.tseries.frequencies import to_offset
 from ruamel.yaml import YAML
 from torch.utils.data import Dataset
 from tqdm import tqdm
 
 from neuralhydrology.datautils import utils
-from neuralhydrology.utils.config import Config
-from neuralhydrology.utils.errors import NoTrainDataError, NoEvaluationDataError
 from neuralhydrology.utils import samplingutils
+from neuralhydrology.utils.config import Config
+from neuralhydrology.utils.errors import (NoEvaluationDataError,
+                                          NoTrainDataError)
 
 LOGGER = logging.getLogger(__name__)
 

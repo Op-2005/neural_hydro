@@ -3,8 +3,8 @@
 Computes shortest directed path lengths from source node to all other nodes.
 """
 
-from typing import Dict, Set, Optional
 from collections import deque
+from typing import Dict, Optional, Set
 
 from basin_graph import BasinGraph
 

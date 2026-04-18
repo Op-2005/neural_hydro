@@ -1,18 +1,15 @@
 """Integration tests that perform full runs on the uncertainty estimation code. """
+from test import Fixture
+from test.test_config_runs import get_basin_results, get_test_start_end_dates
 from typing import Callable
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pytest
 
 from neuralhydrology.evaluation.evaluate import start_evaluation
 from neuralhydrology.training.train import start_training
 from neuralhydrology.utils.config import Config
-
-from test import Fixture
-
-from test.test_config_runs import get_test_start_end_dates, get_basin_results
-
 
 # Common to all uncertainty heads
 common_uncertainty_config = {

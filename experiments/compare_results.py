@@ -7,9 +7,10 @@ Usage:
 """
 
 import argparse
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
-from pathlib import Path
 
 EDGE_FILE = Path("topology_analysis/phase1_network_discovery/outputs/study_network_edges.csv")
 SUMMARY_FILE = Path("topology_analysis/phase1_network_discovery/outputs/study_network_summary.txt")

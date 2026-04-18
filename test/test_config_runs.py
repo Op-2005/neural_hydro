@@ -1,18 +1,18 @@
 """Integration tests that perform full runs. """
 import pickle
 from pathlib import Path
-from typing import Dict, Tuple, Callable
+from test import Fixture
+from typing import Callable, Dict, Tuple
 
 import pandas as pd
-from pandas.tseries.frequencies import to_offset
 import pytest
+from pandas.tseries.frequencies import to_offset
 from pytest import approx
 
 from neuralhydrology.datasetzoo import camelsus, hourlycamelsus
 from neuralhydrology.evaluation.evaluate import start_evaluation
 from neuralhydrology.training.train import start_training
 from neuralhydrology.utils.config import Config
-from test import Fixture
 
 
 def test_daily_regression(get_config: Fixture[Callable[[str], dict]], single_timescale_model: Fixture[str],

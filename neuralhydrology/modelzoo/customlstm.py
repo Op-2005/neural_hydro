@@ -1,6 +1,5 @@
 import math
 from collections import defaultdict
-
 from typing import Dict, Union
 
 import torch
@@ -9,8 +8,8 @@ import torch.nn as nn
 from neuralhydrology.modelzoo.basemodel import BaseModel
 from neuralhydrology.modelzoo.cudalstm import CudaLSTM
 from neuralhydrology.modelzoo.embcudalstm import EmbCudaLSTM
-from neuralhydrology.modelzoo.inputlayer import InputLayer
 from neuralhydrology.modelzoo.head import get_head
+from neuralhydrology.modelzoo.inputlayer import InputLayer
 from neuralhydrology.utils.config import Config
 
 

@@ -2,14 +2,15 @@ import logging
 import pickle
 import sys
 from pathlib import Path
-from typing import List, Dict
+from typing import Dict, List
 
 import numpy as np
 import pandas as pd
 from numba import njit
 from tqdm import tqdm
 
-from neuralhydrology.datasetzoo.camelsus import load_camels_us_forcings, load_camels_us_attributes
+from neuralhydrology.datasetzoo.camelsus import (load_camels_us_attributes,
+                                                 load_camels_us_forcings)
 from neuralhydrology.datautils import pet
 
 LOGGER = logging.getLogger(__name__)

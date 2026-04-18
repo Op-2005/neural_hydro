@@ -1,7 +1,7 @@
 import torch
 
-from neuralhydrology.utils.config import Config
 from neuralhydrology.modelzoo.mclstm import MCLSTM
+from neuralhydrology.utils.config import Config
 
 
 def test_mass_conservation():

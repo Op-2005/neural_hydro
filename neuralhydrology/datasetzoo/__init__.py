@@ -6,14 +6,14 @@ from neuralhydrology.datasetzoo.camelsbr import CamelsBR
 from neuralhydrology.datasetzoo.camelscl import CamelsCL
 from neuralhydrology.datasetzoo.camelsde import CamelsDE
 from neuralhydrology.datasetzoo.camelsgb import CamelsGB
+from neuralhydrology.datasetzoo.camelsind import CamelsIND
 from neuralhydrology.datasetzoo.camelsus import CamelsUS
 from neuralhydrology.datasetzoo.caravan import Caravan
-from neuralhydrology.datasetzoo.camelsind import CamelsIND
+from neuralhydrology.datasetzoo.datasetregistry import DatasetRegistry
 from neuralhydrology.datasetzoo.genericdataset import GenericDataset
 from neuralhydrology.datasetzoo.hourlycamelsus import HourlyCamelsUS
 from neuralhydrology.datasetzoo.lamah import LamaH
 from neuralhydrology.utils.config import Config
-from neuralhydrology.datasetzoo.datasetregistry import DatasetRegistry
 
 
 def get_dataset(cfg: Config,
@@ -73,7 +73,7 @@ def get_dataset(cfg: Config,
 
 def register_dataset(key: str, new_class: Type):
     """Adds a dataset class to the dataset registry.
-    
+
     This class must derive from BaseDataset. New dataset class has to be added at the beginning of runtime.
 
     Parameters

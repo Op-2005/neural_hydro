@@ -4,8 +4,8 @@ import torch
 import torch.nn as nn
 
 from neuralhydrology.modelzoo.basemodel import BaseModel
-from neuralhydrology.modelzoo.inputlayer import InputLayer
 from neuralhydrology.modelzoo.head import get_head
+from neuralhydrology.modelzoo.inputlayer import InputLayer
 from neuralhydrology.utils.config import Config
 
 

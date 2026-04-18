@@ -5,9 +5,10 @@ import pandas as pd
 import torch
 import torch.nn as nn
 
-from neuralhydrology.datautils.utils import get_frequency_factor, sort_frequencies
-from neuralhydrology.modelzoo.head import get_head
+from neuralhydrology.datautils.utils import (get_frequency_factor,
+                                             sort_frequencies)
 from neuralhydrology.modelzoo.basemodel import BaseModel
+from neuralhydrology.modelzoo.head import get_head
 from neuralhydrology.modelzoo.inputlayer import InputLayer
 from neuralhydrology.utils.config import Config
 

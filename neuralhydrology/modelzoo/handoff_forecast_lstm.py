@@ -3,11 +3,12 @@ from typing import Dict
 import torch
 import torch.nn as nn
 
-from neuralhydrology.utils.config import Config
 from neuralhydrology.modelzoo.basemodel import BaseModel
 from neuralhydrology.modelzoo.fc import FC
 from neuralhydrology.modelzoo.head import get_head
 from neuralhydrology.modelzoo.inputlayer import InputLayer
+from neuralhydrology.utils.config import Config
+
 
 class HandoffForecastLSTM(BaseModel):
     """An encoder/decoder LSTM model class used for forecasting.

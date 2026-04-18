@@ -1,11 +1,11 @@
 """Test for checking that the outputs of the CustomLSTM match those of CudaLSTM and EmbCudaLSTM"""
+from test import Fixture
 from typing import Callable
 
 import torch
 
 from neuralhydrology.modelzoo import get_model
 from neuralhydrology.modelzoo.customlstm import CustomLSTM
-from test import Fixture
 
 
 def test_model_equality(get_config: Fixture[Callable[[str], dict]], custom_lstm_supported_models: Fixture[str]):

@@ -4,6 +4,7 @@ import numpy as np
 import torch
 from torch import nn
 
+
 class PositionalEncoding(nn.Module):
     """Class to create a positional encoding vector for timeseries inputs to a model without an explicit time dimension.
 
