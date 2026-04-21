@@ -1,0 +1,19 @@
+======================================================================
+Component 0 (minimum-viable-statistical-power test network)
+======================================================================
+
+Source: full_network_edges.csv (heuristic inference, 671 basins)
+Params: max_dist=150km, area_ratio>=1.5, elev_decreasing=True
+
+Basins (after data-completeness filter): 183
+Edges:     624
+Roots:     33
+Max depth: 4
+HUC regions: 01, 02, 03, 04, 05, 06
+
+Basins per depth:
+  depth 0:  33
+  depth 1:  81
+  depth 2:  51
+  depth 3:  16
+  depth 4:   2

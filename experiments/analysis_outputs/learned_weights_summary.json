@@ -1,0 +1,11 @@
+{
+  "W_out_max_singular_value": 0.35077282786369324,
+  "W_out_mean_singular_value": 0.049698010087013245,
+  "W_msg_hu_avg_norm": 0.5846070051193237,
+  "W_msg_edge_avg_norm": 0.5116714835166931,
+  "W_msg_edge_dim_norms": {
+    "log_dist": 0.46604815125465393,
+    "log_area_ratio": 0.5413031578063965,
+    "elev_drop": 0.5276631116867065
+  }
+}

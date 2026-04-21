@@ -1,0 +1,11 @@
+{
+  "W_out_max_singular_value": 0.19665902853012085,
+  "W_out_min_singular_value": 0.00014809405547566712,
+  "W_out_effective_rank": 55.0,
+  "W_msg_hu_avg_norm": 0.5635284185409546,
+  "W_msg_hu_max_norm": 0.6317741870880127,
+  "W_msg_edge_log_dist_norm": 0.43193602561950684,
+  "W_msg_edge_log_area_ratio_norm": 0.5092831254005432,
+  "W_msg_edge_elev_drop_norm": 0.48379021883010864,
+  "W_msg_edge_avg_norm": 0.47500312328338623
+}

@@ -1,0 +1,70 @@
+{
+  "model": "DirectedGraphLSTM",
+  "epochs": 15,
+  "lr": 0.001,
+  "hidden_size": 64,
+  "seq_length": 30,
+  "dropout": 0.4,
+  "seed": 42,
+  "batch_size": 256,
+  "n_basins": 23,
+  "n_edges": 34,
+  "use_edge_features": true,
+  "use_diff_term": false,
+  "use_basin_encoding": true,
+  "warm_start": true,
+  "freeze_lstm": false,
+  "use_attention": true,
+  "baseline_run": "runs/05_lstm_23basin_strong_baseline",
+  "input_size": 33,
+  "n_dynamic_features": 5,
+  "n_static_total": 28,
+  "timestamp": "2026-04-19T21:43:02.011421",
+  "pre_training_median_nse": 0.42266277494892746,
+  "best_epoch": 12,
+  "final_median_nse": 0.49492098360378256,
+  "final_mean_nse": -0.20853854485610282,
+  "loss_history": [
+    0.17389815002679826,
+    0.14363106712698936,
+    0.16119830297927062,
+    0.15074897160132725,
+    0.17835816219449044,
+    0.13741065909465153,
+    0.13803116977214813,
+    0.14038227299849193,
+    0.13470519731442135,
+    0.1362234351535638,
+    0.12726576030254363,
+    0.1247989445924759,
+    0.11733601912856102,
+    0.12076199352741242,
+    0.12475429028272629
+  ],
+  "nse_history": [
+    [
+      0,
+      0.42266277494892746
+    ],
+    [
+      3,
+      0.4756585891191909
+    ],
+    [
+      6,
+      0.4752664730856464
+    ],
+    [
+      9,
+      0.4911505462020884
+    ],
+    [
+      12,
+      0.49492098360378256
+    ],
+    [
+      15,
+      0.46960088846009596
+    ]
+  ]
+}

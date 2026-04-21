@@ -1,0 +1,47 @@
+{
+  "n_depth_strata_pass_15pct": 0,
+  "n_depth_strata_soft_pass_0pct": 1,
+  "n_depth_strata_fail": 3,
+  "per_depth": [
+    {
+      "depth": 0,
+      "n_basins": 7,
+      "baseline_median_highpow": 0.020257051421840026,
+      "graph_warm_median_highpow": 0.04138018475201412,
+      "graph_frozen_median_highpow": 0.020257051421840026,
+      "warm_vs_base_ratio": 2.0427545890217913,
+      "frozen_vs_base_ratio": 1.0,
+      "warm_vs_base_pct_reduction": -104.27545890217912
+    },
+    {
+      "depth": 1,
+      "n_basins": 12,
+      "baseline_median_highpow": 0.010800329973567394,
+      "graph_warm_median_highpow": 0.010963060253166831,
+      "graph_frozen_median_highpow": 0.009656391381561023,
+      "warm_vs_base_ratio": 1.0150671581329183,
+      "frozen_vs_base_ratio": 0.8940829960930792,
+      "warm_vs_base_pct_reduction": -1.5067158132918257
+    },
+    {
+      "depth": 2,
+      "n_basins": 2,
+      "baseline_median_highpow": 0.01039699813265392,
+      "graph_warm_median_highpow": 0.009390559230845835,
+      "graph_frozen_median_highpow": 0.008568020664082207,
+      "warm_vs_base_ratio": 0.903199087951439,
+      "frozen_vs_base_ratio": 0.8240860058609194,
+      "warm_vs_base_pct_reduction": 9.680091204856101
+    },
+    {
+      "depth": 3,
+      "n_basins": 2,
+      "baseline_median_highpow": 0.006324216473107615,
+      "graph_warm_median_highpow": 0.00647746209135773,
+      "graph_frozen_median_highpow": 0.006550255553027287,
+      "warm_vs_base_ratio": 1.0242315579964347,
+      "frozen_vs_base_ratio": 1.035741831558242,
+      "warm_vs_base_pct_reduction": -2.4231557996434727
+    }
+  ]
+}
