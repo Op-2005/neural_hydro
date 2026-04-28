@@ -1,0 +1,16 @@
+{
+  "baseline_dir": "runs/05_lstm_23basin_strong_baseline",
+  "probe_b_mode": "t-1",
+  "perturb_sigma_frac": 0.5,
+  "probe_a_pass_pct": 100.0,
+  "probe_b_pass_pct": 100.0,
+  "probe_a_pass": true,
+  "probe_b_pass": true,
+  "overall_pass": true,
+  "n_basins": 23,
+  "n_windows_evaluated": 200,
+  "perturb_t": 15,
+  "probe_a_median_recovery_steps_among_recovered": 1,
+  "probe_b_median_max_deviation_normalized": 0.006208755541592836,
+  "interpretation": "framing alive \u2014 proceed to E0.5 then forcing-comparison sub-experiment"
+}

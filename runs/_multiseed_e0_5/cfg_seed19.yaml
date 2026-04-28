@@ -1,0 +1,74 @@
+# Template for multi-seed E0.5 sweeps. The runner script substitutes
+# 19 into experiment_name and the seed: field at run time. Do not
+# train this file directly — it is incomplete on its own.
+experiment_name: lstm_strong_60ep_seed19
+run_dir: runs/
+
+train_basin_file: ./experiments/basin_lists/study_network_basins.txt
+validation_basin_file: ./experiments/basin_lists/study_network_basins.txt
+test_basin_file: ./experiments/basin_lists/study_network_basins.txt
+
+train_start_date: "01/01/1990"
+train_end_date:   "31/12/1999"
+validation_start_date: "01/01/2000"
+validation_end_date:   "31/12/2004"
+test_start_date: "01/01/2005"
+test_end_date:   "31/12/2008"
+
+device: cpu
+
+validate_every: 1
+validate_n_random_basins: 23
+metrics:
+  - NSE
+
+model: cudalstm
+head: regression
+output_activation: linear
+hidden_size: 64
+initial_forget_bias: 3
+output_dropout: 0.4
+
+optimizer: Adam
+loss: MSE
+learning_rate:
+  0: 1e-3
+
+batch_size: 256
+epochs: 60
+clip_gradient_norm: 1
+predict_last_n: 1
+seq_length: 30
+num_workers: 4
+log_interval: 5
+log_tensorboard: False
+
+seed: 19
+
+dataset: camels_us
+data_dir: ./datasets/camels_us
+
+use_basin_id_encoding: True
+
+forcings:
+  - maurer
+
+dynamic_inputs:
+  - PRCP(mm/day)
+  - SRAD(W/m2)
+  - Tmax(C)
+  - Tmin(C)
+  - Vp(Pa)
+
+target_variables:
+  - QObs(mm/d)
+
+clip_targets_to_zero:
+  - QObs(mm/d)
+
+static_attributes:
+  - elev_mean
+  - area_gages2
+  - slope_mean
+  - p_mean
+  - pet_mean

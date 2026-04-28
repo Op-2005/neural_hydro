@@ -1,0 +1,14 @@
+{
+  "perturb_t": 15,
+  "perturb_sigma_frac": 0.5,
+  "n_windows": 200,
+  "h_dev_normalized_at_T": 0.4775192141532898,
+  "h_dev_normalized_at_T_plus_1": 0.06650278717279434,
+  "h_dev_normalized_at_T_plus_5": 0.012123720720410347,
+  "y_dev_normalized_at_T": 0.11334467679262161,
+  "y_dev_normalized_at_T_plus_1": 0.026495598256587982,
+  "y_dev_normalized_at_T_plus_5": 0.0019310065545141697,
+  "h_recovers_below_10pct_within_5_steps": true,
+  "y_recovers_below_10pct_within_5_steps": true,
+  "interpretation": "State-space recovery: \u2016\u0394h\u2016/\u2016\u03c3_h\u2016 goes from 0.478 at t=T to 0.012 at t=T+5. Prediction-space recovery: |\u0394y|/\u03c3_y goes from 0.113 at t=T to 0.002 at t=T+5. BOTH state-space and prediction-space recover within 5 steps to <10% of natural variance \u2014 true contracting dynamics, not just head-orthogonality."
+}

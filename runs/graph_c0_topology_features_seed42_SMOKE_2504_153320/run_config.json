@@ -1,0 +1,23 @@
+{
+  "variant": "topology_features",
+  "seed": 42,
+  "epochs": 2,
+  "n_basins": 23,
+  "n_edges": 34,
+  "baseline_run": "runs/05_lstm_23basin_strong_baseline",
+  "smoke_test": true,
+  "pre_training_median_nse": 0.42266277494892746,
+  "final_median_nse": 0.46124349413506815,
+  "final_mean_nse": -0.17062006621444475,
+  "loss_history": [
+    0.16244395822286606,
+    0.14286174029111862
+  ],
+  "epoch_wall_seconds": [
+    80.78657412528992,
+    85.10790967941284
+  ],
+  "mean_epoch_wall_seconds": 82.94724190235138,
+  "input_size": 38,
+  "timestamp": "2026-04-25T15:36:40.186046"
+}

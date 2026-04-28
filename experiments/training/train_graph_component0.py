@@ -77,11 +77,100 @@ def find_component0_baseline():
 
 
 VARIANTS = {
-    # Ablation dimensions: use_edge_features, use_diff, frozen, attn, sigate, gcn-style
-    "warm":         dict(edge_feat=True,  diff=False, frozen=False, attn=False, sigate=False),
-    "frozen":       dict(edge_feat=True,  diff=False, frozen=True,  attn=False, sigate=False),
-    "gcn_lowpass":  dict(edge_feat=False, diff=False, frozen=False, attn=False, sigate=False),
+    # Ablation dimensions: edge_feat, diff, frozen, attn, sigate, add_topology_features
+    # Conditions A / B / C from idea1.md:
+    #   A baseline = NH-trained baseline (no script needed; use lstm_*_baseline.yaml)
+    #   B topology-as-features = `topology_features` variant below (no edges, augmented x_s)
+    #   C topology + message passing = `warm` (full graph-LSTM)
+    "warm":               dict(edge_feat=True,  diff=False, frozen=False, attn=False, sigate=False, add_topology_features=False),
+    "frozen":             dict(edge_feat=True,  diff=False, frozen=True,  attn=False, sigate=False, add_topology_features=False),
+    "gcn_lowpass":        dict(edge_feat=False, diff=False, frozen=False, attn=False, sigate=False, add_topology_features=False),
+    "topology_features":  dict(edge_feat=False, diff=False, frozen=False, attn=False, sigate=False, add_topology_features=True),
 }
+
+
+def compute_topology_features(basin_ids, edge_file, topo_file):
+    """Compute the 5 Condition-B topology scalars per basin, z-normalized.
+
+    Returns: torch.Tensor [n_basins, 5] with columns:
+      0  graph depth (longest path from any root to this basin)
+      1  in-degree
+      2  out-degree
+      3  transitive upstream count / network size
+      4  log of (sum-of-upstream-areas + own-area) / own-area, z-normalized
+    """
+    import networkx as nx
+    edges_df = pd.read_csv(edge_file, dtype={"parent_id": str, "child_id": str})
+    topo = pd.read_csv(topo_file, sep=";", dtype={"gauge_id": str}).set_index("gauge_id")
+
+    G = nx.DiGraph()
+    for b in basin_ids:
+        G.add_node(b)
+    for _, row in edges_df.iterrows():
+        if row["parent_id"] in basin_ids and row["child_id"] in basin_ids:
+            G.add_edge(row["parent_id"], row["child_id"])
+
+    n = len(basin_ids)
+    feats = np.zeros((n, 5))
+    roots = [m for m in G if G.in_degree(m) == 0]
+    for i, b in enumerate(basin_ids):
+        # Depth: longest path from any root to b
+        max_depth = 0
+        for r in roots:
+            try:
+                d = nx.shortest_path_length(G, r, b)
+                max_depth = max(max_depth, d)
+            except nx.NetworkXNoPath:
+                continue
+        feats[i, 0] = max_depth
+        feats[i, 1] = G.in_degree(b)
+        feats[i, 2] = G.out_degree(b)
+        ancestors = nx.ancestors(G, b)
+        feats[i, 3] = len(ancestors) / max(n, 1)
+        own_area = float(topo.loc[b, "area_gages2"]) if b in topo.index else 1.0
+        upstream_area = sum(float(topo.loc[a, "area_gages2"])
+                              for a in ancestors if a in topo.index)
+        feats[i, 4] = np.log((upstream_area + own_area) / max(own_area, 1.0) + 1e-6)
+
+    # Z-normalize each column independently
+    means = feats.mean(axis=0)
+    stds = feats.std(axis=0) + 1e-8
+    feats_norm = (feats - means) / stds
+
+    return torch.tensor(feats_norm, dtype=torch.float32)
+
+
+def warm_start_with_extra_input_dims(model, baseline_ckpt_path, n_extra_dims):
+    """Warm-start when the target model has n_extra_dims more input columns
+    than the baseline's W_ih. Baseline columns are copied; extra columns are
+    zero-initialized so the augmented model starts identical to baseline on
+    the original inputs.
+    """
+    ckpt = torch.load(baseline_ckpt_path, map_location="cpu", weights_only=True)
+    own = model.state_dict()
+
+    src_W_ih = ckpt.get("lstm.weight_ih_l0")
+    dst_W_ih = own["lstm_cell.weight_ih"]
+    if src_W_ih is not None and src_W_ih.shape[1] + n_extra_dims == dst_W_ih.shape[1]:
+        with torch.no_grad():
+            dst_W_ih[:, :src_W_ih.shape[1]].copy_(src_W_ih)
+            dst_W_ih[:, src_W_ih.shape[1]:].zero_()
+        LOGGER.info(f"  Partial warm-start: copied {src_W_ih.shape[1]} cols of W_ih, "
+                     f"zero-init {n_extra_dims} new cols")
+    elif src_W_ih is not None and src_W_ih.shape == dst_W_ih.shape:
+        own["lstm_cell.weight_ih"].copy_(src_W_ih)
+        LOGGER.info(f"  Warm-start: W_ih shapes match, full copy")
+    else:
+        LOGGER.warning(f"  W_ih shape mismatch ({src_W_ih.shape if src_W_ih is not None else 'missing'} "
+                        f"vs {dst_W_ih.shape}); skipping W_ih warm-start")
+
+    for src, dst in [("lstm.weight_hh_l0", "lstm_cell.weight_hh"),
+                       ("lstm.bias_ih_l0", "lstm_cell.bias_ih"),
+                       ("lstm.bias_hh_l0", "lstm_cell.bias_hh"),
+                       ("head.net.0.weight", "head.weight"),
+                       ("head.net.0.bias", "head.bias")]:
+        if src in ckpt and dst in own and ckpt[src].shape == own[dst].shape:
+            own[dst].copy_(ckpt[src])
 
 
 def main():
@@ -148,13 +237,26 @@ def main():
     x_d_test, _, y_test = load_basin_data(cfg, scaler, basin_ids, "test", id_to_int)
     LOGGER.info(f"Test tensor shape: {x_d_test.shape}")
 
+    # Condition B: append topology-derived static features.
+    # We zero-pad them when ablating *just* the message passing — see comments.
+    if variant["add_topology_features"]:
+        topo_file = ROOT / "datasets/camels_us/camels_attributes_v2.0/camels_topo.txt"
+        topo_feats = compute_topology_features(basin_ids, edge_file, topo_file)  # [n_basins, 5]
+        LOGGER.info(f"Computed Condition-B topology features: {topo_feats.shape}; "
+                     f"first row = {topo_feats[0].tolist()}")
+        x_s = torch.cat([x_s, topo_feats], dim=-1)
+        LOGGER.info(f"Augmented static dim: {x_s.shape[1]} (was {x_s.shape[1] - 5})")
+
     n_dyn = x_d_train.shape[3]
     input_size = n_dyn + x_s.shape[1]
+
+    # For Condition B (topology_features), pass edges=[] so message passing is OFF.
+    model_edges = [] if variant["add_topology_features"] else edges
 
     model = DirectedGraphLSTM(
         input_size=input_size,
         hidden_size=HIDDEN_SIZE,
-        edges=edges,
+        edges=model_edges,
         n_basins=n_basins,
         n_targets=1,
         dropout=DROPOUT,
@@ -164,13 +266,18 @@ def main():
         use_attention=variant["attn"],
         use_sigmoid_gate=variant["sigate"],
     ).to(DEVICE)
-    LOGGER.info(f"Model parameters: {sum(p.numel() for p in model.parameters()):,}")
+    LOGGER.info(f"Model parameters: {sum(p.numel() for p in model.parameters()):,}   "
+                 f"input_size: {input_size}   edges: {len(model_edges)}")
 
     if not args.no_warm_start:
         ckpts = sorted(baseline_run.glob("model_epoch*.pt"))
         if ckpts:
             LOGGER.info(f"Warm-starting from: {ckpts[-1]}")
-            warm_start_from_baseline(model, ckpts[-1])
+            if variant["add_topology_features"]:
+                # Augmented input dim — partial warm-start with zero-init for new dims.
+                warm_start_with_extra_input_dims(model, ckpts[-1], n_extra_dims=5)
+            else:
+                warm_start_from_baseline(model, ckpts[-1])
         else:
             LOGGER.warning("No baseline checkpoint to warm-start from.")
 

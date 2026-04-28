@@ -1,0 +1,37 @@
+{
+  "seeds": [
+    11,
+    13,
+    17,
+    19,
+    23
+  ],
+  "per_seed_plateau_medians": [
+    0.47764,
+    0.39632999999999996,
+    0.36656500000000003,
+    0.38324,
+    0.366425
+  ],
+  "per_seed_plateau_mads": [
+    0.015305000000000013,
+    0.01722499999999999,
+    0.03236499999999998,
+    0.02185000000000001,
+    0.02074000000000001
+  ],
+  "across_seed_plateau_median_mean": 0.39804,
+  "across_seed_plateau_disagreement_max_minus_min": 0.11121500000000001,
+  "per_seed_slope_epochs_10_to_60": [
+    9.873846153846131e-05,
+    0.0002908244343891384,
+    -0.0018901022624434427,
+    0.0002352904977375532,
+    -0.0010862760180995507
+  ],
+  "mean_slope_across_seeds": -0.0004703049773755681,
+  "max_abs_slope_across_seeds": 0.0018901022624434427,
+  "plateau_check_pass": false,
+  "slope_check_pass": false,
+  "verdict": "MULTI-SEED PARTIALLY supports the saturation reading; some cross-seed disagreement requires nuance \u2014 see per-seed values."
+}

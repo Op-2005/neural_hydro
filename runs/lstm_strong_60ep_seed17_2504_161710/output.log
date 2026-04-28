@@ -1,0 +1,170 @@
+2026-04-25 16:17:10,782: Logging to runs/lstm_strong_60ep_seed17_2504_161710/output.log initialized.
+2026-04-25 16:17:10,782: ### Folder structure created at runs/lstm_strong_60ep_seed17_2504_161710
+2026-04-25 16:17:10,782: ### Run configurations for lstm_strong_60ep_seed17
+2026-04-25 16:17:10,782: experiment_name: lstm_strong_60ep_seed17
+2026-04-25 16:17:10,782: run_dir: runs/lstm_strong_60ep_seed17_2504_161710
+2026-04-25 16:17:10,782: train_basin_file: experiments/basin_lists/study_network_basins.txt
+2026-04-25 16:17:10,782: validation_basin_file: experiments/basin_lists/study_network_basins.txt
+2026-04-25 16:17:10,782: test_basin_file: experiments/basin_lists/study_network_basins.txt
+2026-04-25 16:17:10,782: train_start_date: 1990-01-01 00:00:00
+2026-04-25 16:17:10,782: train_end_date: 1999-12-31 00:00:00
+2026-04-25 16:17:10,782: validation_start_date: 2000-01-01 00:00:00
+2026-04-25 16:17:10,782: validation_end_date: 2004-12-31 00:00:00
+2026-04-25 16:17:10,782: test_start_date: 2005-01-01 00:00:00
+2026-04-25 16:17:10,782: test_end_date: 2008-12-31 00:00:00
+2026-04-25 16:17:10,782: device: cpu
+2026-04-25 16:17:10,782: validate_every: 1
+2026-04-25 16:17:10,782: validate_n_random_basins: 23
+2026-04-25 16:17:10,783: metrics: ['NSE']
+2026-04-25 16:17:10,783: model: cudalstm
+2026-04-25 16:17:10,783: head: regression
+2026-04-25 16:17:10,783: output_activation: linear
+2026-04-25 16:17:10,783: hidden_size: 64
+2026-04-25 16:17:10,783: initial_forget_bias: 3
+2026-04-25 16:17:10,783: output_dropout: 0.4
+2026-04-25 16:17:10,783: optimizer: Adam
+2026-04-25 16:17:10,783: loss: MSE
+2026-04-25 16:17:10,783: learning_rate: {0: 0.001}
+2026-04-25 16:17:10,783: batch_size: 256
+2026-04-25 16:17:10,783: epochs: 60
+2026-04-25 16:17:10,783: clip_gradient_norm: 1
+2026-04-25 16:17:10,783: predict_last_n: 1
+2026-04-25 16:17:10,783: seq_length: 30
+2026-04-25 16:17:10,783: num_workers: 4
+2026-04-25 16:17:10,783: log_interval: 5
+2026-04-25 16:17:10,783: log_tensorboard: False
+2026-04-25 16:17:10,783: seed: 17
+2026-04-25 16:17:10,783: dataset: camels_us
+2026-04-25 16:17:10,783: data_dir: datasets/camels_us
+2026-04-25 16:17:10,783: use_basin_id_encoding: True
+2026-04-25 16:17:10,783: forcings: ['maurer']
+2026-04-25 16:17:10,783: dynamic_inputs: ['PRCP(mm/day)', 'SRAD(W/m2)', 'Tmax(C)', 'Tmin(C)', 'Vp(Pa)']
+2026-04-25 16:17:10,783: target_variables: ['QObs(mm/d)']
+2026-04-25 16:17:10,783: clip_targets_to_zero: ['QObs(mm/d)']
+2026-04-25 16:17:10,783: static_attributes: ['elev_mean', 'area_gages2', 'slope_mean', 'p_mean', 'pet_mean']
+2026-04-25 16:17:10,783: number_of_basins: 23
+2026-04-25 16:17:10,783: train_dir: runs/lstm_strong_60ep_seed17_2504_161710/train_data
+2026-04-25 16:17:10,783: img_log_dir: runs/lstm_strong_60ep_seed17_2504_161710/img_log
+2026-04-25 16:17:10,784: ### Device cpu will be used for training
+2026-04-25 16:17:10,816: Loading basin data into xarray data set.
+2026-04-25 16:17:11,849: Create lookup table and convert to pytorch tensor
+2026-04-25 16:17:35,323: Epoch 1 average loss: avg_loss: 0.41540, avg_total_loss: 0.41540
+2026-04-25 16:17:45,060: Epoch 1 average validation loss: 0.94998 -- Median validation metrics: avg_loss: 0.94998, NSE: 0.28144
+2026-04-25 16:18:10,381: Epoch 2 average loss: avg_loss: 0.31627, avg_total_loss: 0.31627
+2026-04-25 16:18:14,545: Epoch 2 average validation loss: 0.90707 -- Median validation metrics: avg_loss: 0.90707, NSE: 0.36995
+2026-04-25 16:18:39,597: Epoch 3 average loss: avg_loss: 0.27572, avg_total_loss: 0.27572
+2026-04-25 16:18:43,391: Epoch 3 average validation loss: 0.89948 -- Median validation metrics: avg_loss: 0.89948, NSE: 0.42536
+2026-04-25 16:19:03,889: Epoch 4 average loss: avg_loss: 0.24239, avg_total_loss: 0.24239
+2026-04-25 16:19:07,726: Epoch 4 average validation loss: 0.88883 -- Median validation metrics: avg_loss: 0.88883, NSE: 0.35620
+2026-04-25 16:19:29,269: Epoch 5 average loss: avg_loss: 0.22072, avg_total_loss: 0.22072
+2026-04-25 16:19:32,946: Epoch 5 average validation loss: 0.88130 -- Median validation metrics: avg_loss: 0.88130, NSE: 0.42242
+2026-04-25 16:19:56,252: Epoch 6 average loss: avg_loss: 0.20933, avg_total_loss: 0.20933
+2026-04-25 16:19:59,945: Epoch 6 average validation loss: 0.86706 -- Median validation metrics: avg_loss: 0.86706, NSE: 0.45401
+2026-04-25 16:20:22,266: Epoch 7 average loss: avg_loss: 0.19448, avg_total_loss: 0.19448
+2026-04-25 16:20:26,320: Epoch 7 average validation loss: 0.86963 -- Median validation metrics: avg_loss: 0.86963, NSE: 0.42401
+2026-04-25 16:20:49,231: Epoch 8 average loss: avg_loss: 0.18504, avg_total_loss: 0.18504
+2026-04-25 16:20:53,217: Epoch 8 average validation loss: 0.86695 -- Median validation metrics: avg_loss: 0.86695, NSE: 0.42312
+2026-04-25 16:21:23,304: Epoch 9 average loss: avg_loss: 0.17049, avg_total_loss: 0.17049
+2026-04-25 16:21:29,128: Epoch 9 average validation loss: 0.87195 -- Median validation metrics: avg_loss: 0.87195, NSE: 0.46361
+2026-04-25 16:21:53,963: Epoch 10 average loss: avg_loss: 0.16768, avg_total_loss: 0.16768
+2026-04-25 16:21:59,691: Epoch 10 average validation loss: 0.86190 -- Median validation metrics: avg_loss: 0.86190, NSE: 0.45676
+2026-04-25 16:22:26,857: Epoch 11 average loss: avg_loss: 0.15512, avg_total_loss: 0.15512
+2026-04-25 16:22:31,235: Epoch 11 average validation loss: 0.85604 -- Median validation metrics: avg_loss: 0.85604, NSE: 0.43405
+2026-04-25 16:22:58,245: Epoch 12 average loss: avg_loss: 0.15364, avg_total_loss: 0.15364
+2026-04-25 16:23:02,956: Epoch 12 average validation loss: 0.86529 -- Median validation metrics: avg_loss: 0.86529, NSE: 0.42560
+2026-04-25 16:23:24,784: Epoch 13 average loss: avg_loss: 0.14971, avg_total_loss: 0.14971
+2026-04-25 16:23:28,660: Epoch 13 average validation loss: 0.86992 -- Median validation metrics: avg_loss: 0.86992, NSE: 0.42608
+2026-04-25 16:23:49,705: Epoch 14 average loss: avg_loss: 0.13968, avg_total_loss: 0.13968
+2026-04-25 16:23:53,480: Epoch 14 average validation loss: 0.87292 -- Median validation metrics: avg_loss: 0.87292, NSE: 0.41966
+2026-04-25 16:24:16,508: Epoch 15 average loss: avg_loss: 0.14104, avg_total_loss: 0.14104
+2026-04-25 16:24:20,464: Epoch 15 average validation loss: 0.88004 -- Median validation metrics: avg_loss: 0.88004, NSE: 0.37089
+2026-04-25 16:24:41,801: Epoch 16 average loss: avg_loss: 0.13533, avg_total_loss: 0.13533
+2026-04-25 16:24:45,574: Epoch 16 average validation loss: 0.88879 -- Median validation metrics: avg_loss: 0.88879, NSE: 0.45059
+2026-04-25 16:25:06,713: Epoch 17 average loss: avg_loss: 0.12552, avg_total_loss: 0.12552
+2026-04-25 16:25:10,635: Epoch 17 average validation loss: 0.87630 -- Median validation metrics: avg_loss: 0.87630, NSE: 0.39443
+2026-04-25 16:25:31,795: Epoch 18 average loss: avg_loss: 0.12400, avg_total_loss: 0.12400
+2026-04-25 16:25:35,584: Epoch 18 average validation loss: 0.88124 -- Median validation metrics: avg_loss: 0.88124, NSE: 0.42566
+2026-04-25 16:25:56,574: Epoch 19 average loss: avg_loss: 0.11289, avg_total_loss: 0.11289
+2026-04-25 16:26:00,371: Epoch 19 average validation loss: 0.88026 -- Median validation metrics: avg_loss: 0.88026, NSE: 0.38490
+2026-04-25 16:26:21,454: Epoch 20 average loss: avg_loss: 0.10577, avg_total_loss: 0.10577
+2026-04-25 16:26:25,528: Epoch 20 average validation loss: 0.88957 -- Median validation metrics: avg_loss: 0.88957, NSE: 0.39311
+2026-04-25 16:26:46,536: Epoch 21 average loss: avg_loss: 0.10812, avg_total_loss: 0.10812
+2026-04-25 16:26:50,487: Epoch 21 average validation loss: 0.88252 -- Median validation metrics: avg_loss: 0.88252, NSE: 0.31786
+2026-04-25 16:27:11,952: Epoch 22 average loss: avg_loss: 0.10633, avg_total_loss: 0.10633
+2026-04-25 16:27:15,715: Epoch 22 average validation loss: 0.90422 -- Median validation metrics: avg_loss: 0.90422, NSE: 0.39259
+2026-04-25 16:27:37,412: Epoch 23 average loss: avg_loss: 0.10807, avg_total_loss: 0.10807
+2026-04-25 16:27:41,679: Epoch 23 average validation loss: 0.90100 -- Median validation metrics: avg_loss: 0.90100, NSE: 0.45437
+2026-04-25 16:28:02,491: Epoch 24 average loss: avg_loss: 0.10175, avg_total_loss: 0.10175
+2026-04-25 16:28:06,187: Epoch 24 average validation loss: 0.90015 -- Median validation metrics: avg_loss: 0.90015, NSE: 0.38208
+2026-04-25 16:28:27,308: Epoch 25 average loss: avg_loss: 0.09727, avg_total_loss: 0.09727
+2026-04-25 16:28:31,171: Epoch 25 average validation loss: 0.89955 -- Median validation metrics: avg_loss: 0.89955, NSE: 0.42786
+2026-04-25 16:28:52,525: Epoch 26 average loss: avg_loss: 0.10101, avg_total_loss: 0.10101
+2026-04-25 16:28:56,296: Epoch 26 average validation loss: 0.89382 -- Median validation metrics: avg_loss: 0.89382, NSE: 0.35591
+2026-04-25 16:29:17,680: Epoch 27 average loss: avg_loss: 0.09636, avg_total_loss: 0.09636
+2026-04-25 16:29:21,583: Epoch 27 average validation loss: 0.91075 -- Median validation metrics: avg_loss: 0.91075, NSE: 0.33389
+2026-04-25 16:29:42,569: Epoch 28 average loss: avg_loss: 0.09507, avg_total_loss: 0.09507
+2026-04-25 16:29:46,357: Epoch 28 average validation loss: 0.91015 -- Median validation metrics: avg_loss: 0.91015, NSE: 0.38358
+2026-04-25 16:30:07,287: Epoch 29 average loss: avg_loss: 0.08471, avg_total_loss: 0.08471
+2026-04-25 16:30:11,142: Epoch 29 average validation loss: 0.90967 -- Median validation metrics: avg_loss: 0.90967, NSE: 0.35093
+2026-04-25 16:30:31,901: Epoch 30 average loss: avg_loss: 0.08876, avg_total_loss: 0.08876
+2026-04-25 16:30:35,671: Epoch 30 average validation loss: 0.92188 -- Median validation metrics: avg_loss: 0.92188, NSE: 0.32174
+2026-04-25 16:30:56,532: Epoch 31 average loss: avg_loss: 0.09152, avg_total_loss: 0.09152
+2026-04-25 16:31:00,278: Epoch 31 average validation loss: 0.90500 -- Median validation metrics: avg_loss: 0.90500, NSE: 0.36451
+2026-04-25 16:31:21,359: Epoch 32 average loss: avg_loss: 0.08028, avg_total_loss: 0.08028
+2026-04-25 16:31:25,129: Epoch 32 average validation loss: 0.90159 -- Median validation metrics: avg_loss: 0.90159, NSE: 0.34403
+2026-04-25 16:31:46,134: Epoch 33 average loss: avg_loss: 0.08018, avg_total_loss: 0.08018
+2026-04-25 16:31:49,785: Epoch 33 average validation loss: 0.91805 -- Median validation metrics: avg_loss: 0.91805, NSE: 0.35159
+2026-04-25 16:32:11,254: Epoch 34 average loss: avg_loss: 0.08754, avg_total_loss: 0.08754
+2026-04-25 16:32:15,264: Epoch 34 average validation loss: 0.89911 -- Median validation metrics: avg_loss: 0.89911, NSE: 0.34819
+2026-04-25 16:32:36,059: Epoch 35 average loss: avg_loss: 0.08345, avg_total_loss: 0.08345
+2026-04-25 16:32:39,959: Epoch 35 average validation loss: 0.91716 -- Median validation metrics: avg_loss: 0.91716, NSE: 0.38627
+2026-04-25 16:33:00,586: Epoch 36 average loss: avg_loss: 0.08326, avg_total_loss: 0.08326
+2026-04-25 16:33:04,302: Epoch 36 average validation loss: 0.91355 -- Median validation metrics: avg_loss: 0.91355, NSE: 0.39843
+2026-04-25 16:33:25,084: Epoch 37 average loss: avg_loss: 0.08053, avg_total_loss: 0.08053
+2026-04-25 16:33:28,941: Epoch 37 average validation loss: 0.92748 -- Median validation metrics: avg_loss: 0.92748, NSE: 0.36862
+2026-04-25 16:33:50,454: Epoch 38 average loss: avg_loss: 0.08040, avg_total_loss: 0.08040
+2026-04-25 16:33:54,327: Epoch 38 average validation loss: 0.91645 -- Median validation metrics: avg_loss: 0.91645, NSE: 0.35217
+2026-04-25 16:34:15,846: Epoch 39 average loss: avg_loss: 0.07909, avg_total_loss: 0.07909
+2026-04-25 16:34:19,593: Epoch 39 average validation loss: 0.91562 -- Median validation metrics: avg_loss: 0.91562, NSE: 0.33334
+2026-04-25 16:34:42,200: Epoch 40 average loss: avg_loss: 0.07188, avg_total_loss: 0.07188
+2026-04-25 16:34:46,338: Epoch 40 average validation loss: 0.92531 -- Median validation metrics: avg_loss: 0.92531, NSE: 0.33382
+2026-04-25 16:35:07,930: Epoch 41 average loss: avg_loss: 0.07823, avg_total_loss: 0.07823
+2026-04-25 16:35:11,642: Epoch 41 average validation loss: 0.92762 -- Median validation metrics: avg_loss: 0.92762, NSE: 0.33353
+2026-04-25 16:35:32,550: Epoch 42 average loss: avg_loss: 0.07113, avg_total_loss: 0.07113
+2026-04-25 16:35:36,377: Epoch 42 average validation loss: 0.91925 -- Median validation metrics: avg_loss: 0.91925, NSE: 0.32586
+2026-04-25 16:35:57,352: Epoch 43 average loss: avg_loss: 0.07556, avg_total_loss: 0.07556
+2026-04-25 16:36:01,008: Epoch 43 average validation loss: 0.92321 -- Median validation metrics: avg_loss: 0.92321, NSE: 0.35920
+2026-04-25 16:36:22,153: Epoch 44 average loss: avg_loss: 0.07327, avg_total_loss: 0.07327
+2026-04-25 16:36:25,969: Epoch 44 average validation loss: 0.92167 -- Median validation metrics: avg_loss: 0.92167, NSE: 0.31741
+2026-04-25 16:36:47,123: Epoch 45 average loss: avg_loss: 0.06854, avg_total_loss: 0.06854
+2026-04-25 16:36:50,867: Epoch 45 average validation loss: 0.90801 -- Median validation metrics: avg_loss: 0.90801, NSE: 0.36950
+2026-04-25 16:37:11,570: Epoch 46 average loss: avg_loss: 0.06436, avg_total_loss: 0.06436
+2026-04-25 16:37:15,407: Epoch 46 average validation loss: 0.92899 -- Median validation metrics: avg_loss: 0.92899, NSE: 0.34736
+2026-04-25 16:37:36,354: Epoch 47 average loss: avg_loss: 0.07302, avg_total_loss: 0.07302
+2026-04-25 16:37:40,050: Epoch 47 average validation loss: 0.92284 -- Median validation metrics: avg_loss: 0.92284, NSE: 0.22146
+2026-04-25 16:38:00,884: Epoch 48 average loss: avg_loss: 0.06310, avg_total_loss: 0.06310
+2026-04-25 16:38:04,605: Epoch 48 average validation loss: 0.92229 -- Median validation metrics: avg_loss: 0.92229, NSE: 0.30644
+2026-04-25 16:38:25,327: Epoch 49 average loss: avg_loss: 0.06596, avg_total_loss: 0.06596
+2026-04-25 16:38:29,252: Epoch 49 average validation loss: 0.92656 -- Median validation metrics: avg_loss: 0.92656, NSE: 0.30526
+2026-04-25 16:38:50,115: Epoch 50 average loss: avg_loss: 0.06656, avg_total_loss: 0.06656
+2026-04-25 16:38:53,955: Epoch 50 average validation loss: 0.93629 -- Median validation metrics: avg_loss: 0.93629, NSE: 0.27585
+2026-04-25 16:39:15,039: Epoch 51 average loss: avg_loss: 0.05779, avg_total_loss: 0.05779
+2026-04-25 16:39:18,776: Epoch 51 average validation loss: 0.91198 -- Median validation metrics: avg_loss: 0.91198, NSE: 0.39862
+2026-04-25 16:39:40,412: Epoch 52 average loss: avg_loss: 0.06340, avg_total_loss: 0.06340
+2026-04-25 16:39:44,397: Epoch 52 average validation loss: 0.91966 -- Median validation metrics: avg_loss: 0.91966, NSE: 0.32366
+2026-04-25 16:40:05,409: Epoch 53 average loss: avg_loss: 0.06588, avg_total_loss: 0.06588
+2026-04-25 16:40:09,212: Epoch 53 average validation loss: 0.91456 -- Median validation metrics: avg_loss: 0.91456, NSE: 0.35648
+2026-04-25 16:40:29,903: Epoch 54 average loss: avg_loss: 0.06011, avg_total_loss: 0.06011
+2026-04-25 16:40:33,743: Epoch 54 average validation loss: 0.91026 -- Median validation metrics: avg_loss: 0.91026, NSE: 0.34784
+2026-04-25 16:40:54,546: Epoch 55 average loss: avg_loss: 0.05936, avg_total_loss: 0.05936
+2026-04-25 16:40:58,231: Epoch 55 average validation loss: 0.91915 -- Median validation metrics: avg_loss: 0.91915, NSE: 0.35687
+2026-04-25 16:41:19,112: Epoch 56 average loss: avg_loss: 0.06270, avg_total_loss: 0.06270
+2026-04-25 16:41:23,097: Epoch 56 average validation loss: 0.91840 -- Median validation metrics: avg_loss: 0.91840, NSE: 0.34480
+2026-04-25 16:41:43,927: Epoch 57 average loss: avg_loss: 0.06378, avg_total_loss: 0.06378
+2026-04-25 16:41:47,768: Epoch 57 average validation loss: 0.91491 -- Median validation metrics: avg_loss: 0.91491, NSE: 0.31998
+2026-04-25 16:42:08,445: Epoch 58 average loss: avg_loss: 0.06427, avg_total_loss: 0.06427
+2026-04-25 16:42:12,260: Epoch 58 average validation loss: 0.90942 -- Median validation metrics: avg_loss: 0.90942, NSE: 0.36994
+2026-04-25 16:42:33,006: Epoch 59 average loss: avg_loss: 0.06258, avg_total_loss: 0.06258
+2026-04-25 16:42:36,771: Epoch 59 average validation loss: 0.91924 -- Median validation metrics: avg_loss: 0.91924, NSE: 0.35855
+2026-04-25 16:42:57,736: Epoch 60 average loss: avg_loss: 0.05516, avg_total_loss: 0.05516
+2026-04-25 16:43:01,545: Epoch 60 average validation loss: 0.91885 -- Median validation metrics: avg_loss: 0.91885, NSE: 0.37543

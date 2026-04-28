@@ -1,0 +1,70 @@
+attribute_means:
+  area_gages2: 838.1395652173912
+  elev_mean: 366.10826086956513
+  p_mean: 2.388169449156326
+  pet_mean: 3.6708307972502463
+  slope_mean: 12.45275347826087
+attribute_stds:
+  area_gages2: 622.9514397350601
+  elev_mean: 189.02022120426872
+  p_mean: 0.26201211709887984
+  pet_mean: 0.5300708257686705
+  slope_mean: 5.618846198684315
+xarray_feature_scale:
+  coords: {}
+  attrs: {}
+  dims: {}
+  data_vars:
+    PRCP(mm/day):
+      dims: []
+      attrs: {}
+      data: 6.490157604217529
+    QObs(mm/d):
+      dims: []
+      attrs: {}
+      data: 1.8458771705627441
+    SRAD(W/m2):
+      dims: []
+      attrs: {}
+      data: 110.8681869506836
+    Tmax(C):
+      dims: []
+      attrs: {}
+      data: 7.705872535705566
+    Tmin(C):
+      dims: []
+      attrs: {}
+      data: 7.705872535705566
+    Vp(Pa):
+      dims: []
+      attrs: {}
+      data: 672.2482299804688
+xarray_feature_center:
+  coords: {}
+  attrs: {}
+  dims: {}
+  data_vars:
+    PRCP(mm/day):
+      dims: []
+      attrs: {}
+      data: 2.3348207473754883
+    QObs(mm/d):
+      dims: []
+      attrs: {}
+      data: 0.3424203097820282
+    SRAD(W/m2):
+      dims: []
+      attrs: {}
+      data: 403.7208557128906
+    Tmax(C):
+      dims: []
+      attrs: {}
+      data: 19.26983070373535
+    Tmin(C):
+      dims: []
+      attrs: {}
+      data: 19.26983070373535
+    Vp(Pa):
+      dims: []
+      attrs: {}
+      data: 1448.9901123046875
