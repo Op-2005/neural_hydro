@@ -207,6 +207,18 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Caveats:** none.
 - **Next:** unchanged — E0.5 loss-saturation curve still queued for the next invocation.
 
+### CRS Session — 2026-04-27 (Colab notebook for the publication run)
+
+- **Reviewed:** user's compute pivot — Google Colab Pro / Colab for Research available; supersedes the cloud-GPU recommendation.
+- **Ran:** answer-only — wrote `notebooks/colab_publication_run.ipynb` (25 cells, valid nbformat 4.5) implementing the locked A/B/C protocol as a single Run-All notebook. Idempotent (skip-if-done per-seed), writes results to Google Drive symlinked to `runs/`, includes pre-flight smoke test + GPU check + numpy<2 pin. Wrote `notebooks/README.md` covering one-time setup (zip+upload data and code to Drive), running instructions, two result-pull options (Drive desktop sync vs git-push), and compute-estimate table per GPU type.
+- **Result:** Compute path is unblocked. User can: zip data + code locally → upload to Drive → open notebook in Colab → Runtime → Run All → ~3-4 hr A100 / ~7-8 hr T4 → pull `summary.json` + `per_basin_per_seed.csv` back to local repo → ask CRS to interpret.
+- **Decision:** Colab Pro+ on A100 (Research-tier) is the canonical compute target. Cloud GPU rental ($10) and academic-grant paths remain as fallbacks but are no longer needed.
+- **Files:** `notebooks/colab_publication_run.ipynb` (new); `notebooks/README.md` (new); this audit.
+- **Caveats:** Notebook assumes either zip-upload-to-Drive flow or git-clone-from-private-GitHub (both supported via Cell 2 options). Tested only for JSON validity locally — first end-to-end run is the smoke test that happens on Colab.
+- **Smoke test (locally):** N/A (notebook ships unrun; smoke test happens as Cell 7 inside Colab).
+- **Deferred:** Multi-seed pilot 23-basin re-run on local CPU (now superseded by going straight to Component-0 A/B/C on Colab GPU — same data, more decisive result, similar wall-clock).
+- **Next:** *User executes the notebook on Colab.* Expected 3-8 hours. Then `crs interpret abc results` to read summary.json + per_basin_per_seed.csv and propose the next step.
+
 ### CRS Session — 2026-04-26 (later, `/crs` continuation — multi-seed E0.5 analysis)
 
 - **Reviewed:** background sweep completion notification fired; 5 seeds × 60 epochs all finished.
