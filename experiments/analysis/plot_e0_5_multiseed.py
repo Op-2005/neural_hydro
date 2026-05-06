@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).parent.parent.parent
-OUT_DIR = ROOT / "experiments" / "analysis_outputs" / "e0_5"
+OUT_DIR = ROOT / "experiments" / "analysis_outputs" / "dynamical_systems_probes" / "e0_5"
 SEEDS = [11, 13, 17, 19, 23]
 
 

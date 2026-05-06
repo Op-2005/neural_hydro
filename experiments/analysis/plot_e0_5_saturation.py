@@ -24,7 +24,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ROOT = Path(__file__).parent.parent.parent
-OUT_DIR = ROOT / "experiments" / "analysis_outputs" / "e0_5"
+OUT_DIR = ROOT / "experiments" / "analysis_outputs" / "dynamical_systems_probes" / "e0_5"
 
 
 def find_latest_run():

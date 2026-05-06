@@ -79,7 +79,7 @@ from train_graph_lstm import DirectedGraphLSTM, load_basin_data
 
 DEFAULT_BASELINE_DIR = ROOT / "runs" / "05_lstm_23basin_strong_baseline"
 BASIN_FILE = ROOT / "experiments" / "basin_lists" / "study_network_basins.txt"
-OUT_DIR = ROOT / "experiments" / "analysis_outputs" / "e0"
+OUT_DIR = ROOT / "experiments" / "analysis_outputs" / "dynamical_systems_probes" / "e0"
 
 HIDDEN_SIZE = 64
 DROPOUT = 0.4
