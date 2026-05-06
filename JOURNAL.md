@@ -48,6 +48,129 @@ decision (so we can audit downstream consistency).
 
 ## Entries
 
+## 2026-05-06 — Condition C lands. Pilot's +0.078 does NOT replicate at scale.
+
+**Source.** Cell 11 of the Colab notebook completed overnight; user uploaded the run; CRS organized into `runs/16_graph_c0_warm_seed42/` and ran the cross-condition analysis.
+
+**Signal — the headline.** All three conditions on Component 0 (183 basins), single-seed (seed=42):
+
+| Cond. | Median NSE | Δ vs A |
+|---|---|---|
+| A baseline | **0.648** | — |
+| B topology features | 0.591 | −0.050 |
+| C full graph-LSTM | 0.578 | **−0.070** |
+
+**C − B median Δ = −0.021** with std 0.082 — *tighter* than the C−A or B−A distributions. That means most of the deficit C and B share against A is *not* about message passing per se; it's something B and C have in common relative to A.
+
+**Per-basin breakdown (C vs A):** 113 of 183 basins worse by ≥ 0.05 NSE; 15 better by ≥ 0.05; 55 within ±0.05. Heavy negative tail.
+
+**Depth-stratified pattern:** A wins at every depth except depth 4 (n=2, noise). Gap A − C ≈ 0.05 NSE across depths 0–3, **roughly constant — not depth-dependent.** This argues against the framing's prediction that message passing should help deeper basins more.
+
+**Why it matters — three honest readings.**
+
+1. **The pilot's +0.078 NSE does NOT scale.** At 23 basins (HUC-12 Texas, 34 heuristic edges, warm-started), graph-LSTM beat baseline by +0.078. At 183 basins (Component 0, 624 edges, from-scratch), graph-LSTM is *behind* baseline by 0.077. The headline gain reverses sign at scale.
+
+2. **The "shared B+C deficit" is the diagnostic finding.** The fact that C − B is small (−0.021, std 0.082) while both have large negative deltas vs A means the cost is mostly **structural**: training the DirectedGraphLSTM architecture from-scratch instead of warm-started lands in a worse optimization basin than NH's batched cudalstm. Two candidates for what's shared between B and C:
+   - The DirectedGraphLSTM uses a Python `LSTMCell` timestep loop. NH's cudalstm uses `nn.LSTM` (CUDA-batched, fully fused). The optimization trajectories are different even at identical parameter counts.
+   - Both B and C add input dimensionality vs A (B = 5 topology scalars; C = effectively-zero-init message channel). From-scratch training with augmented inputs may converge differently than baseline.
+
+3. **Aligned with Kirschstein 2024's null result.** Their finding — "GNNs on river-network topology don't help streamflow prediction at scale" — is now corroborated on CAMELS-US Component 0, single seed. The pilot's positive result was likely a small-N artifact + warm-start optimization-trajectory effect, both of which we already partially identified earlier (the +0.013 frozen-isolation finding in run 07).
+
+**Honest qualifications.**
+
+- **Single seed.** Yesterday's E0.5 multi-seed result showed cross-seed variance of ±0.111 NSE on the 23-basin baseline. With a similar variance at scale, the −0.07 C − A could plausibly shift to 0 or even small positive on a different seed. **Multi-seed verification is now the load-bearing next step before any framing-level claim.**
+- A's mean (0.586) is dragged down by an outlier basin at -6.495 NSE. Median (0.648) is the robust summary. The B − A and C − A *means* are accordingly less negative than the medians (−0.011 and −0.041 respectively).
+- B, C trained from-scratch per the locked protocol. Pilot was warm-started. Apples-to-apples is C-from-scratch vs A-from-scratch, both of which we have. The from-scratch protocol IS the right comparison for a publication-grade ablation; we're not measuring an artifact.
+
+**What this means for the project — three branches.**
+
+1. **If multi-seed confirms** (C consistently behind A across 5 seeds): we have a **strong negative result** at scale. This is a publishable workshop paper: *"On a 183-basin connected eastern-US network, river-network topology — both as static features and as runtime message passing — does not improve streamflow prediction over a strong multi-basin LSTM baseline. We characterize the depth-stratified, basin-by-basin pattern of the deficit and position the finding relative to Kirschstein 2024."* Negative results with mechanistic decomposition are valuable; this would be defensible.
+
+2. **If multi-seed disagrees** (C beats A at some seeds, loses at others): the cross-seed variance is itself the headline. Workshop paper would frame as "graph methods are seed-fragile at this scale; mean effect is statistically indistinguishable from baseline." Less crisp but still publishable.
+
+3. **If multi-seed shows C consistently beats A** (would surprise me, but possible): we'd have to revisit why the seed-42 result was off. Re-run carefully and explore.
+
+The dynamical-systems framing's empirical predictions (graph as destabilizing forcing) are wounded by these single-seed numbers but not falsified yet — depth-stratified pattern doesn't fit, but multi-seed could change the pattern. The framing remains useful as an **interpretation** of the negative result if (1) holds: the LSTM has already settled into a good attractor with basin encoding alone; the graph's destabilizing effect actively pulls it out.
+
+**Decisions.**
+
+- [x] Mark A/B/C single-seed Component-0 phase as DONE.
+- [x] Update `runs/README.md` headline table; write `runs/16_*/NOTES.md`.
+- [x] Update `idea1.md` status section to reflect C result.
+- [ ] **Multi-seed run** is the next compute spend — `MODE = 'full'` of the Colab notebook with 4 more seeds (11, 13, 17, 19, 23). On L4 ~25 hr / 125 units (over budget); on T4 ~70 hr / 105 units (in budget but multiple sessions). **Recommend T4.**
+- [ ] When multi-seed lands, expand the analysis script's plots to include cross-seed bands; decide between branches 1, 2, 3 above.
+- [ ] If branch 1, draft a workshop paper outline. If branch 2, design follow-up experiments to characterize seed-fragility. If branch 3, debug seed-42.
+
+**Affected files.**
+
+- New: `runs/16_graph_c0_warm_seed42/` + NOTES.md.
+- Updated: `experiments/analysis_outputs/abc_component0/` — summary.json, per_basin_long.csv, per_basin_deltas.csv, delta_distributions.png, nse_by_depth.png, depth_stratified.csv, summary_table.txt — all now contain all three conditions.
+- Updated: `runs/README.md` — Condition C row + headline table now complete.
+- Removed: `experiments/drive-download-20260506T052646Z-3-001 2/` (duplicate upload; all content already organized).
+- Updated: `JOURNAL.md` (this entry), `CURRENT_STATE.md`, `idea1.md`.
+
+---
+
+## 2026-05-05 — First scaled-A and scaled-B results land (Component 0, single-seed)
+
+**Source.** User ran the Colab notebook (Conditions A and B completed; Condition C still running). Local CRS pulled the runs from Drive, organized them into `runs/14_*` and `runs/15_*`, ran `nh_run.py evaluate` on Condition A locally, and produced the first cross-condition analysis.
+
+**Signal.** First non-pilot empirical results.
+
+| Condition | Run dir | Median NSE | Mean NSE |
+|---|---|---|---|
+| A — NH cudalstm baseline | `14_lstm_component0_baseline_seed42` | **0.648** | 0.586 |
+| B — graph-LSTM + topology features (no message passing) | `15_graph_c0_topology_features_seed42` | **0.591** | 0.575 |
+| C — full graph-LSTM | (still training on Colab) | — | — |
+
+**Per-basin ΔNSE (B − A) across 183 common basins:**
+- median: **−0.050** (B is worse than A at the median)
+- mean: −0.011 (smaller in magnitude due to A's outlier basins)
+- distribution: 92 basins worse by ≥ 0.05; 20 basins better by ≥ 0.05; 71 within ±0.05
+- std: 0.487 — high variance, not a uniform shift
+
+**Depth-stratified A vs B medians:** A wins at depths 0 through 3 (the bulk of the network). At depth 4, B and A converge (small n). See `experiments/analysis_outputs/abc_component0/nse_by_depth.png`.
+
+**Why it matters.**
+
+1. **The Component-0 baseline (0.648) is much higher than the 23-basin pilot (0.423).** This is consistent with Kratzert 2019's finding: more basins → better cross-basin generalization for the multi-basin LSTM. The pilot's "easy gain" regime doesn't map directly to the larger network.
+
+2. **Topology-as-static-features alone HURTS at this scale (single seed).** That's a meaningful finding even before C lands. Two readings:
+   - The 5 topology scalars (depth, in/out-degree, transitive upstream count, log upstream-area ratio) are redundant with what the LSTM already encodes via basin ID + 5 static attributes. Adding them perturbs the optimization away from a good attractor.
+   - From-scratch training (no warm-start) with augmented input dim is a different optimization problem; the seed-42 trajectory may just have been unlucky.
+
+3. **The pilot's +0.078 headline does not transfer to B at scale.** Whatever the pilot's graph-LSTM was doing on 23 basins is not reproduced as "topology features for free" on Component 0. Whether C (full message passing) recovers anything is the open question.
+
+**Honest qualifications.**
+- Single seed only. Yesterday's multi-seed E0.5 result (cross-seed val NSE spread of 0.111 NSE on 23 basins) suggests these single-seed Component-0 numbers could shift by similar magnitudes at other seeds. **Multi-seed verification is the next no-question-asked priority.**
+- A's mean NSE (0.586) is dragged down by an outlier basin at -6.495. Median (0.648) is the robust summary. Same pattern as the 08165300 outlier on the 23-basin pilot.
+- B was trained from-scratch (no warm-start), per the locked A/B/C protocol. This means B − A is *not* a "warm-start vs no-warm-start" effect — both are from-scratch.
+
+**Decisions.**
+
+- [x] Move the runs into `runs/14_*` and `runs/15_*` with NOTES.md per locked organization patterns.
+- [x] Archive the incomplete A_baseline_seed42_0605_000314 (no model_epoch030.pt).
+- [x] Archive the Colab-retrained 05_lstm_23basin_strong_baseline (we already have a complete local copy).
+- [x] Build `experiments/analysis/compare_abc_component0.py` for the cross-condition comparison; partial-results-aware so it works with A+B now and gracefully handles C when it arrives.
+- [ ] **Wait for Condition C** (Colab Cell 11). Critical for interpreting B − A: if C ≈ A, both ablations agree no-graph wins; if C > B but C < A, message-passing helps over static features but doesn't recover the full A baseline; if C > A, message-passing matters at scale.
+- [ ] **Multi-seed for all three conditions** (the `'full'` MODE of the Colab notebook, ~7-8 hr on L4). Required before any framing-level claim.
+
+**Affected files.**
+- New: `runs/14_lstm_component0_baseline_seed42/` + NOTES.md (with `test/model_epoch030/test_metrics.csv` from local evaluate).
+- New: `runs/15_graph_c0_topology_features_seed42/` + NOTES.md.
+- Archived: `runs/_archive/A_baseline_seed42_0605_000314_incomplete/`, `runs/_archive/05_lstm_23basin_strong_baseline_colab_retrain/`.
+- New: `experiments/analysis/compare_abc_component0.py`.
+- New: `experiments/analysis_outputs/abc_component0/{summary.json, per_basin_long.csv, per_basin_deltas.csv, delta_distributions.png, nse_by_depth.png, depth_stratified.csv, summary_table.txt}`.
+- Updated: `runs/README.md` with runs 14, 15, and the Component-0 results table.
+- Updated: `JOURNAL.md` (this entry), `CURRENT_STATE.md`.
+
+**Open questions for the next session.**
+- *What does Condition C report?* That's the headline-determining number.
+- *Do A − B and the depth-stratified pattern survive multi-seed?* If A still beats B by ~0.05 NSE across 5 seeds, the "topology features hurt" finding is solid. If it's seed-dependent, no claim.
+- *Why does B win at depth 4?* Could be 2 basins of noise; could be signal. If multi-seed confirms it, that's a depth-effect finding.
+
+---
+
 ## 2026-04-26 (later) — Multi-seed E0.5: cross-seed NSE variance (0.11) larger than the pilot's +0.078 headline
 
 **Source.** Background sweep (5 seeds × 60-epoch retrain) launched yesterday completed. Ran the multi-seed analysis (`experiments/analysis/plot_e0_5_multiseed.py`).

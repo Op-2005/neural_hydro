@@ -1,0 +1,93 @@
+2026-05-06 00:03:14,628: Logging to runs/A_baseline_seed42_0605_000314/output.log initialized.
+2026-05-06 00:03:14,630: ### Folder structure created at runs/A_baseline_seed42_0605_000314
+2026-05-06 00:03:14,631: ### Run configurations for A_baseline_seed42
+2026-05-06 00:03:14,631: experiment_name: A_baseline_seed42
+2026-05-06 00:03:14,632: run_dir: runs/A_baseline_seed42_0605_000314
+2026-05-06 00:03:14,632: train_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-05-06 00:03:14,632: validation_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-05-06 00:03:14,632: test_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-05-06 00:03:14,632: train_start_date: 1990-01-01 00:00:00
+2026-05-06 00:03:14,632: train_end_date: 1999-12-31 00:00:00
+2026-05-06 00:03:14,633: validation_start_date: 2000-01-01 00:00:00
+2026-05-06 00:03:14,633: validation_end_date: 2004-12-31 00:00:00
+2026-05-06 00:03:14,633: test_start_date: 2005-01-01 00:00:00
+2026-05-06 00:03:14,634: test_end_date: 2008-12-31 00:00:00
+2026-05-06 00:03:14,635: device: cuda:0
+2026-05-06 00:03:14,635: validate_every: 5
+2026-05-06 00:03:14,635: validate_n_random_basins: 10
+2026-05-06 00:03:14,635: metrics: ['NSE']
+2026-05-06 00:03:14,635: model: cudalstm
+2026-05-06 00:03:14,636: head: regression
+2026-05-06 00:03:14,636: output_activation: linear
+2026-05-06 00:03:14,636: hidden_size: 64
+2026-05-06 00:03:14,636: initial_forget_bias: 3
+2026-05-06 00:03:14,636: output_dropout: 0.4
+2026-05-06 00:03:14,636: optimizer: Adam
+2026-05-06 00:03:14,636: loss: MSE
+2026-05-06 00:03:14,636: learning_rate: {0: 0.001}
+2026-05-06 00:03:14,637: batch_size: 256
+2026-05-06 00:03:14,637: epochs: 30
+2026-05-06 00:03:14,637: clip_gradient_norm: 1
+2026-05-06 00:03:14,637: predict_last_n: 1
+2026-05-06 00:03:14,637: seq_length: 30
+2026-05-06 00:03:14,637: num_workers: 4
+2026-05-06 00:03:14,637: log_interval: 5
+2026-05-06 00:03:14,637: log_tensorboard: False
+2026-05-06 00:03:14,638: dataset: camels_us
+2026-05-06 00:03:14,638: data_dir: datasets/camels_us
+2026-05-06 00:03:14,638: use_basin_id_encoding: True
+2026-05-06 00:03:14,638: forcings: ['maurer']
+2026-05-06 00:03:14,638: dynamic_inputs: ['PRCP(mm/day)', 'SRAD(W/m2)', 'Tmax(C)', 'Tmin(C)', 'Vp(Pa)']
+2026-05-06 00:03:14,638: target_variables: ['QObs(mm/d)']
+2026-05-06 00:03:14,638: clip_targets_to_zero: ['QObs(mm/d)']
+2026-05-06 00:03:14,639: static_attributes: ['elev_mean', 'area_gages2', 'slope_mean', 'p_mean', 'pet_mean']
+2026-05-06 00:03:14,639: seed: 42
+2026-05-06 00:03:14,639: number_of_basins: 183
+2026-05-06 00:03:14,639: train_dir: runs/A_baseline_seed42_0605_000314/train_data
+2026-05-06 00:03:14,639: img_log_dir: runs/A_baseline_seed42_0605_000314/img_log
+2026-05-06 00:03:14,665: ### Device cuda:0 will be used for training
+2026-05-06 00:03:14,762: Loading basin data into xarray data set.
+2026-05-06 00:06:49,068: Create lookup table and convert to pytorch tensor
+2026-05-06 00:08:15,710: Epoch 1 average loss: avg_loss: 0.22162, avg_total_loss: 0.22162
+2026-05-06 00:09:31,709: Epoch 2 average loss: avg_loss: 0.15673, avg_total_loss: 0.15673
+2026-05-06 00:10:49,326: Epoch 3 average loss: avg_loss: 0.13887, avg_total_loss: 0.13887
+2026-05-06 00:12:05,685: Epoch 4 average loss: avg_loss: 0.12707, avg_total_loss: 0.12707
+2026-05-06 00:13:21,604: Epoch 5 average loss: avg_loss: 0.11942, avg_total_loss: 0.11942
+2026-05-06 00:13:26,397: Epoch 5 average validation loss: 0.18378 -- Median validation metrics: avg_loss: 0.18378, NSE: 0.65472
+2026-05-06 00:14:40,999: Epoch 6 average loss: avg_loss: 0.11411, avg_total_loss: 0.11411
+2026-05-06 00:15:53,697: Epoch 7 average loss: avg_loss: 0.10764, avg_total_loss: 0.10764
+2026-05-06 00:17:08,259: Epoch 8 average loss: avg_loss: 0.10268, avg_total_loss: 0.10268
+2026-05-06 00:17:22,166: Uncaught exception
+Traceback (most recent call last):
+  File "/content/nh/neuralhydrology/nh_run.py", line 178, in <module>
+    _main()
+  File "/content/nh/neuralhydrology/nh_run.py", line 43, in _main
+    start_run(config_file=Path(args["config_file"]), gpu=args["gpu"])
+  File "/content/nh/neuralhydrology/nh_run.py", line 77, in start_run
+    start_training(config)
+  File "/content/nh/neuralhydrology/training/train.py", line 20, in start_training
+    trainer.train_and_validate()
+  File "/content/nh/neuralhydrology/training/basetrainer.py", line 233, in train_and_validate
+    self._train_epoch(epoch=epoch)
+  File "/content/nh/neuralhydrology/training/basetrainer.py", line 324, in _train_epoch
+    predictions = self.model(data)
+                  ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/content/nh/neuralhydrology/modelzoo/cudalstm.py", line 67, in forward
+    x_d = self.embedding_net(data)
+          ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/content/nh/neuralhydrology/modelzoo/inputlayer.py", line 242, in forward
+    ret_val = torch.cat([dynamics_out, statics_out], dim=-1)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+KeyboardInterrupt

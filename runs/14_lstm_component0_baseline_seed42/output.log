@@ -1,0 +1,120 @@
+2026-05-06 00:35:17,523: Logging to runs/A_baseline_seed42_0605_003517/output.log initialized.
+2026-05-06 00:35:17,524: ### Folder structure created at runs/A_baseline_seed42_0605_003517
+2026-05-06 00:35:17,524: ### Run configurations for A_baseline_seed42
+2026-05-06 00:35:17,524: experiment_name: A_baseline_seed42
+2026-05-06 00:35:17,524: run_dir: runs/A_baseline_seed42_0605_003517
+2026-05-06 00:35:17,524: train_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-05-06 00:35:17,524: validation_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-05-06 00:35:17,524: test_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-05-06 00:35:17,524: train_start_date: 1990-01-01 00:00:00
+2026-05-06 00:35:17,525: train_end_date: 1999-12-31 00:00:00
+2026-05-06 00:35:17,525: validation_start_date: 2000-01-01 00:00:00
+2026-05-06 00:35:17,525: validation_end_date: 2004-12-31 00:00:00
+2026-05-06 00:35:17,525: test_start_date: 2005-01-01 00:00:00
+2026-05-06 00:35:17,525: test_end_date: 2008-12-31 00:00:00
+2026-05-06 00:35:17,525: device: cuda:0
+2026-05-06 00:35:17,525: validate_every: 5
+2026-05-06 00:35:17,525: validate_n_random_basins: 10
+2026-05-06 00:35:17,525: metrics: ['NSE']
+2026-05-06 00:35:17,525: model: cudalstm
+2026-05-06 00:35:17,525: head: regression
+2026-05-06 00:35:17,525: output_activation: linear
+2026-05-06 00:35:17,525: hidden_size: 64
+2026-05-06 00:35:17,526: initial_forget_bias: 3
+2026-05-06 00:35:17,526: output_dropout: 0.4
+2026-05-06 00:35:17,526: optimizer: Adam
+2026-05-06 00:35:17,526: loss: MSE
+2026-05-06 00:35:17,526: learning_rate: {0: 0.001}
+2026-05-06 00:35:17,526: batch_size: 256
+2026-05-06 00:35:17,526: epochs: 30
+2026-05-06 00:35:17,526: clip_gradient_norm: 1
+2026-05-06 00:35:17,526: predict_last_n: 1
+2026-05-06 00:35:17,526: seq_length: 30
+2026-05-06 00:35:17,526: num_workers: 4
+2026-05-06 00:35:17,527: log_interval: 5
+2026-05-06 00:35:17,527: log_tensorboard: False
+2026-05-06 00:35:17,527: dataset: camels_us
+2026-05-06 00:35:17,527: data_dir: datasets/camels_us
+2026-05-06 00:35:17,527: use_basin_id_encoding: True
+2026-05-06 00:35:17,527: forcings: ['maurer']
+2026-05-06 00:35:17,527: dynamic_inputs: ['PRCP(mm/day)', 'SRAD(W/m2)', 'Tmax(C)', 'Tmin(C)', 'Vp(Pa)']
+2026-05-06 00:35:17,527: target_variables: ['QObs(mm/d)']
+2026-05-06 00:35:17,527: clip_targets_to_zero: ['QObs(mm/d)']
+2026-05-06 00:35:17,527: static_attributes: ['elev_mean', 'area_gages2', 'slope_mean', 'p_mean', 'pet_mean']
+2026-05-06 00:35:17,527: seed: 42
+2026-05-06 00:35:17,527: number_of_basins: 183
+2026-05-06 00:35:17,527: train_dir: runs/A_baseline_seed42_0605_003517/train_data
+2026-05-06 00:35:17,528: img_log_dir: runs/A_baseline_seed42_0605_003517/img_log
+2026-05-06 00:35:17,550: ### Device cuda:0 will be used for training
+2026-05-06 00:35:17,634: Loading basin data into xarray data set.
+2026-05-06 00:40:48,903: Create lookup table and convert to pytorch tensor
+2026-05-06 00:41:22,051: Epoch 1 average loss: avg_loss: 0.22067, avg_total_loss: 0.22067
+2026-05-06 00:41:44,243: Epoch 2 average loss: avg_loss: 0.15705, avg_total_loss: 0.15705
+2026-05-06 00:42:06,556: Epoch 3 average loss: avg_loss: 0.13918, avg_total_loss: 0.13918
+2026-05-06 00:42:28,998: Epoch 4 average loss: avg_loss: 0.12789, avg_total_loss: 0.12789
+2026-05-06 00:42:52,185: Epoch 5 average loss: avg_loss: 0.12039, avg_total_loss: 0.12039
+2026-05-06 00:42:56,041: Epoch 5 average validation loss: 0.18342 -- Median validation metrics: avg_loss: 0.18342, NSE: 0.68392
+2026-05-06 00:43:18,590: Epoch 6 average loss: avg_loss: 0.11465, avg_total_loss: 0.11465
+2026-05-06 00:43:40,580: Epoch 7 average loss: avg_loss: 0.10751, avg_total_loss: 0.10751
+2026-05-06 00:44:02,301: Epoch 8 average loss: avg_loss: 0.10454, avg_total_loss: 0.10454
+2026-05-06 00:44:24,125: Epoch 9 average loss: avg_loss: 0.10084, avg_total_loss: 0.10084
+2026-05-06 00:44:46,101: Epoch 10 average loss: avg_loss: 0.09785, avg_total_loss: 0.09785
+2026-05-06 00:44:49,070: Epoch 10 average validation loss: 0.33108 -- Median validation metrics: avg_loss: 0.33108, NSE: 0.67472
+2026-05-06 00:45:11,952: Epoch 11 average loss: avg_loss: 0.09498, avg_total_loss: 0.09498
+2026-05-06 00:45:34,094: Epoch 12 average loss: avg_loss: 0.09188, avg_total_loss: 0.09188
+2026-05-06 00:45:57,459: Epoch 13 average loss: avg_loss: 0.08932, avg_total_loss: 0.08932
+2026-05-06 00:46:19,457: Epoch 14 average loss: avg_loss: 0.08761, avg_total_loss: 0.08761
+2026-05-06 00:46:41,629: Epoch 15 average loss: avg_loss: 0.08488, avg_total_loss: 0.08488
+2026-05-06 00:46:44,477: Epoch 15 average validation loss: 0.19849 -- Median validation metrics: avg_loss: 0.19849, NSE: 0.66380
+2026-05-06 00:47:07,245: Epoch 16 average loss: avg_loss: 0.08275, avg_total_loss: 0.08275
+2026-05-06 00:47:30,237: Epoch 17 average loss: avg_loss: 0.08342, avg_total_loss: 0.08342
+2026-05-06 00:47:52,499: Epoch 18 average loss: avg_loss: 0.08024, avg_total_loss: 0.08024
+2026-05-06 00:48:14,970: Epoch 19 average loss: avg_loss: 0.07911, avg_total_loss: 0.07911
+2026-05-06 00:48:37,363: Epoch 20 average loss: avg_loss: 0.07690, avg_total_loss: 0.07690
+2026-05-06 00:48:40,444: Epoch 20 average validation loss: 0.11054 -- Median validation metrics: avg_loss: 0.11054, NSE: 0.65184
+2026-05-06 00:49:02,464: Epoch 21 average loss: avg_loss: 0.07574, avg_total_loss: 0.07574
+2026-05-06 00:49:25,202: Epoch 22 average loss: avg_loss: 0.07458, avg_total_loss: 0.07458
+2026-05-06 00:49:48,618: Epoch 23 average loss: avg_loss: 0.07371, avg_total_loss: 0.07371
+2026-05-06 00:50:11,031: Epoch 24 average loss: avg_loss: 0.07214, avg_total_loss: 0.07214
+2026-05-06 00:50:33,651: Epoch 25 average loss: avg_loss: 0.07168, avg_total_loss: 0.07168
+2026-05-06 00:50:36,463: Epoch 25 average validation loss: 0.11809 -- Median validation metrics: avg_loss: 0.11809, NSE: 0.69292
+2026-05-06 00:50:59,276: Epoch 26 average loss: avg_loss: 0.07048, avg_total_loss: 0.07048
+2026-05-06 00:51:21,768: Epoch 27 average loss: avg_loss: 0.06966, avg_total_loss: 0.06966
+2026-05-06 00:51:45,726: Epoch 28 average loss: avg_loss: 0.06932, avg_total_loss: 0.06932
+2026-05-06 00:52:08,438: Epoch 29 average loss: avg_loss: 0.06725, avg_total_loss: 0.06725
+2026-05-06 00:52:30,553: Epoch 30 average loss: avg_loss: 0.06681, avg_total_loss: 0.06681
+2026-05-06 00:52:33,133: Epoch 30 average validation loss: 0.14369 -- Median validation metrics: avg_loss: 0.14369, NSE: 0.63249
+2026-05-05 23:29:10,098: Logging to runs/14_lstm_component0_baseline_seed42/output.log initialized.
+2026-05-05 23:29:10,138: Uncaught exception
+Traceback (most recent call last):
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/nh_run.py", line 178, in <module>
+    _main()
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/nh_run.py", line 51, in _main
+    eval_run(run_dir=Path(args["run_dir"]), period=args["period"], epoch=args["epoch"], gpu=args["gpu"])
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/nh_run.py", line 174, in eval_run
+    start_evaluation(cfg=config, run_dir=run_dir, epoch=epoch, period=period)
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/evaluation/evaluate.py", line 22, in start_evaluation
+    tester = get_tester(cfg=cfg, run_dir=run_dir, period=period, init_model=True)
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/evaluation/__init__.py", line 36, in get_tester
+    return Tester(cfg=cfg, run_dir=run_dir, period=period, init_model=init_model)
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/evaluation/tester.py", line 529, in __init__
+    super(RegressionTester, self).__init__(cfg, run_dir, period, init_model)
+  File "/Users/om/Desktop/neural_hydrology/neuralhydrology/evaluation/tester.py", line 68, in __init__
+    self.model = get_model(cfg).to(self.device)
+  File "/Applications/anaconda3/envs/nh/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1152, in to
+    return self._apply(convert)
+  File "/Applications/anaconda3/envs/nh/lib/python3.10/site-packages/torch/nn/modules/module.py", line 802, in _apply
+    module._apply(fn)
+  File "/Applications/anaconda3/envs/nh/lib/python3.10/site-packages/torch/nn/modules/rnn.py", line 216, in _apply
+    ret = super()._apply(fn, recurse)
+  File "/Applications/anaconda3/envs/nh/lib/python3.10/site-packages/torch/nn/modules/module.py", line 825, in _apply
+    param_applied = fn(param)
+  File "/Applications/anaconda3/envs/nh/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1150, in convert
+    return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None, non_blocking)
+  File "/Applications/anaconda3/envs/nh/lib/python3.10/site-packages/torch/cuda/__init__.py", line 293, in _lazy_init
+    raise AssertionError("Torch not compiled with CUDA enabled")
+AssertionError: Torch not compiled with CUDA enabled
+2026-05-05 23:29:27,278: Logging to runs/14_lstm_component0_baseline_seed42/output.log initialized.
+2026-05-05 23:29:27,304: Using the model weights from runs/14_lstm_component0_baseline_seed42/model_epoch030.pt
+2026-05-05 23:30:16,720: Stored metrics at runs/14_lstm_component0_baseline_seed42/test/model_epoch030/test_metrics.csv
+2026-05-05 23:30:16,747: Stored results at runs/14_lstm_component0_baseline_seed42/test/model_epoch030/test_results.p

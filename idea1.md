@@ -368,6 +368,7 @@ ones still standing for next time:
 8. ~~**Condition B (topology_features) implementation in `train_graph_component0.py`**~~ **DONE 2026-04-25** — verified by pre-training NSE = 0.423 = exact baseline match.
 9. ~~**Multi-seed E0.5**~~ **DONE 2026-04-26** — within-seed saturation CONFIRMED (slopes ≤ 0.0019/epoch). **Cross-seed spread: 0.111 NSE** (0.366 ↔ 0.478) — 2× the pre-registered bar. **Pilot's +0.078 headline is now multi-seed-contingent** — cross-seed variance in baseline alone is larger than the gap. Framing probes unaffected. See JOURNAL 2026-04-26 (later).
 10. ~~**A/B/C pre-registration document**~~ **DONE 2026-04-25 (this section + Compute Spec below)** — methodology locked.
+11. ~~**A/B/C single-seed run on Component 0**~~ **DONE 2026-05-06 — A 0.648, B 0.591, C 0.578.** Pilot's +0.078 does NOT replicate at scale. C is *behind* A by 0.077 NSE at median (single seed). Multi-seed verification is the load-bearing follow-up. See JOURNAL 2026-05-06 entry and `runs/{14,15,16}_*/NOTES.md`.
 
 ---
 
@@ -489,6 +490,154 @@ python experiments/analysis/compare_results.py \
 - **C − A > 0 fails (95% CI includes 0):** topology + message passing didn't help. Workshop-publishable as a negative result with the dynamical-systems mechanistic frame.
 - **C − B ≈ 0 but B − A > 0:** topology helps as static identity, not as runtime messages. Cleanly positions against the "graph-LSTM is special" assumption.
 - **All three saturate at the same NSE:** no benefit from topology in any form. Replicates Kirschstein 2024 at scale with stronger ablation. Still publishable.
+
+---
+
+# Revised Framework — 5-Condition Factorial Ablation (2026-05-06)
+
+The 3-condition (A/B/C) design above was the working plan through the first
+scaled run. After the 2026-05-06 meeting and review of the single-seed
+Component-0 result (A 0.648, B 0.591, C 0.578), two methodological gaps
+became apparent that the 3-condition design cannot resolve. **The remainder
+of the experimental program supersedes the 3-condition framework with the
+5-condition factorial described below.**
+
+## Why the 3-condition design isn't enough
+
+**Gap 1 — Architecture confound.** Condition A uses NH's `cudalstm` (an
+`nn.LSTM` wrapper, fully CUDA-batched). Conditions B and C use the
+`DirectedGraphLSTM` class (an `nn.LSTMCell` Python timestep loop). These
+are not the same architecture; their optimization trajectories differ even
+at identical hyperparameters. The "shared B+C deficit" we observed (C − B
+median Δ = −0.021 with std 0.082, much tighter than C − A or B − A) is
+suggestive evidence that a meaningful fraction of the gap to A is the
+architecture switch, not the topology signal. The 3-condition design has
+no way to separate these effects.
+
+**Gap 2 — Missing combination cell.** The 3-condition design treats topology
+features and message passing as either-or alternatives. Condition B has
+topology features but no messages; Condition C has messages but no topology
+features. There is no condition with **both**. This means the contrast
+"C − B" doesn't isolate the marginal effect of message passing — it
+compares two different *implementations* of topology. The clean question
+"given topology features are already in the model, does adding message
+passing additionally help?" is unanswerable in the current design.
+
+## The 5-condition factorial design
+
+A **2×2 factorial** of (topology features × message passing), all four
+cells implemented in the same DirectedGraphLSTM architecture, plus an
+**architecture-control reference** using NH's cudalstm. This is the
+textbook ablation pattern from the GNN-on-rivers literature (Kirschstein
+2024, Jiang 2025).
+
+| ID | Architecture | Topology static features | Message passing |
+|---|---|---|---|
+| **L** | NH `cudalstm` | — | — |
+| **G** | DirectedGraphLSTM, `edges=[]` | — | — |
+| **G+T** | DirectedGraphLSTM, `edges=[]` | ✓ | — |
+| **G+M** | DirectedGraphLSTM, full edges | — | ✓ |
+| **G+T+M** | DirectedGraphLSTM, full edges | ✓ | ✓ |
+
+L is the field-standard Kratzert-2019-style baseline (citable; lets us
+position our numbers). G is the *architecture-matched* baseline that all
+the 2×2 factorial cells will be compared against.
+
+## What each clean contrast measures
+
+| Contrast | Isolates |
+|---|---|
+| **L − G** | Architecture confound size (cudalstm vs DirectedGraphLSTM, both with no graph). Reported as a methodology note. |
+| **(G+T) − G** | Pure marginal effect of topology static features, holding architecture constant. |
+| **(G+M) − G** | Pure marginal effect of message passing, holding architecture constant. |
+| **(G+T+M) − (G+T)** | Marginal effect of message passing **given** topology features are present. |
+| **(G+T+M) − (G+M)** | Marginal effect of topology features **given** message passing is present. |
+| **(G+T+M) − G** | Total combined effect of topology + message passing. |
+| **Interaction term** | (G+T+M) − (G+T) − (G+M) + G — whether topology features and message passing combine super-additively, sub-additively, or independently. The interaction is itself a publishable finding. |
+
+Compare to the 3-condition design, where C − B is uninterpretable because
+B and C don't differ in only one factor.
+
+## Why this is more viable
+
+Beyond eliminating the two methodology gaps, the 5-condition design also:
+
+1. **Is informative in every result direction.** Whatever the data say
+   — graph helps, graph hurts, only static features help, only messages
+   help, the two have synergy, the two are redundant — the design produces
+   an interpretable claim. The 3-condition design has multiple result
+   patterns it cannot distinguish.
+2. **Matches what reviewers expect.** Kirschstein 2024 ran 4 adjacency
+   types × 3 model types; Jiang 2025 ran their method × 3 GNN baselines
+   on multiple datasets. A 5-condition × 5-seed factorial is the
+   standard expected level of rigor for a workshop submission.
+3. **Lets us cite our own pilot honestly.** The 23-basin pilot (run 06)
+   showed +0.078 NSE with warm-start. The Component-0 result showed
+   −0.077 with from-scratch. The 5-condition design lets us write
+   *"the pilot gain reverses sign at scale; we attribute the reversal
+   to a combination of architecture confound, increased baseline
+   capacity at 183-basin scale, and the from-scratch protocol"* —
+   a coherent published narrative rather than an unexplained sign flip.
+4. **Salvages the existing single-seed results.** The current runs 14,
+   15, 16 map directly onto the 5-condition design as L, G+T, and G+M
+   respectively. Adding G and G+T+M is two new conditions, not a
+   redo of the whole experiment.
+
+## Required reporting (standard publication practice)
+
+- **Multi-seed**: 5 seeds (11, 13, 17, 19, 23). Below 3 is anecdotal;
+  5 enables bootstrap 95% CIs that aren't trivially wide.
+- **Three metrics**: NSE (the standard), KGE (more robust to mean/variance
+  bias), log-NSE (downweights outlier high-flow events). All built into NH.
+- **Per-condition table** with cross-seed median ± 95% CI for each metric.
+- **Per-basin paired ΔNSE distributions** for each pairwise contrast above
+  (six contrasts), with median, mean, std, % of basins improved by
+  ≥ 0.05, signed-rank test p-value or bootstrap CI on the median Δ.
+- **Stratified analyses**: depth-stratified (already in our analysis
+  pipeline), area-stratified, outlier-trimmed (drop bottom 5% basins).
+- **Pilot vs scaled supplementary**: explicit contrast of the 23-basin
+  pilot's +0.078 against the Component-0 scaled result, framed as a
+  generalization-failure case study.
+
+## Compute reality (Colab Pro $10/month)
+
+5 conditions × 5 seeds = 25 runs. With the current Python-loop
+DirectedGraphLSTM at ~5-8 hr/seed on T4, the full sweep is ~150-180 units —
+nearly 2× the monthly budget. Three viable paths:
+
+1. **Optimize the DirectedGraphLSTM forward pass** (replace the per-step
+   `LSTMCell` Python loop with `nn.LSTM` between message-passing rounds).
+   Realistic 2-3× speedup. Brings the full 25-run sweep into ~80-unit
+   range, comfortably in budget. **Recommended path.** ~1 day of code,
+   one-time investment that also makes future experiments cheap.
+2. **3 seeds instead of 5.** Saves compute but underpowers statistical
+   claims. Acceptable as a fallback if (1) is too costly to attempt.
+3. **Drop G** (architecture control). Saves compute but reintroduces the
+   methodology critique we're trying to eliminate. **Not acceptable** for
+   a publication-worthy submission.
+
+## What changes from the 3-condition plan
+
+- Add condition **G**: DirectedGraphLSTM with `edges=[]` and no topology
+  features. Architecture-matched baseline.
+- Add condition **G+T+M**: DirectedGraphLSTM with full edges + edge features
+  + 5 topology static features. The combination cell.
+- Rename existing conditions for clarity in writing: A → L, B → G+T, C → G+M.
+  Run folder names stay (14, 15, 16) — they're just relabeled in the
+  published narrative.
+- Multi-seed for all 5 conditions (5 seeds each, 25 runs total).
+
+## What stays the same
+
+- Locked hyperparameters (hidden_size 64, dropout 0.4, seq_length 30,
+  batch 256, 30 epochs, LR 1e-3, basin encoding on, 5 static attributes,
+  Maurer forcings).
+- Train/val/test windows (1990-1999 / 2000-2004 / 2005-2008).
+- Basin set: Component 0 (183 basins, eastern US, 6 HUC regions, 624 edges).
+- Heuristic edges for the main result; NHDPlus ground-truth edges as a
+  secondary robustness check (not blocking for the main run).
+- Single-seed pilot evidence (runs 03–13) preserved as motivating
+  background; no longer the headline.
 3. **Add Condition B** (`--variant topology_features`) to
    `train_graph_component0.py`. Small edit.
 4. **Compute decision** — block on this before launching the full A/B/C
@@ -507,7 +656,6 @@ python experiments/analysis/compare_results.py \
 
 - Decision/feedback log: `JOURNAL.md`
 - Alternative direction (set aside): `idea2/`
-- Pilot findings: `INSIGHTS.md`
 - Chronological experiment log: `CURRENT_STATE.md`
 - Experiment scripts and their status: `experiments/README.md`
 - Per-run results: `runs/README.md`

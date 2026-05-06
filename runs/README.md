@@ -21,10 +21,32 @@ direction see `../idea1.md`.
 | 11 | `11_graph_edge_pruned_edges/` | Graph-LSTM + mean aggregation, 26 of 34 edges (bad-parent edges dropped) | NSE **0.504**. The "bad-parent poisoning" hypothesis was WRONG: pruning did not rescue the affected basins — LSTM drift is the real mechanism. |
 | 12 | `12_lstm_ungauged_baseline/` | CudaLSTM, 20 train basins, 3 held-out, **no** basin encoding | PUB baseline; held-out median NSE ≈ 0.23. |
 | 13 | `13_graph_ungauged/` | Graph-LSTM warm-started from run 12; 3 held-out basins receive messages from trained parents at inference | **Nuanced**: 08158700 +0.043, 08189500 +0.107, 08164300 −0.575 (middle-node chain contamination). 2 of 3 improved; one catastrophic failure mode identified. |
+| **14** | `14_lstm_component0_baseline_seed42/` | NH cudalstm + basin encoding, **183 basins (Component 0)**, 30 epochs, seed 42 | **Condition A scaled.** Median test NSE **0.648** (range [-6.5, 0.85]). First Component-0 baseline; bar that B and C must beat. |
+| **15** | `15_graph_c0_topology_features_seed42/` | DirectedGraph-LSTM, no edges, +5 topology static features, 183 basins, seed 42, no warm-start | **Condition B scaled.** Median test NSE **0.591**. Per-basin Δ vs A: median **−0.050**. Topology-as-features alone does not help at scale. |
+| **16** | `16_graph_c0_warm_seed42/` | DirectedGraph-LSTM, full edges (624) + message passing, 183 basins, seed 42, no warm-start | **Condition C scaled.** Median test NSE **0.578**. Per-basin Δ vs A: median **−0.077** (113/183 worse, 15 better). vs B: median Δ **−0.021** (much tighter distribution; std 0.082). **Pilot's +0.078 NSE does NOT replicate at scale, single seed.** |
 
 ## What the set of runs establishes
 
-Full 23-basin setting:
+### 183-basin Component-0 setting (single-seed, seed=42)
+
+| Setup | Median NSE | vs Condition A | per-basin Δ stats |
+|---|---|---|---|
+| **A** Baseline LSTM (run 14) | **0.648** | — | — |
+| **B** Topology-as-features (run 15) | 0.591 | **−0.050** | 92/183 basins worse by ≥0.05; 20 better; std 0.487 |
+| **C** Full graph-LSTM (run 16) | 0.578 | **−0.077** | 113/183 basins worse by ≥0.05; 15 better; std 0.526 |
+
+**C − B median Δ = −0.021** (std 0.082 — much tighter than C−A and B−A,
+suggesting most of the gap to A is shared between B and C, not unique to
+message passing).
+
+Depth-stratified plot: A wins at every depth except depth 4 (n=2, noise).
+Gap (A − C) ~0.05 across depths 0–3 — global deficit, not depth-dependent.
+
+Single seed; multi-seed verification is the load-bearing follow-up (5 seeds
+via `'full'` mode of `notebooks/colab_publication_run.ipynb`). 23-basin
+pilot results below remain a separate body of evidence at the smaller scale.
+
+### Full 23-basin setting (pilot, single-seed)
 
 | Setup | Median NSE | vs strong baseline |
 |---|---|---|

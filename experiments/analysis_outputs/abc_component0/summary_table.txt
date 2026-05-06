@@ -1,0 +1,19 @@
+======================================================================
+A/B/C scaled comparison — Component 0 (183 basins)
+======================================================================
+
+A_baseline:  n_seeds=1  median NSE = 0.6480  (±0.0000 across seeds)
+B_topology_features:  n_seeds=1  median NSE = 0.5910  (±0.0000 across seeds)
+C_graph_messages:  n_seeds=1  median NSE = 0.5781  (±0.0000 across seeds)
+
+Per-basin ΔNSE (across all common seeds × basins):
+  B_minus_A     n= 183  median -0.0501  mean -0.0107  std 0.487  +/0/-: 20/71/92
+  C_minus_A     n= 183  median -0.0771  mean -0.0410  std 0.526  +/0/-: 15/55/113
+  C_minus_B     n= 183  median -0.0211  mean -0.0303  std 0.082  +/0/-: 15/111/57
+
+Outputs:
+  /Users/om/Desktop/neural_hydrology/experiments/analysis_outputs/abc_component0/summary.json
+  /Users/om/Desktop/neural_hydrology/experiments/analysis_outputs/abc_component0/per_basin_long.csv
+  /Users/om/Desktop/neural_hydrology/experiments/analysis_outputs/abc_component0/per_basin_deltas.csv
+  /Users/om/Desktop/neural_hydrology/experiments/analysis_outputs/abc_component0/delta_distributions.png
+  /Users/om/Desktop/neural_hydrology/experiments/analysis_outputs/abc_component0/nse_by_depth.png

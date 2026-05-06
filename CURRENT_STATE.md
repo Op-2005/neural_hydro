@@ -207,6 +207,30 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Caveats:** none.
 - **Next:** unchanged — E0.5 loss-saturation curve still queued for the next invocation.
 
+### CRS Session — 2026-05-06 (Condition C lands; pilot's +0.078 does NOT replicate at scale)
+
+- **Reviewed:** user's overnight Colab session completed Cell 11. Uploaded `experiments/graph_c0_warm_seed42_0605_063025` (real, 30 epochs, 183 basins, 624 edges) plus a duplicate of yesterday's A+B upload.
+- **Ran:** `/organize` (cleanup + move) — deleted the duplicate `experiments/drive-download-20260506T052646Z-3-001 2/`; moved Condition C → `runs/16_graph_c0_warm_seed42/` per the established numbered convention; wrote NOTES.md following the run-14/15 template. Re-ran `experiments/analysis/compare_abc_component0.py` with all three conditions; produced final `summary.json`, `per_basin_long.csv`, `per_basin_deltas.csv`, `delta_distributions.png`, `nse_by_depth.png`, `depth_stratified.csv`, `summary_table.txt`.
+- **Result (single-seed, seed=42):** A median NSE 0.648, B median 0.591, **C median 0.578**. C − A = **−0.077** at the median; C − B = **−0.021** with much tighter distribution (std 0.082 vs 0.487 for B−A). **Pilot's +0.078 does NOT replicate at scale.** Depth-stratified: A wins at every depth except depth 4 (n=2 noise); gap A−C constant ~0.05 across depths 0–3.
+- **Decision:** Honest read — the pilot's positive result was likely a small-N artifact + warm-start optimization-trajectory effect (we already had partial evidence of this from the +0.013 frozen-isolation in run 07). At Component-0 scale with from-scratch protocol, both ablations underperform baseline. **Multi-seed verification is now load-bearing** before any framing-level claim. If multi-seed confirms, this becomes a strong negative result at scale, publishable as a workshop paper aligned with Kirschstein 2024.
+- **Files:** new `runs/16_graph_c0_warm_seed42/` + NOTES.md; updated `runs/README.md`, `experiments/analysis_outputs/abc_component0/` (all three conditions now), `JOURNAL.md`, `idea1.md`. Removed duplicate `experiments/drive-download-20260506T052646Z-3-001 2/`.
+- **Caveats:** SINGLE SEED. Yesterday's E0.5 multi-seed result showed cross-seed variance of ±0.111 NSE on the 23-basin baseline; with similar variance at scale, the C−A delta could plausibly shift on other seeds. The C − B = −0.021 with tight std is the diagnostic finding: the deficit is not unique to message passing, it's shared between B and C — likely an architecture/optimization-trajectory effect (DirectedGraphLSTM's Python LSTMCell loop vs NH's batched cudalstm).
+- **Smoke test:** N/A — analysis only.
+- **Deferred:** Multi-seed `MODE='full'` run (4 more seeds = 11, 13, 17, 19, 23). On T4 ~70 hr / ~105 units (in budget for one Pro month, multi-session); on L4 ~25 hr / ~125 units (over budget).
+- **Next:** *User decides whether to launch multi-seed.* CRS will interpret once it lands.
+
+### CRS Session — 2026-05-05 (organize Component-0 runs from Drive + first scaled A vs B finding)
+
+- **Reviewed:** user pulled Drive runs into local `drive-download-20260506T052646Z-3-001/`. Conditions A and B from Colab Pro (single-seed, seed=42, Component-0 / 183 basins). Condition C still running on Colab Cell 11.
+- **Ran:** organize-style work — moved `A_baseline_seed42_0605_003517` → `runs/14_lstm_component0_baseline_seed42`; moved `graph_c0_topology_features_seed42_0605_005241` → `runs/15_graph_c0_topology_features_seed42`. Archived the incomplete second A run and the Colab-retrained pilot baseline. Patched run-14's `config.yml` to `device: cpu` and ran `nh_run.py evaluate` locally to produce `test/model_epoch030/test_metrics.csv` (which the Colab `train` step alone does not produce). Wrote NOTES.md for both new runs. Built `experiments/analysis/compare_abc_component0.py` (handles partial states; works now with A+B and will work with C when it lands). Updated `runs/README.md` with runs 14/15 and the new Component-0 results table.
+- **Result:** First scaled-experiment numbers in hand. **A median NSE 0.648, B median 0.591, per-basin ΔNSE(B−A) median −0.050.** Topology-as-static-features alone *hurts* relative to baseline on Component 0 at seed 42. Depth-stratified plot shows A wins at depths 0–3 (bulk of the network), B and A converge at depth 4 (small n).
+- **Decision:** B vs A is the first real Component-0 finding. Pilot's +0.078 doesn't transfer to "topology features for free" at scale. Whether C recovers any gap is the open question. Multi-seed verification is the next no-compute-needed priority once C completes.
+- **Files:** see JOURNAL.md 2026-05-05 entry for full file list.
+- **Caveats:** All Component-0 numbers are single-seed. Yesterday's E0.5 multi-seed result (cross-seed band 0.111 NSE) suggests these numbers could shift by similar magnitudes at other seeds. A's mean (0.586) is outlier-pulled (one basin at -6.495); median is the robust summary.
+- **Smoke test:** N/A — analysis only on top of completed training runs.
+- **Deferred:** wait for Condition C from Colab Cell 11 (~5-7 hr). Then run analysis script again to get the full A/B/C comparison.
+- **Next:** Once C lands, rerun `experiments/analysis/compare_abc_component0.py` and write the interpretation. Multi-seed run (full MODE in notebook) is the publication-grade follow-up.
+
 ### CRS Session — 2026-04-27 (Colab notebook for the publication run)
 
 - **Reviewed:** user's compute pivot — Google Colab Pro / Colab for Research available; supersedes the cloud-GPU recommendation.

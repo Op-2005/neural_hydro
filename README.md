@@ -18,7 +18,6 @@ strong multi-basin LSTM baseline.
 - `idea1.md` — master file for the current active research direction.
 - `idea2/` — alternative direction (temporal-lag spectral framing), set aside.
 - `JOURNAL.md` — running log of decisions, PI feedback, and direction changes (read this if you want to know *why* a call was made).
-- `INSIGHTS.md` — research findings from the 23-basin pilot.
 - `CURRENT_STATE.md` — chronological log of experiments and evolving thinking.
 
 ## Quick start
