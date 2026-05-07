@@ -1,0 +1,50 @@
+{
+  "conditions": {
+    "L": {
+      "n_seeds": 1,
+      "seeds": [
+        42
+      ],
+      "NSE": {
+        "per_seed_medians": [
+          0.6445250567322256
+        ],
+        "cross_seed_median": 0.6445250567322256,
+        "bootstrap_95ci": [
+          0.6445250567322256,
+          0.6445250567322256
+        ],
+        "cross_seed_std": 0.0
+      },
+      "KGE": {
+        "per_seed_medians": [
+          0.721293712793752
+        ],
+        "cross_seed_median": 0.721293712793752,
+        "bootstrap_95ci": [
+          0.721293712793752,
+          0.721293712793752
+        ],
+        "cross_seed_std": 0.0
+      },
+      "logNSE": {
+        "per_seed_medians": [
+          0.6861129073115613
+        ],
+        "cross_seed_median": 0.6861129073115613,
+        "bootstrap_95ci": [
+          0.6861129073115613,
+          0.6861129073115613
+        ],
+        "cross_seed_std": 0.0
+      }
+    }
+  },
+  "contrasts": {},
+  "outlier_trimmed_5pct": {
+    "L": {
+      "cross_seed_median_full": 0.6445250567322256,
+      "cross_seed_median_trimmed": 0.6575728423650038
+    }
+  }
+}

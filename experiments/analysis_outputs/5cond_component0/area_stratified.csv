@@ -1,0 +1,4 @@
+condition,area_tercile,n_basin_seed,median_NSE
+L,small,61,0.6001768373434875
+L,medium,61,0.6381084524922491
+L,large,61,0.710827002870571
