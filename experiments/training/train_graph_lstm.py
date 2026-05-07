@@ -468,6 +468,18 @@ def train_epoch(model, x_d, x_s, y, optimizer, batch_size):
 
 
 def evaluate(model, x_d, x_s, y, basin_ids):
+    """Backward-compatible wrapper: returns only the per-basin NSE dict."""
+    nse, _obs_pred = evaluate_with_predictions(model, x_d, x_s, y, basin_ids)
+    return nse
+
+
+def evaluate_with_predictions(model, x_d, x_s, y, basin_ids):
+    """Like evaluate() but also returns per-basin (obs, pred) arrays.
+
+    Returned obs/pred only include timesteps where the observation was non-NaN —
+    i.e. they are aligned 1:1 within each basin and ready to feed into any
+    metric (NSE, KGE, log-NSE, ...).
+    """
     model.eval()
     n_windows, n_basins, seq_len, n_targets = y.shape
     all_preds = {i: [] for i in range(n_basins)}
@@ -485,16 +497,18 @@ def evaluate(model, x_d, x_s, y, basin_ids):
                     all_preds[b].append(pred_val)
                     all_obs[b].append(obs_val)
 
-    results = {}
+    nse = {}
+    obs_pred = {}
     for b in range(n_basins):
-        obs = np.array(all_obs[b])
-        pred = np.array(all_preds[b])
+        obs = np.array(all_obs[b], dtype=np.float64)
+        pred = np.array(all_preds[b], dtype=np.float64)
         if len(obs) > 0 and obs.std() > 0:
-            nse = 1 - np.sum((obs - pred) ** 2) / np.sum((obs - obs.mean()) ** 2)
+            n = 1 - np.sum((obs - pred) ** 2) / np.sum((obs - obs.mean()) ** 2)
         else:
-            nse = float("nan")
-        results[basin_ids[b]] = nse
-    return results
+            n = float("nan")
+        nse[basin_ids[b]] = n
+        obs_pred[basin_ids[b]] = (obs, pred)
+    return nse, obs_pred
 
 
 # ---------------------------------------------------------------------------

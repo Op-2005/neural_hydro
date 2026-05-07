@@ -50,6 +50,7 @@ from train_graph_lstm import (
     warm_start_from_baseline,
     train_epoch,
     evaluate,
+    evaluate_with_predictions,
 )
 
 ROOT = Path(__file__).parent.parent.parent
@@ -77,15 +78,20 @@ def find_component0_baseline():
 
 
 VARIANTS = {
-    # Ablation dimensions: edge_feat, diff, frozen, attn, sigate, add_topology_features
-    # Conditions A / B / C from idea1.md:
-    #   A baseline = NH-trained baseline (no script needed; use lstm_*_baseline.yaml)
-    #   B topology-as-features = `topology_features` variant below (no edges, augmented x_s)
-    #   C topology + message passing = `warm` (full graph-LSTM)
-    "warm":               dict(edge_feat=True,  diff=False, frozen=False, attn=False, sigate=False, add_topology_features=False),
-    "frozen":             dict(edge_feat=True,  diff=False, frozen=True,  attn=False, sigate=False, add_topology_features=False),
-    "gcn_lowpass":        dict(edge_feat=False, diff=False, frozen=False, attn=False, sigate=False, add_topology_features=False),
-    "topology_features":  dict(edge_feat=False, diff=False, frozen=False, attn=False, sigate=False, add_topology_features=True),
+    # Ablation dimensions: edge_feat, diff, frozen, attn, sigate, add_topology_features, use_full_edges
+    # Conditions in the locked 5-condition factorial framework (idea1.md §"Revised Framework"):
+    #   L = NH cudalstm baseline                             (no script needed; use lstm_*_baseline.yaml)
+    #   G = DirectedGraphLSTM, empty edges, no topology      → variant `empty_graph`         [NEW]
+    #   G+T = DirectedGraphLSTM, empty edges, + topology     → variant `topology_features`
+    #   G+M = DirectedGraphLSTM, full edges, no topology     → variant `warm`
+    #   G+T+M = DirectedGraphLSTM, full edges, + topology    → variant `full_graph_with_topology` [NEW]
+    "warm":                       dict(edge_feat=True,  diff=False, frozen=False, attn=False, sigate=False, add_topology_features=False, use_full_edges=True),
+    "frozen":                     dict(edge_feat=True,  diff=False, frozen=True,  attn=False, sigate=False, add_topology_features=False, use_full_edges=True),
+    "gcn_lowpass":                dict(edge_feat=False, diff=False, frozen=False, attn=False, sigate=False, add_topology_features=False, use_full_edges=True),
+    "topology_features":          dict(edge_feat=False, diff=False, frozen=False, attn=False, sigate=False, add_topology_features=True,  use_full_edges=False),
+    # === New variants for the 5-condition factorial (added 2026-05-06) ===
+    "empty_graph":                dict(edge_feat=False, diff=False, frozen=False, attn=False, sigate=False, add_topology_features=False, use_full_edges=False),
+    "full_graph_with_topology":   dict(edge_feat=True,  diff=False, frozen=False, attn=False, sigate=False, add_topology_features=True,  use_full_edges=True),
 }
 
 
@@ -187,6 +193,12 @@ def main():
     parser.add_argument("--no-warm-start", action="store_true")
     parser.add_argument("--tag", default="",
                         help="Extra tag for the run directory name")
+    parser.add_argument("--run-dir", default=None,
+                        help="Override the auto-generated run dir path. "
+                              "Used by the 5cond_factorial sweep to write into runs/5cond_factorial/<cond>_seed<N>/.")
+    parser.add_argument("--use-compile", action="store_true",
+                        help="Wrap the DirectedGraphLSTM with torch.compile for ~2-3x training speedup. "
+                              "Requires PyTorch >= 2.0. Falls back to uncompiled with a warning if unavailable.")
     args = parser.parse_args()
 
     if args.smoke_test:
@@ -210,13 +222,16 @@ def main():
         sys.exit(1)
     LOGGER.info(f"Baseline run: {baseline_run}")
 
-    timestamp = datetime.now().strftime("%d%m_%H%M%S")
-    tag = f"c0_{args.variant}_seed{args.seed}"
-    if args.smoke_test:
-        tag += "_SMOKE"
-    if args.tag:
-        tag += f"_{args.tag}"
-    run_dir = ROOT / f"runs/graph_{tag}_{timestamp}"
+    if args.run_dir:
+        run_dir = Path(args.run_dir)
+    else:
+        timestamp = datetime.now().strftime("%d%m_%H%M%S")
+        tag = f"c0_{args.variant}_seed{args.seed}"
+        if args.smoke_test:
+            tag += "_SMOKE"
+        if args.tag:
+            tag += f"_{args.tag}"
+        run_dir = ROOT / f"runs/graph_{tag}_{timestamp}"
     run_dir.mkdir(parents=True, exist_ok=True)
     LOGGER.info(f"Output directory: {run_dir}")
 
@@ -250,8 +265,13 @@ def main():
     n_dyn = x_d_train.shape[3]
     input_size = n_dyn + x_s.shape[1]
 
-    # For Condition B (topology_features), pass edges=[] so message passing is OFF.
-    model_edges = [] if variant["add_topology_features"] else edges
+    # Edges are present iff the variant explicitly says so (use_full_edges flag).
+    # Conditions in the 5-condition factorial:
+    #   G            (empty_graph)              -> edges=[]   (no graph)
+    #   G+T          (topology_features)        -> edges=[]   (no graph; topology comes from static features)
+    #   G+M          (warm)                     -> full edges (message passing)
+    #   G+T+M        (full_graph_with_topology) -> full edges (message passing AND topology features)
+    model_edges = edges if variant["use_full_edges"] else []
 
     model = DirectedGraphLSTM(
         input_size=input_size,
@@ -293,6 +313,24 @@ def main():
                  f"{sum(p.numel() for p in model.parameters()):,}")
     optimizer = torch.optim.Adam(trainable, lr=LR)
 
+    # === Forward-pass optimization ===
+    # Wrap the DirectedGraphLSTM with torch.compile if available and requested.
+    # Locked decision (2026-05-06, idea1.md): the 5-condition factorial uses
+    # torch.compile for ~2-3x training speedup. All 4 graph variants share the
+    # same compiled architecture, preserving the architecture-matched control.
+    if args.use_compile:
+        try:
+            torch_major = int(torch.__version__.split(".")[0])
+            if torch_major < 2:
+                LOGGER.warning(f"  torch.compile requires PyTorch >= 2.0 (have {torch.__version__}); "
+                                f"falling back to uncompiled forward.")
+            else:
+                model = torch.compile(model, mode="reduce-overhead", fullgraph=False)
+                LOGGER.info("  Wrapped model with torch.compile(mode='reduce-overhead'). "
+                             "First epoch will be slow (compilation); subsequent epochs ~2-3x faster.")
+        except Exception as e:
+            LOGGER.warning(f"  torch.compile failed ({e}); falling back to uncompiled forward.")
+
     # Pre-training eval (sanity: should ~match baseline if warm-start worked)
     LOGGER.info("Pre-training test NSE (sanity check):")
     pre = evaluate(model, x_d_test, x_s, y_test, basin_ids)
@@ -311,14 +349,25 @@ def main():
                      f"wall={elapsed:.1f}s")
         torch.save(model.state_dict(), run_dir / f"model_epoch{epoch:03d}.pt")
 
-    # Final eval
-    final = evaluate(model, x_d_test, x_s, y_test, basin_ids)
+    # Final eval — capture raw obs/pred so the analysis script can compute
+    # NSE / KGE / log-NSE consistently across all 5 conditions.
+    final, obs_pred = evaluate_with_predictions(model, x_d_test, x_s, y_test, basin_ids)
     final_med = float(np.nanmedian(list(final.values())))
     final_mean = float(np.nanmean(list(final.values())))
     LOGGER.info(f"Final median NSE: {final_med:.3f}   mean: {final_mean:.3f}")
 
     pd.DataFrame([{"basin": b, "NSE": v} for b, v in final.items()]).to_csv(
         run_dir / "test_metrics.csv", index=False)
+
+    # Long-format predictions: one row per (basin, timestep) for the test window.
+    # ~275k rows for Component 0 (183 basins × ~1500 steps); ~10 MB CSV.
+    pred_rows = []
+    for basin, (obs, pred) in obs_pred.items():
+        for i in range(len(obs)):
+            pred_rows.append({"basin": basin, "step": i,
+                               "obs": float(obs[i]), "pred": float(pred[i])})
+    pd.DataFrame(pred_rows).to_csv(run_dir / "test_predictions.csv", index=False)
+    LOGGER.info(f"Wrote {len(pred_rows)} prediction rows to test_predictions.csv")
 
     run_config = {
         "variant": args.variant,

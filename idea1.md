@@ -652,6 +652,38 @@ nearly 2× the monthly budget. Three viable paths:
 - Synthetic linear-reservoir experiment.
 - Dynamical-systems-on-networks literature read.
 
+## Operational protocol — locked 2026-05-07
+
+The 5-condition factorial is now the active experimental program. The
+infrastructure is in place; the next action is the production sweep.
+
+**Locked folder paths.**
+- Experiment master: `experiments/5cond_factorial/`
+  - `RUN_PLAN.md` — phase-gated checklist, status tracker.
+  - `README.md` — variant flag table, conditions, compute budget.
+  - `configs/L_seed{11,13,17}.yaml` — Condition L NH cudalstm configs.
+  - `notebooks/colab_5cond_run.ipynb` — single-click sweep.
+- Run outputs: `runs/5cond_factorial/`
+  - 15 folders: `L_seed{N}/`, `G_seed{N}/`, `G_T_seed{N}/`, `G_M_seed{N}/`, `G_T_M_seed{N}/` for N ∈ {11, 13, 17}.
+- Analysis script: `experiments/analysis/compare_5conditions.py`
+  - Output: `experiments/analysis_outputs/5cond_component0/RESULTS.md` + figures.
+
+**Locked decisions.**
+- **3 seeds** (11, 13, 17), not 5. Trade compute for tangible results faster; 5-seed expansion is a follow-up if the headline contrasts are noisy.
+- **Forward-pass optimization via `torch.compile`** (not the LSTMCell→nn.LSTM rewrite originally proposed). Wrapped at `--use-compile` flag; gracefully falls back if PyTorch < 2. Brings the 15-run sweep into ~30-hr / ~45-unit Colab Pro range.
+- **NSE + KGE + log-NSE**, all three computed identically from raw test predictions for every condition. The graph trainer now persists `test_predictions.csv` (long format obs/pred per basin) for this purpose; for Condition L the analysis script reads NH's `test_results.p` pickle.
+- **Two new variants** added to `experiments/training/train_graph_component0.py`:
+  - `empty_graph` — DirectedGraphLSTM with `edges=[]`, no topology features. Becomes Condition G (architecture-matched no-graph baseline).
+  - `full_graph_with_topology` — DirectedGraphLSTM with full edges + edge features + 5 topology static features. Becomes Condition G+T+M.
+- **`--run-dir` override** on `train_graph_component0.py` so the sweep writes directly into `runs/5cond_factorial/<sub>_seed{N}/` (no glob over auto-timestamps; skip-if-done is an exact path check).
+
+**Status of each phase** (live tracker in `experiments/5cond_factorial/RUN_PLAN.md`).
+- Phase 1 — Code infrastructure: **done** (variants, `--run-dir`, `--use-compile`, prediction-dump).
+- Phase 2 — Notebook + configs: **done** (`colab_5cond_run.ipynb`, 3 L-condition YAMLs).
+- Phase 3 — Analysis pipeline: **done** (`compare_5conditions.py` + RESULTS.md template).
+- Phase 4 — Pre-flight smoke: in progress (one new variant smoke at a time on the 23-basin pilot).
+- Phase 5 — Production sweep: pending user-launch on Colab T4.
+
 ## Pointers
 
 - Decision/feedback log: `JOURNAL.md`
