@@ -1,0 +1,56 @@
+2026-05-18 18:10:24,769: Logging to runs/5cond_factorial/L420_seed13_1805_181024/output.log initialized.
+2026-05-18 18:10:24,769: ### Folder structure created at runs/5cond_factorial/L420_seed13_1805_181024
+2026-05-18 18:10:24,769: ### Run configurations for L420_seed13
+2026-05-18 18:10:24,769: experiment_name: L420_seed13
+2026-05-18 18:10:24,769: run_dir: runs/5cond_factorial/L420_seed13_1805_181024
+2026-05-18 18:10:24,769: train_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-05-18 18:10:24,769: validation_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-05-18 18:10:24,769: test_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-05-18 18:10:24,769: train_start_date: 1990-01-01 00:00:00
+2026-05-18 18:10:24,769: train_end_date: 1999-12-31 00:00:00
+2026-05-18 18:10:24,769: validation_start_date: 2000-01-01 00:00:00
+2026-05-18 18:10:24,769: validation_end_date: 2004-12-31 00:00:00
+2026-05-18 18:10:24,769: test_start_date: 2005-01-01 00:00:00
+2026-05-18 18:10:24,769: test_end_date: 2008-12-31 00:00:00
+2026-05-18 18:10:24,769: device: cpu
+2026-05-18 18:10:24,769: validate_every: 999
+2026-05-18 18:10:24,769: validate_n_random_basins: 10
+2026-05-18 18:10:24,769: metrics: ['NSE', 'KGE']
+2026-05-18 18:10:24,769: model: cudalstm
+2026-05-18 18:10:24,769: head: regression
+2026-05-18 18:10:24,769: output_activation: linear
+2026-05-18 18:10:24,770: hidden_size: 64
+2026-05-18 18:10:24,770: initial_forget_bias: 3
+2026-05-18 18:10:24,770: output_dropout: 0.4
+2026-05-18 18:10:24,770: optimizer: Adam
+2026-05-18 18:10:24,770: loss: MSE
+2026-05-18 18:10:24,770: learning_rate: {0: 0.001}
+2026-05-18 18:10:24,770: batch_size: 256
+2026-05-18 18:10:24,770: epochs: 1
+2026-05-18 18:10:24,770: clip_gradient_norm: 1
+2026-05-18 18:10:24,770: predict_last_n: 1
+2026-05-18 18:10:24,770: seq_length: 30
+2026-05-18 18:10:24,770: num_workers: 4
+2026-05-18 18:10:24,770: log_interval: 5
+2026-05-18 18:10:24,770: log_tensorboard: False
+2026-05-18 18:10:24,770: dataset: camels_us
+2026-05-18 18:10:24,770: data_dir: datasets/camels_us
+2026-05-18 18:10:24,770: use_basin_id_encoding: True
+2026-05-18 18:10:24,770: forcings: ['maurer']
+2026-05-18 18:10:24,770: dynamic_inputs: ['PRCP(mm/day)', 'SRAD(W/m2)', 'Tmax(C)', 'Tmin(C)', 'Vp(Pa)']
+2026-05-18 18:10:24,770: target_variables: ['QObs(mm/d)']
+2026-05-18 18:10:24,770: clip_targets_to_zero: ['QObs(mm/d)']
+2026-05-18 18:10:24,770: static_attributes: ['elev_mean', 'area_gages2', 'slope_mean', 'p_mean', 'pet_mean']
+2026-05-18 18:10:24,770: seed: 13
+2026-05-18 18:10:24,770: max_updates_per_epoch: 420
+2026-05-18 18:10:24,770: number_of_basins: 183
+2026-05-18 18:10:24,770: train_dir: runs/5cond_factorial/L420_seed13_1805_181024/train_data
+2026-05-18 18:10:24,770: img_log_dir: runs/5cond_factorial/L420_seed13_1805_181024/img_log
+2026-05-18 18:10:24,771: ### Device cpu will be used for training
+2026-05-18 18:10:24,837: Loading basin data into xarray data set.
+2026-05-18 18:10:33,014: Create lookup table and convert to pytorch tensor
+2026-05-18 18:11:19,732: Epoch 1 average loss: avg_loss: 0.32919, avg_total_loss: 0.32919
+2026-05-18 18:11:25,561: Logging to /Users/om/Desktop/neural_hydrology/runs/5cond_factorial/L420_seed13/output.log initialized.
+2026-05-18 18:11:25,578: Using the model weights from /Users/om/Desktop/neural_hydrology/runs/5cond_factorial/L420_seed13/model_epoch001.pt
+2026-05-18 18:12:15,986: Stored metrics at /Users/om/Desktop/neural_hydrology/runs/5cond_factorial/L420_seed13/test/model_epoch001/test_metrics.csv
+2026-05-18 18:12:16,011: Stored results at /Users/om/Desktop/neural_hydrology/runs/5cond_factorial/L420_seed13/test/model_epoch001/test_results.p

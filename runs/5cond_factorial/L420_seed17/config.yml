@@ -1,0 +1,66 @@
+batch_size: 256
+clip_gradient_norm: 1
+clip_targets_to_zero:
+- QObs(mm/d)
+commit_hash: eff54e2
+data_dir: datasets/camels_us
+dataset: camels_us
+device: cpu
+dynamic_inputs:
+- PRCP(mm/day)
+- SRAD(W/m2)
+- Tmax(C)
+- Tmin(C)
+- Vp(Pa)
+epochs: 1
+experiment_name: L420_seed17
+forcings:
+- maurer
+head: regression
+hidden_size: 64
+img_log_dir: runs/5cond_factorial/L420_seed17_1805_181219/img_log
+initial_forget_bias: 3
+learning_rate:
+  0: 0.001
+log_interval: 5
+log_tensorboard: false
+loss: MSE
+max_updates_per_epoch: 420
+metrics:
+- NSE
+- KGE
+model: cudalstm
+num_workers: 4
+number_of_basins: 183
+optimizer: Adam
+output_activation: linear
+output_dropout: 0.4
+package_version: 1.12.0
+predict_last_n: 1
+run_dir: runs/5cond_factorial/L420_seed17_1805_181219
+seed: 17
+seq_length: 30
+static_attributes:
+- elev_mean
+- area_gages2
+- slope_mean
+- p_mean
+- pet_mean
+target_variables:
+- QObs(mm/d)
+test_basin_file: 
+  topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+test_end_date: 31/12/2008
+test_start_date: 01/01/2005
+train_basin_file: 
+  topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+train_dir: runs/5cond_factorial/L420_seed17_1805_181219/train_data
+train_end_date: 31/12/1999
+train_start_date: 01/01/1990
+use_basin_id_encoding: true
+validate_every: 999
+validate_n_random_basins: 10
+validation_basin_file: 
+  topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+validation_end_date: 31/12/2004
+validation_start_date: 01/01/2000

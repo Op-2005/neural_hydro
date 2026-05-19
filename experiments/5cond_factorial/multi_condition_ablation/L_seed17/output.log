@@ -1,0 +1,90 @@
+2026-05-11 07:51:53,277: Logging to runs/5cond_factorial/L_seed17_1105_075153/output.log initialized.
+2026-05-11 07:51:53,278: ### Folder structure created at runs/5cond_factorial/L_seed17_1105_075153
+2026-05-11 07:51:53,279: ### Run configurations for L_seed17
+2026-05-11 07:51:53,280: experiment_name: L_seed17
+2026-05-11 07:51:53,281: run_dir: runs/5cond_factorial/L_seed17_1105_075153
+2026-05-11 07:51:53,281: train_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-05-11 07:51:53,281: validation_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-05-11 07:51:53,281: test_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-05-11 07:51:53,281: train_start_date: 1990-01-01 00:00:00
+2026-05-11 07:51:53,281: train_end_date: 1999-12-31 00:00:00
+2026-05-11 07:51:53,282: validation_start_date: 2000-01-01 00:00:00
+2026-05-11 07:51:53,282: validation_end_date: 2004-12-31 00:00:00
+2026-05-11 07:51:53,282: test_start_date: 2005-01-01 00:00:00
+2026-05-11 07:51:53,282: test_end_date: 2008-12-31 00:00:00
+2026-05-11 07:51:53,282: device: cuda:0
+2026-05-11 07:51:53,282: validate_every: 5
+2026-05-11 07:51:53,282: validate_n_random_basins: 10
+2026-05-11 07:51:53,283: metrics: ['NSE', 'KGE']
+2026-05-11 07:51:53,283: model: cudalstm
+2026-05-11 07:51:53,283: head: regression
+2026-05-11 07:51:53,283: output_activation: linear
+2026-05-11 07:51:53,283: hidden_size: 64
+2026-05-11 07:51:53,283: initial_forget_bias: 3
+2026-05-11 07:51:53,283: output_dropout: 0.4
+2026-05-11 07:51:53,283: optimizer: Adam
+2026-05-11 07:51:53,283: loss: MSE
+2026-05-11 07:51:53,284: learning_rate: {0: 0.001}
+2026-05-11 07:51:53,284: batch_size: 256
+2026-05-11 07:51:53,284: epochs: 30
+2026-05-11 07:51:53,284: clip_gradient_norm: 1
+2026-05-11 07:51:53,284: predict_last_n: 1
+2026-05-11 07:51:53,284: seq_length: 30
+2026-05-11 07:51:53,284: num_workers: 4
+2026-05-11 07:51:53,284: log_interval: 5
+2026-05-11 07:51:53,285: log_tensorboard: False
+2026-05-11 07:51:53,285: dataset: camels_us
+2026-05-11 07:51:53,285: data_dir: datasets/camels_us
+2026-05-11 07:51:53,285: use_basin_id_encoding: True
+2026-05-11 07:51:53,285: forcings: ['maurer']
+2026-05-11 07:51:53,285: dynamic_inputs: ['PRCP(mm/day)', 'SRAD(W/m2)', 'Tmax(C)', 'Tmin(C)', 'Vp(Pa)']
+2026-05-11 07:51:53,285: target_variables: ['QObs(mm/d)']
+2026-05-11 07:51:53,286: clip_targets_to_zero: ['QObs(mm/d)']
+2026-05-11 07:51:53,286: static_attributes: ['elev_mean', 'area_gages2', 'slope_mean', 'p_mean', 'pet_mean']
+2026-05-11 07:51:53,286: seed: 17
+2026-05-11 07:51:53,286: number_of_basins: 183
+2026-05-11 07:51:53,286: train_dir: runs/5cond_factorial/L_seed17_1105_075153/train_data
+2026-05-11 07:51:53,286: img_log_dir: runs/5cond_factorial/L_seed17_1105_075153/img_log
+2026-05-11 07:51:53,314: ### Device cuda:0 will be used for training
+2026-05-11 07:51:53,414: Loading basin data into xarray data set.
+2026-05-11 07:52:21,522: Create lookup table and convert to pytorch tensor
+2026-05-11 07:53:48,514: Epoch 1 average loss: avg_loss: 0.22154, avg_total_loss: 0.22154
+2026-05-11 07:55:04,114: Epoch 2 average loss: avg_loss: 0.15682, avg_total_loss: 0.15682
+2026-05-11 07:56:19,229: Epoch 3 average loss: avg_loss: 0.13967, avg_total_loss: 0.13967
+2026-05-11 07:57:35,352: Epoch 4 average loss: avg_loss: 0.12871, avg_total_loss: 0.12871
+2026-05-11 07:58:52,788: Epoch 5 average loss: avg_loss: 0.11990, avg_total_loss: 0.11990
+2026-05-11 07:58:57,235: Epoch 5 average validation loss: 0.09219 -- Median validation metrics: avg_loss: 0.09219, NSE: 0.68694, KGE: 0.71056
+2026-05-11 08:00:12,859: Epoch 6 average loss: avg_loss: 0.11498, avg_total_loss: 0.11498
+2026-05-11 08:01:28,489: Epoch 7 average loss: avg_loss: 0.10902, avg_total_loss: 0.10902
+2026-05-11 08:02:43,836: Epoch 8 average loss: avg_loss: 0.10497, avg_total_loss: 0.10497
+2026-05-11 08:03:58,685: Epoch 9 average loss: avg_loss: 0.10108, avg_total_loss: 0.10108
+2026-05-11 08:05:13,292: Epoch 10 average loss: avg_loss: 0.09690, avg_total_loss: 0.09690
+2026-05-11 08:05:16,963: Epoch 10 average validation loss: 0.13389 -- Median validation metrics: avg_loss: 0.13389, NSE: 0.67692, KGE: 0.74302
+2026-05-11 08:06:33,931: Epoch 11 average loss: avg_loss: 0.09286, avg_total_loss: 0.09286
+2026-05-11 08:07:48,611: Epoch 12 average loss: avg_loss: 0.09157, avg_total_loss: 0.09157
+2026-05-11 08:09:05,146: Epoch 13 average loss: avg_loss: 0.08767, avg_total_loss: 0.08767
+2026-05-11 08:10:21,770: Epoch 14 average loss: avg_loss: 0.08496, avg_total_loss: 0.08496
+2026-05-11 08:11:39,238: Epoch 15 average loss: avg_loss: 0.08425, avg_total_loss: 0.08425
+2026-05-11 08:11:42,600: Epoch 15 average validation loss: 0.12907 -- Median validation metrics: avg_loss: 0.12907, NSE: 0.65006, KGE: 0.74390
+2026-05-11 08:12:58,328: Epoch 16 average loss: avg_loss: 0.08200, avg_total_loss: 0.08200
+2026-05-11 08:14:13,812: Epoch 17 average loss: avg_loss: 0.08033, avg_total_loss: 0.08033
+2026-05-11 08:15:33,587: Epoch 18 average loss: avg_loss: 0.07816, avg_total_loss: 0.07816
+2026-05-11 08:16:53,326: Epoch 19 average loss: avg_loss: 0.07706, avg_total_loss: 0.07706
+2026-05-11 08:18:10,155: Epoch 20 average loss: avg_loss: 0.07594, avg_total_loss: 0.07594
+2026-05-11 08:18:13,474: Epoch 20 average validation loss: 0.15333 -- Median validation metrics: avg_loss: 0.15333, NSE: 0.54152, KGE: 0.66950
+2026-05-11 08:19:30,631: Epoch 21 average loss: avg_loss: 0.07483, avg_total_loss: 0.07483
+2026-05-11 08:20:49,823: Epoch 22 average loss: avg_loss: 0.07348, avg_total_loss: 0.07348
+2026-05-11 08:22:07,373: Epoch 23 average loss: avg_loss: 0.07297, avg_total_loss: 0.07297
+2026-05-11 08:23:25,554: Epoch 24 average loss: avg_loss: 0.07099, avg_total_loss: 0.07099
+2026-05-11 08:24:43,845: Epoch 25 average loss: avg_loss: 0.07107, avg_total_loss: 0.07107
+2026-05-11 08:24:47,307: Epoch 25 average validation loss: 0.22648 -- Median validation metrics: avg_loss: 0.22648, NSE: 0.67975, KGE: 0.69434
+2026-05-11 08:26:06,769: Epoch 26 average loss: avg_loss: 0.06956, avg_total_loss: 0.06956
+2026-05-11 08:27:25,362: Epoch 27 average loss: avg_loss: 0.06797, avg_total_loss: 0.06797
+2026-05-11 08:28:45,425: Epoch 28 average loss: avg_loss: 0.06780, avg_total_loss: 0.06780
+2026-05-11 08:30:01,881: Epoch 29 average loss: avg_loss: 0.06800, avg_total_loss: 0.06800
+2026-05-11 08:31:16,393: Epoch 30 average loss: avg_loss: 0.06469, avg_total_loss: 0.06469
+2026-05-11 08:31:19,782: Epoch 30 average validation loss: 0.16040 -- Median validation metrics: avg_loss: 0.16040, NSE: 0.62424, KGE: 0.74553
+2026-05-11 08:31:29,401: Logging to /content/nh/runs/5cond_factorial/L_seed17/output.log initialized.
+2026-05-11 08:31:30,033: Using the model weights from /content/nh/runs/5cond_factorial/L_seed17/model_epoch030.pt
+2026-05-11 08:32:44,153: Stored metrics at /content/nh/runs/5cond_factorial/L_seed17/test/model_epoch030/test_metrics.csv
+2026-05-11 08:32:44,235: Stored results at /content/nh/runs/5cond_factorial/L_seed17/test/model_epoch030/test_results.p

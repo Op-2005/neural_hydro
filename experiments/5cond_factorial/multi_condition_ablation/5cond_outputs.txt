@@ -1,0 +1,130 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2868
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fmodern\fcharset0 Courier;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;}
+\margl1440\margr1440\vieww29380\viewh17060\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\fs26 \cf0 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 /content/nh\
+Run discovery from /content/nh/runs/5cond_factorial:\
+       L: 3 seed(s) found: [11, 13, 17]\
+       G: 3 seed(s) found: [11, 13, 17]\
+     G+T: 3 seed(s) found: [11, 13, 17]\
+     G+M: 3 seed(s) found: [11, 13, 17]\
+   G+T+M: 3 seed(s) found: [11, 13, 17]\
+\
+\
+=== HEADLINE ===\
+       L  NSE +0.653  KGE +0.728  logNSE +0.683\
+       G  NSE +0.609  KGE +0.515  logNSE +0.622\
+     G+T  NSE +0.605  KGE +0.512  logNSE +0.616\
+     G+M  NSE +0.583  KGE +0.559  logNSE +0.605\
+   G+T+M  NSE +0.586  KGE +0.533  logNSE +0.604\
+\
+Outputs at: /content/nh/experiments/analysis_outputs/5cond_component0\
+\
+/content/nh\
+     L: 3 seed(s) found: [11, 13, 17]\
+     G: 3 seed(s) found: [11, 13, 17]\
+   G+T: 3 seed(s) found: [11, 13, 17]\
+   G+M: 3 seed(s) found: [11, 13, 17]\
+ G+T+M: 3 seed(s) found: [11, 13, 17]\
+\
+\{\
+  "L": \{\
+    "n_seeds": 3,\
+    "seeds": [\
+      11,\
+      13,\
+      17\
+    ],\
+    "median_NSE_per_seed": [\
+      0.6511677447636253,\
+      0.6529475952853108,\
+      0.6555066057116874\
+    ],\
+    "cross_seed_median": 0.6529475952853108,\
+    "cross_seed_std": 0.0017808274159460894\
+  \},\
+  "G": \{\
+    "n_seeds": 3,\
+    "seeds": [\
+      11,\
+      13,\
+      17\
+    ],\
+    "median_NSE_per_seed": [\
+      0.5897120863231458,\
+      0.608603960427075,\
+      0.6141429060121809\
+    ],\
+    "cross_seed_median": 0.608603960427075,\
+    "cross_seed_std": 0.010458636920064488\
+  \},\
+  "G+T": \{\
+    "n_seeds": 3,\
+    "seeds": [\
+      11,\
+      13,\
+      17\
+    ],\
+    "median_NSE_per_seed": [\
+      0.6032093813277466,\
+      0.6051525881730949,\
+      0.6126082154187782\
+    ],\
+    "cross_seed_median": 0.6051525881730949,\
+    "cross_seed_std": 0.004051069992279419\
+  \},\
+  "G+M": \{\
+    "n_seeds": 3,\
+    "seeds": [\
+      11,\
+      13,\
+      17\
+    ],\
+    "median_NSE_per_seed": [\
+      0.5810384498191039,\
+      0.5832314074054508,\
+      0.6114366679048968\
+    ],\
+    "cross_seed_median": 0.5832314074054508,\
+    "cross_seed_std": 0.013841954926191903\
+  \},\
+  "G+T+M": \{\
+    "n_seeds": 3,\
+    "seeds": [\
+      11,\
+      13,\
+      17\
+    ],\
+    "median_NSE_per_seed": [\
+      0.5781998463777376,\
+      0.5858521179452937,\
+      0.5963924827657239\
+    ],\
+    "cross_seed_median": 0.5858521179452937,\
+    "cross_seed_std": 0.007458243533439826\
+  \}\
+\}\
+\
+Wrote 2745 rows to per_basin_per_seed.csv\
+\
+*** Cross-seed median NSE per condition ***\
+    L     : +0.653    (NH cudalstm reference baseline)\
+    G     : +0.609    (architecture-matched no-graph control)\
+    G+T   : +0.605\
+    G+M   : +0.583\
+    G+T+M : +0.586\
+\
+*** Pairwise contrasts ***\
+    L \uc0\u8722  G               : +0.044    (architecture/methodology delta)\
+    (G+T) \uc0\u8722  G           : -0.003    (effect of topology features alone)\
+    (G+M) \uc0\u8722  G           : -0.025    (effect of message passing alone)\
+    (G+T+M) \uc0\u8722  (G+T)     : -0.019    (adding messages on top of T)\
+    (G+T+M) \uc0\u8722  (G+M)     : +0.003    (adding T on top of messages)\
+    (G+T+M) \uc0\u8722  G         : -0.023    (combined effect)\
+    interaction (T\'d7M)    : +0.006    (super-/sub-additivity of T and M)\
+}
