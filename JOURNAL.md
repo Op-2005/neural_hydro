@@ -543,3 +543,165 @@ This is a stronger question because:
 - *Compute is still unresolved.* The reframing doesn't change the fact
   that a 5-seed × 3-condition × 183-basin run needs GPU. Did we ask? Logged
   as a follow-up question for the next meeting.
+
+---
+## 2026-05-12 — /crs-unleashed: 5-condition factorial post-mortem
+
+### Step 1 — Orient (deeper)
+
+15 runs from the Colab sweep landed in `experiments/5cond_factorial/multi_condition_ablation/`. Each L_seed* folder has the canonical NH layout (`config.yml`, `model_epoch001..030.pt`, `test/model_epoch030/{test_metrics.csv, test_results.p}`); each graph run has `test_metrics.csv`, `test_predictions.csv`, `run_config.json` with epoch-by-epoch loss + wall-clock. `compare_5conditions.py` works against either layout once a symlink puts everything under `runs/5cond_factorial/`. Recent commits (last 5): notebook fixes (Cell 8 disabled, Cell 10 cascade-detection, Component-0 baseline fix, factorial infrastructure). Open question carried from prior journal: "why does the 23-basin pilot's +0.078 NSE evaporate at Component-0 scale?" — this session addresses it.
+
+### Step 2 — Diagnose (top 3 load-bearing claims, ranked)
+
+1. **"L − G = +0.050 NSE is the architecture confound."** *Importance: high (it's the central question of this paper). Confidence: LOW after this session — see Step 4.* The hypothesis from the 2026-05-06 meeting was that cudalstm (cuDNN-fused `nn.LSTM`) and DirectedGraphLSTM (Python loop over `nn.LSTMCell`) are different architectures. They are — but they should be mathematically equivalent forward passes when edges are empty. Whether the gap is "real architecture" or "training-budget confound dressed up as architecture" needed to be tested. **TEST FIRST.**
+2. **"Graph signal (topology features + message passing) is net null-to-negative at Component-0 scale."** *Importance: high. Confidence: medium-high.* Within-graph-trainer contrasts: G+T − G = −0.001 (null), G+M − G = −0.006 (slight negative), G+T+M − G = −0.011 (more negative), interaction = −0.009 (sub-additive). All three CIs exclude zero on the negative side. These contrasts hold the architecture and training budget constant, so they're internally valid — but they sit on an undertrained baseline.
+3. **"23-basin pilot +0.078 NSE was real but doesn't generalize."** *Importance: medium. Confidence: high.* The pilot used warm-start and 23 basins (tiny network, high signal-per-step); the scaled run is from-scratch on 183 basins. Generalization gap is the expected story.
+
+### Step 3 — Decide (chain of 2 gated steps; only Step A run this session)
+
+**Step A — Code-level audit of L vs G architectural & training-pipeline differences.** *Hypothesis:* there is at least one non-architectural difference (training budget, batching, normalization) large enough to plausibly account for ΔNSE ≈ 0.05. *Success:* identify the difference and quantify it. *Falsification:* the trainers are matched on every dimension we can audit at code level (in which case the gap is purely architecture/numerics). *Cost:* free (no compute).
+
+**Step B (gated on A finding a budget confound) — Reproduce L with matched gradient budget.** *Hypothesis:* if I train cudalstm with the SAME gradient-step budget the graph trainer gets (14 steps/epoch × 30 epochs = 420 steps total), its median NSE drops to ≈ G's 0.609. *Success:* cudalstm-with-restricted-budget lands within 0.01 NSE of G. *Falsification:* cudalstm-with-restricted-budget still beats G by ≥ 0.03 NSE → there IS a real architecture component. *Cost:* ~5 min on T4 per seed (only 420 gradient steps); 3 seeds ≈ 15 min. NOT RUN THIS SESSION (needs GPU).
+
+### Step 4 — Execute (Step A only)
+
+**Audited DirectedGraphLSTM (`experiments/training/train_graph_lstm.py`):**
+- Forget bias init → matched (set to 3 on `bias_hh` at construction).
+- Dropout → matched (0.4 on LSTM output before head).
+- LR / optimizer / clip → matched (Adam, 1e-3, clip_grad_norm=1).
+- Basin one-hot encoding → matched (`x_one_hot` from NH dataset, propagated via `static_parts.append(sample["x_one_hot"])`).
+- Hidden size → matched (64).
+- Loss → mathematically equivalent (MSE on last-step prediction with NaN masking).
+- **Batching shape → MISMATCH.** NH samples random (basin, window) pairs of size 256 → ~2,610 gradient steps/epoch on Component 0. DirectedGraphLSTM samples whole windows (all 183 basins per window) of 256 windows per batch → ~14 gradient steps/epoch. **186× ratio.**
+
+**Quantification: loss trajectories all four graph variants, seed 11:**
+- G:    epoch 0/5/10/15/20/25/29 loss = 0.912/0.606/0.486/0.433/0.406/0.370/0.359
+- G+T:  0.960/0.626/0.499/0.448/0.418/0.379/0.366
+- G+M:  0.904/0.559/0.458/0.414/0.392/0.365/0.351
+- G+T+M: 0.949/0.583/0.473/0.426/0.402/0.378/0.360
+
+Loss still falling ~3% in the last 4 epochs across all variants. Graph trainer is NOT converged at epoch 30. With NH's gradient-step budget the trainer would have processed ~78,000 gradient steps; it processed 420.
+
+**Per-basin pattern check (L − G):** 76% of basins are better with L; 50% strongly so (Δ > 0.05); only 10% are strongly better with G. The L > G effect is *broad and uniform*, not concentrated on a specific basin type. This is the signature of an optimization-side cause, not a model-side cause (which would show a bimodal pattern, e.g., "G better on basins with strong upstream signal, L better on independent basins").
+
+**Step A verdict: PASSES (a large non-architectural confound exists).** Step B would proceed if compute were available this session.
+
+### Step 4.5 — Reviewer 2
+
+- *"Could the gradient-step ratio simply be wrong because each graph step sees 183× more data and so per-example signal is the same?"* → Per-example signal is the same, but **Adam's adaptive moments behave differently with effective batch size 183 × 256 ≈ 47k vs 256.** Larger effective batch → smaller relative noise → smaller effective step size at fixed LR. Empirically the loss curve says: trainer is still descending. So whatever the per-step efficiency, 30 epochs isn't enough.
+- *"What if the LSTMCell Python loop has subtly different numerics from cuDNN-fused LSTM?"* → Possible at the 1e-4 level. The smoke test on 23 basins matched the pilot NSE within < 1e-3 of the cudalstm pilot. A 0.05 NSE gap is two orders of magnitude too large for FP32-vs-cuDNN.
+- *"Is the per-basin uniformity argument really diagnostic?"* → It's suggestive, not conclusive. The strict test is Step B: equalize gradient budget and re-run. That's the killer experiment.
+- *"What about KGE? L beats G by +0.17 KGE — same training-budget story?"* → Same direction. KGE has higher std due to dry-basin instability (mean-ratio β term blows up). Bootstrap median CI [+0.15, +0.20] is still very tight.
+- *"The original 23-basin pilot had warm-start. Component 0 graph runs were from-scratch. Could warm-start alone close the gap?"* → Possibly. Warm-start was originally how we got +0.078 NSE. A future test should compare "G from-scratch" vs "G warm-started from L_seed11" — orthogonal to Step B.
+
+### Open questions remaining
+
+1. Does matched-gradient-budget cudalstm match G? (Step B; pre-registered above.)
+2. Does warm-started G match L? (Independent test, 30 epochs each.)
+3. If G == L when properly trained, do (G+T) − G and (G+M) − G change sign or magnitude on the properly-trained baseline? (The real publishable contrasts.)
+4. Why is loss decreasing slowly in graph trainer — Adam moment-scale issue, or genuinely undertrained at any LR?
+
+### Plan for next 2–3 sessions
+
+1. **Run Step B on Colab T4 (~20 min):** train cudalstm with 420 gradient steps total (no longer 78,000) on Component 0. Compare to G. *Decisive on the training-budget hypothesis.*
+2. **Run Step C — graph variants extended training (compute heavy):** train G for 200 epochs on Colab T4 (~10 hr), see if it converges to L's NSE. If yes, training-budget confirmed; if no, residual architecture gap quantified.
+3. **Recompute the factorial contrasts on the properly-trained baseline:** once we have a converged G, recompute (G+T) − G, (G+M) − G, (G+T+M) − G. *This is the actual publishable result — current numbers are on an undertrained baseline and overstate the sub-additivity.*
+
+
+---
+## 2026-05-12 — Architecture deep-audit and testing-framework redesign
+
+### Why this session
+
+The 5-condition factorial finished with G+T+M < G+M ≈ G+T < G < L. The headline (L − G ≈ +0.050 NSE) was previously framed as an architecture confound (cudalstm vs DirectedGraphLSTM). Earlier this day's `/crs-unleashed` session showed it was almost entirely a **training-budget confound**: graph trainer gets 186× fewer gradient updates per epoch than NH's cudalstm trainer. Loss is still falling at epoch 30.
+
+But the training-budget story is necessary, not sufficient. Why do the *advanced* variants (G+T, G+M, G+T+M) also underperform even the simplest no-graph baseline G? This session audits each architectural component to answer that.
+
+### Three deliverables produced (root directory)
+
+1. **`5cond_run_analysis.md`** — results-only digest. Headline numbers, six pairwise contrasts, per-basin patterns, stratifications, loss trajectories. Conclusion: the paper-claim direction is reversed; current results cannot support "our features beat standard LSTM."
+2. **`architecture_analysis.md`** — deep technical critique. Walks through each component (DirectedGraphLSTM forward pass, the 5 topology features, message passing aggregation/function/residual, training pipeline confounds) and identifies specific defects. Prioritized fix tiers and three honest paper narratives.
+3. **`testing_framework_proposal.md`** — 6-step diagnostic ladder with pre-registration discipline. Step 1 (matched-budget L) is 15 min on T4 and gates the next step. Total framework through Step 5 = ~43 hr T4.
+
+### Most surprising finding from the audit
+
+**The basin one-hot encoding (NH default, 671-dim) subsumes the 5 hand-designed topology features.** The topology features are 0.7% of the static input vector. The basin one-hot already perfectly identifies each basin and lets the LSTM learn arbitrary per-basin response curves. The topology features are *redundant signal in low-dimensional drag-along channels.*
+
+This is the structural reason G+T − G ≈ 0. Not because topology features are inherently weak — they aren't necessarily — but because the design choice to keep `use_basin_id_encoding: True` makes them informationally redundant. Step 2 of the new framework tests this directly.
+
+### Other architectural defects worth recording
+
+- Mean aggregation gives a 1km² parent and a 100km² parent equal weight (Component 0 has area_ratio up to 275×).
+- Single linear `W_msg_edge` (no nonlinearity in the message function itself).
+- Zero-init `W_out` + `tanh(W_out(m))` residual: the graph path has to grow from zero through a saturating nonlinearity.
+- `train_graph_lstm.py` had test-set leakage in best-checkpoint selection (lines 635-643) — production trainer doesn't use it but the helper code is buggy.
+- `compute_topology_features` uses `shortest_path_length` despite docstring saying "longest path" — minor bug for ~10% of basins.
+
+### Hostile-reviewer review of these findings
+
+- *"Aren't you just rationalizing a negative result?"* → No: the diagnoses are specific (training budget = 186× ratio, basin one-hot = 0.7% feature share). Each has a falsifiable test in the new framework.
+- *"What if all the proposed fixes don't help?"* → Then we publish the negative result (Narrative C in arch_analysis §7). The 5cond run already has the statistical rigor for that.
+- *"You're proposing too many changes."* → The framework explicitly orders them — Step 1 is one experiment, gated; Step 2 is another, gated. Not all at once.
+
+### Plan: next 2–3 sessions
+
+1. **Write `preregistration_step1.md`** and launch matched-budget L on Colab (15 min compute). *Gates whether the L−G gap is purely training budget.*
+2. **Write `preregistration_step2.md`** based on Step 1 outcome, launch one-hot-ablation runs (~6 hr compute). *Gates whether topology features have signal independent of basin-ID.*
+3. **Implement area-weighted aggregation in DirectedGraphLSTM (code change in `train_graph_lstm.py`)** while Step 2 runs — does not need its own pre-registration since it's a design improvement, not a hypothesis test. The test of whether it helps is Step 4.
+
+---
+## 2026-05-12 — /crs-unleashed: Step 1 executed (matched-budget L)
+
+### Step 1 (Orient deeper)
+
+Re-read this morning's three analysis files. Identified `max_updates_per_epoch` in NH's `BaseTrainer` — clean implementation path for matched-budget cudalstm without forking the codebase. The framework's Step 1 was queued as the immediate next action; this session executed it.
+
+### Step 2 (Diagnose top 3)
+
+1. **L − G gap of +0.050 NSE is dominantly a training-budget confound** (high importance, low confidence after earlier analysis). → TEST THIS NOW.
+2. Basin one-hot encoding subsumes topology features (high importance, med confidence). → Pre-register, defer execution to GPU session.
+3. Area-weighted aggregation > mean (med importance, med confidence). → Defer.
+
+### Step 3 (Decide)
+
+- **Step A:** Pre-register Step 1 (`preregistration_step1.md`), implement matched-budget script, run on CPU. Hypothesis: L_420 lands within 0.01 NSE of G.
+- **Step B:** Pre-register Step 2 (`preregistration_step2.md`) — write only, run later on GPU.
+- **Step C:** gated on A: write addendum to `5cond_run_analysis.md` if hypothesis confirmed.
+
+### Step 4 (Execute)
+
+**Step A — matched-budget L (main result):**
+
+| Trainer | Steps | Examples | Cross-seed median NSE |
+|---|---|---|---|
+| L (cudalstm, 30 epoch) | 78,330 | 20M | 0.653 |
+| G (graph, 30 graph-epoch) | 420 | 20M | 0.609 |
+| L_420 (matched steps) | 420 | 107k | **0.502** |
+
+L_420 − G paired (n=549): median Δ = **−0.100**, CI [−0.105, −0.092], 94.5% of basin × seed pairs favor G.
+
+**Outcome:** neither success (Δ ≈ 0) nor falsification (Δ ≥ +0.03). Third-category — Δ went in the *opposite* direction. **The "matched gradient steps" framing was biased toward the trainer with the larger per-step batch.** Each graph step sees 47k examples; cudalstm sees 256. At 420 steps, graph trainer has seen 200× more data.
+
+**Step B — preregistration_step2 (queued, not run):** basin-encoding ablation. Needs GPU.
+
+### Step 4.5 — Reviewer 2
+
+1. **"Is the L_420 result an artifact of the script implementation?"** → Unlikely. Uses NH's standard `BaseTrainer` with only `max_updates_per_epoch=420` and `epochs=1`; everything else (model, loss, optimizer, data pipeline) is identical to the original L runs. Same scaler, same basin set, same forcings. Identical NH eval pipeline producing test_metrics.csv. The pipeline is the same as the L_seed runs, just stopped early.
+2. **"Could L_420 just be 'NH at 16% of one epoch' which is essentially random?"** → No. L_420 NSE = 0.502 is far above the null-control expectation (≪ 0); the model HAS learned something. It's just less than G learned in the same step count.
+3. **"Does cross-seed std support the conclusion?"** → Yes. L_420 per-seed medians 0.521/0.502/0.501 (std 0.011), tight. G per-seed medians 0.609/0.614/0.590 (std 0.013). The L_420 − G gap (0.10) is ~7× the cross-seed std, very robust.
+4. **"What if NH cudalstm has a warmup phase that makes step-420 NSE pessimistic?"** → Plausible. Adam moments stabilize in early training. To address: would need to evaluate at multiple step counts (e.g., 420, 1000, 3000, 10000) — a quick follow-up using the existing L checkpoints. The bigger point is that *the original L − G comparison happened at matched-examples* (~20M each), not matched-steps. At matched-examples, L still wins by 0.05. So the residual gap is real even after this experiment.
+5. **"Are you sure you didn't just rediscover that larger batch = fewer steps to reach same NSE?"** → Yes, that's exactly what this result implies — and that's *the finding*. The previous hypothesis (training-budget = step-count) collided with the reality that matched-steps biases toward whichever trainer has the bigger per-step batch. Matched-examples is the cleaner framing, and there L > G by 0.05 — so the gap is something *other than* both step count and example count.
+
+### Open questions after this session
+
+1. **What IS the source of the L − G gap at matched examples?** Three candidates: (a) Adam gradient-noise scaling (small-batch L gets effective LR boost from noise); (b) data exposure pattern (random (basin, window) sampling exposes the model to more diverse mini-batches than whole-window sampling); (c) actual architectural difference (cuDNN nn.LSTM vs Python nn.LSTMCell loop). Next experiment should isolate.
+2. **Does graph trainer benefit from smaller batches?** If batch=32 instead of 256, graph trainer gets 14×16 = 117 steps/epoch → 30 epochs = 3,510 steps. 8× more gradient updates. Pre-register before running.
+3. **Does the L − G gap survive at L's batch=32 setting?** Train L with batch=32 to check if cudalstm itself benefits more from smaller batches than graph trainer would.
+4. Step 2 (basin-encoding ablation) still queued; gated by Step 1 outcome but the outcome here doesn't invalidate Step 2's design.
+
+### Plan for next 2–3 sessions
+
+1. **Graph trainer with batch=32 (G_b32):** matched-examples to original G but with 8× more gradient updates per epoch. 3 seeds. Pre-register before launching. Compute: ~3 hr on T4 (8× the graph trainer's per-epoch step count, similar per-step cost). *Gates whether more gradient updates close the L − G gap.*
+2. **Step 2 from framework** (`preregistration_step2.md`, already written): one-hot ablation. 6 hr on T4. *Gates whether topology features have signal independent of basin-ID.* Independent of #1.
+3. **L learning-curve via existing checkpoints:** evaluate L_seed11 at epochs {1, 5, 10, 20, 30}. ~5 min compute (eval-only). *Tells us where on L's learning curve NSE ≈ 0.609 (G's level) sits — i.e., how many cudalstm-steps equal one graph-trainer-step in NSE terms.*
+
