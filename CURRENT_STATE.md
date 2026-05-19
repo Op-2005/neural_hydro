@@ -362,3 +362,15 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Caveats:** Step 1 result is robust (3 seeds, n=549 paired comparisons, tight bootstrap CIs). Robustness check with alternative batch sizes for L_420 was pre-committed but deferred to a follow-up — the 200× per-step example gap makes the matching question moot regardless.
 - **Files:** new `train_matched_budget_lstm.py`, `preregistration_step1.md` (with results section), `preregistration_step2.md`. `L420_seed{11,13,17}/` runs in `runs/5cond_factorial/`.
 - **Next:** train G with smaller batches (batch=32 → 4,576 steps per epoch × 30 = 137k gradient steps) — tests whether more gradient updates at the same example exposure closes the L − G gap.
+
+### Organize Session — 2026-05-12 (post-Step-1 cleanup)
+
+- **Audited:** `experiments/5cond_factorial/{configs,multi_condition_ablation,notebooks}/`, `runs/5cond_factorial/L420_seed*/`.
+- **Fixes applied:** 6 new docs total — 3 NOTES.md (Pattern 4, results-bearing folders) + 3 READMEs (Pattern 2, subfolder grouping).
+- **Files created:**
+  - `runs/5cond_factorial/L420_seed{11,13,17}/NOTES.md` — per-seed result + reference to pre-registration.
+  - `experiments/5cond_factorial/configs/README.md` — L vs L420 config table.
+  - `experiments/5cond_factorial/notebooks/README.md` — single-notebook description.
+  - `experiments/5cond_factorial/multi_condition_ablation/README.md` — 15-folder run-output index.
+- **Smoke test:** path references in new docs verified to point to existing files.
+- **Deferred:** none — root README and existing subfolder docs are already in good shape; no medium/low items worth this session.
