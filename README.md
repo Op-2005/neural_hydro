@@ -1,42 +1,25 @@
 # Neural Hydrology — Graph-LSTM Experiments (Baker Lab @ UCLA)
 
-Graph-based extensions to the [NeuralHydrology](https://github.com/neuralhydrology/neuralhydrology)
-framework (Kratzert et al., JKU Linz). This fork tests whether river-network
-topology and inter-basin message passing improve streamflow prediction over a
-strong multi-basin LSTM baseline.
+Graph-based extensions to the [NeuralHydrology](https://github.com/neuralhydrology/neuralhydrology) framework (Kratzert et al., JKU Linz). This fork investigates whether river-network topology and inter-basin message passing improve streamflow prediction over a strong multi-basin LSTM baseline on CAMELS-US.
 
-## What's here
+## What this is
 
-- `neuralhydrology/` — upstream NH framework, unmodified.
-- `datasets/camels_us/` — CAMELS-US data (674 basins, 3 forcing products).
-- `topology_analysis/` — river-network inference from CAMELS gauges (1298 edges
-  across 584 basins in 46 connected components).
-- `experiments/` — training scripts, configs, basin lists, analysis tools. See
-  `experiments/README.md` for per-file descriptions.
-- `runs/` — every experiment run, numbered chronologically. See
-  `runs/README.md` for the index.
-- `idea1.md` — master file for the current active research direction.
-- `idea2/` — alternative direction (temporal-lag spectral framing), set aside.
-- `JOURNAL.md` — running log of decisions, PI feedback, and direction changes (read this if you want to know *why* a call was made).
-- `CURRENT_STATE.md` — chronological log of experiments and evolving thinking.
+A research codebase, not a finished product. The work is ongoing; current results, open questions, and the next experiments are tracked elsewhere (see "Where to go next" below).
 
-## Quick start
+## Where to go next
 
-```bash
-conda activate nh
-
-# Train the 23-basin strong baseline
-python neuralhydrology/nh_run.py train --config-file experiments/configs/lstm_study_network_strong.yaml
-
-# Train a graph-LSTM variant (edit flags at top of script first)
-python experiments/training/train_graph_lstm.py
-
-# Compare results
-python experiments/analysis/compare_results.py \
-    --baseline runs/05_lstm_23basin_strong_baseline/test/model_epoch030/test_metrics.csv \
-    --baseline-label "Strong LSTM" \
-    --graph runs/06_graph_edge_warm_full/test_metrics.csv:Graph+Edge
-```
+| If you want… | Go to |
+|---|---|
+| The current research direction | `idea1.md` |
+| Latest experiment results and what they mean | `experiments/5cond_factorial/analysis/` |
+| The running log of decisions, pivots, and PI feedback | `JOURNAL.md` |
+| Chronological history of all sessions | `CURRENT_STATE.md` |
+| Training scripts, configs, analysis tools | `experiments/` (each subfolder has its own README) |
+| Per-experiment run outputs | `runs/` |
+| River-network inference (Phase 1) | `topology_analysis/` |
+| Literature review and positioning | `research_papers.md` |
+| The upstream NH framework (unmodified) | `neuralhydrology/` |
+| Alternative direction set aside in April 2026 | `idea2/` |
 
 ## Credits
 
@@ -52,3 +35,7 @@ Built on NeuralHydrology:
   doi = {10.21105/joss.04050},
 }
 ```
+
+CAMELS-US dataset: Newman et al. (2015), Addor et al. (2017).
+
+Research conducted at the Baker Lab, UCLA.

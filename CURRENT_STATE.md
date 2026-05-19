@@ -336,7 +336,7 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 ### CRS Session — 2026-05-12 (architecture deep-audit + framework redesign)
 
 - **Reviewed:** DirectedGraphLSTM class (`train_graph_lstm.py:98-294`), `compute_topology_features` (`train_graph_component0.py:98-146`), message passing forward, edge feature normalization, training pipeline (per-window batching, best-checkpoint selection, validation handling).
-- **Produced (3 root-dir files):** `5cond_run_analysis.md` (results-only digest of 5cond_factorial), `architecture_analysis.md` (deep technical critique of model + topology features + message passing + training pipeline, with prioritized improvement tiers and 3 paper-narrative paths), `testing_framework_proposal.md` (6-step diagnostic ladder with pre-registration discipline, compute estimates, and a decision diagram).
+- **Produced (3 root-dir files):** `experiments/5cond_factorial/analysis/5cond_run_analysis.md` (results-only digest of 5cond_factorial), `experiments/5cond_factorial/analysis/architecture_analysis.md` (deep technical critique of model + topology features + message passing + training pipeline, with prioritized improvement tiers and 3 paper-narrative paths), `experiments/5cond_factorial/analysis/testing_framework_proposal.md` (6-step diagnostic ladder with pre-registration discipline, compute estimates, and a decision diagram).
 - **Key findings beyond training-budget confound:**
   1. **Basin one-hot encoding subsumes the 5 topology features** (5/681 ≈ 0.7% of static input is drowned by 671-dim one-hot). Explains G+T − G ≈ 0.
   2. **Mean aggregation gives equal weight to a 1km² parent and a 100km² parent** — physically wrong. Area-weighted aggregation is the obvious fix.
@@ -344,13 +344,13 @@ reasoning and pre-registrations live in `JOURNAL.md`.
   4. **Test-set leakage in `train_graph_lstm.py:635-643`** (best-checkpoint selection on test data). Production trainer is unaffected but the helper code is buggy.
   5. **`compute_topology_features` uses `shortest_path_length` despite docstring saying "longest path"** — minor bug affecting depth values on multi-parent basins (~10% of basins).
 - **Recommended path:** Start with Step 1 (matched-budget L control on Colab, 15 min compute). Then Step 2 (one-hot ablation, 6 hr). Both pre-registered before launching.
-- **Files:** new `5cond_run_analysis.md`, `architecture_analysis.md`, `testing_framework_proposal.md` at repo root.
+- **Files:** new `experiments/5cond_factorial/analysis/5cond_run_analysis.md`, `experiments/5cond_factorial/analysis/architecture_analysis.md`, `experiments/5cond_factorial/analysis/testing_framework_proposal.md` at repo root.
 - **Caveats:** no code changes yet — pure analysis pass. Tier-1 architectural fixes (area-weighted aggregation, 2-layer message MLP) are recommended but require pre-registration before implementation.
 - **Next:** write `preregistration_step1.md`, launch matched-budget L on Colab.
 
 ### CRS-Unleashed Session — 2026-05-12 (Step 1 executed: matched-budget L on CPU)
 
-- **Reviewed:** `5cond_run_analysis.md`, `architecture_analysis.md`, `testing_framework_proposal.md` (just-written), NH `BaseTrainer` (has `max_updates_per_epoch` — directly usable).
+- **Reviewed:** `experiments/5cond_factorial/analysis/5cond_run_analysis.md`, `experiments/5cond_factorial/analysis/architecture_analysis.md`, `experiments/5cond_factorial/analysis/testing_framework_proposal.md` (just-written), NH `BaseTrainer` (has `max_updates_per_epoch` — directly usable).
 - **Produced (3 files):** `experiments/5cond_factorial/preregistration_step1.md` (pre-registered before any data), `experiments/5cond_factorial/preregistration_step2.md` (queued, not run), `experiments/training/train_matched_budget_lstm.py` (standalone matched-budget cudalstm trainer; ~120 LOC).
 - **Executed:** Step 1 on CPU. 3 seeds × 420 gradient steps cudalstm on Component 0. Total time ~25 min.
 - **Headline result (third-category outcome, neither pre-registered prediction):**
@@ -374,3 +374,12 @@ reasoning and pre-registrations live in `JOURNAL.md`.
   - `experiments/5cond_factorial/multi_condition_ablation/README.md` — 15-folder run-output index.
 - **Smoke test:** path references in new docs verified to point to existing files.
 - **Deferred:** none — root README and existing subfolder docs are already in good shape; no medium/low items worth this session.
+
+### Organize Session — 2026-05-12 (cleanup pass)
+
+- **Audited:** root *.md files, `notebooks/` folder, README content.
+- **Fixes applied:** (1) Grouped the 4 5cond analysis docs into a new `experiments/5cond_factorial/analysis/` folder with its own README. (2) Archived the superseded root-level `notebooks/colab_publication_run.ipynb` (old A/B/C) to `notebooks/_archive/`. (3) Rewrote root README as a clean signpost — removed runs-table content that drifts; kept premise + pointers + credits.
+- **Files moved:** 4 root .md → `experiments/5cond_factorial/analysis/`; `notebooks/{colab_publication_run.ipynb,README.md}` → `notebooks/_archive/` (preserving git history via `git mv`).
+- **References updated:** CURRENT_STATE.md, JOURNAL.md, preregistration_step1.md, preregistration_step2.md, multi_condition_ablation/README.md — all bare-name refs to the moved files now use full paths.
+- **Smoke test:** no broken refs; all moved files still resolvable from their referrers.
+- **Deferred:** none — clean state.

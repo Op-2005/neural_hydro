@@ -1,7 +1,7 @@
 # Pre-registration — Step 1: Matched-Budget L Control
 
 **Status:** Pre-registered 2026-05-12, before any data is observed.
-**Framework reference:** `testing_framework_proposal.md` §3, Step 1.
+**Framework reference:** `experiments/5cond_factorial/analysis/testing_framework_proposal.md` §3, Step 1.
 **Author session:** `/crs-unleashed` 2026-05-12.
 
 ---
@@ -65,7 +65,7 @@ Re-run seed 11 with a **different effective batch size** that produces 420 steps
 
 ## Pre-committed paper-narrative implications
 
-- If hypothesis confirmed (success criterion met): the headline "L beats G by 0.05 NSE" is replaced by "L and G are equivalent at matched budget; G's apparent loss in the 5cond run was a training-budget artifact." `5cond_run_analysis.md` gets an addendum, not a rewrite. Future work targets G+T+M − G under proper training budget.
+- If hypothesis confirmed (success criterion met): the headline "L beats G by 0.05 NSE" is replaced by "L and G are equivalent at matched budget; G's apparent loss in the 5cond run was a training-budget artifact." `experiments/5cond_factorial/analysis/5cond_run_analysis.md` gets an addendum, not a rewrite. Future work targets G+T+M − G under proper training budget.
 - If hypothesis falsified: there IS a residual architecture difference. The architecture-confound framing of the original A/B/C analysis was partially right after all. A separate investigation is needed before claiming anything about graph signal at scale.
 
 ## Pre-committed *what we will not do*

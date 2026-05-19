@@ -1,7 +1,7 @@
 # Pre-registration — Step 2: Basin-Encoding Ablation
 
 **Status:** Pre-registered 2026-05-12, before any data is observed. *Conditional* on Step 1 outcome (gates whether this experiment is the right next step).
-**Framework reference:** `testing_framework_proposal.md` §3, Step 2.
+**Framework reference:** `experiments/5cond_factorial/analysis/testing_framework_proposal.md` §3, Step 2.
 **Depends on:** Step 1 (`preregistration_step1.md`) — must complete before launching.
 
 ---
@@ -31,7 +31,7 @@ This is the threshold at which we'd say "topology features have real signal." Fo
 
 Paired per-basin median Δ NSE (`G+T_no_oh − G_no_oh`) **≤ +0.005** AND CI overlaps zero.
 
-This would mean: the topology features are intrinsically weak — they have no signal even when given a chance to contribute. Need architectural redesign of the topology-feature pathway (per `architecture_analysis.md` §2: embed discrete features, replace network-relative with absolute attributes, etc.) before any further test.
+This would mean: the topology features are intrinsically weak — they have no signal even when given a chance to contribute. Need architectural redesign of the topology-feature pathway (per `experiments/5cond_factorial/analysis/architecture_analysis.md` §2: embed discrete features, replace network-relative with absolute attributes, etc.) before any further test.
 
 ## Pre-committed secondary observation
 

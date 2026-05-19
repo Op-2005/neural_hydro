@@ -619,9 +619,9 @@ But the training-budget story is necessary, not sufficient. Why do the *advanced
 
 ### Three deliverables produced (root directory)
 
-1. **`5cond_run_analysis.md`** — results-only digest. Headline numbers, six pairwise contrasts, per-basin patterns, stratifications, loss trajectories. Conclusion: the paper-claim direction is reversed; current results cannot support "our features beat standard LSTM."
-2. **`architecture_analysis.md`** — deep technical critique. Walks through each component (DirectedGraphLSTM forward pass, the 5 topology features, message passing aggregation/function/residual, training pipeline confounds) and identifies specific defects. Prioritized fix tiers and three honest paper narratives.
-3. **`testing_framework_proposal.md`** — 6-step diagnostic ladder with pre-registration discipline. Step 1 (matched-budget L) is 15 min on T4 and gates the next step. Total framework through Step 5 = ~43 hr T4.
+1. **`experiments/5cond_factorial/analysis/5cond_run_analysis.md`** — results-only digest. Headline numbers, six pairwise contrasts, per-basin patterns, stratifications, loss trajectories. Conclusion: the paper-claim direction is reversed; current results cannot support "our features beat standard LSTM."
+2. **`experiments/5cond_factorial/analysis/architecture_analysis.md`** — deep technical critique. Walks through each component (DirectedGraphLSTM forward pass, the 5 topology features, message passing aggregation/function/residual, training pipeline confounds) and identifies specific defects. Prioritized fix tiers and three honest paper narratives.
+3. **`experiments/5cond_factorial/analysis/testing_framework_proposal.md`** — 6-step diagnostic ladder with pre-registration discipline. Step 1 (matched-budget L) is 15 min on T4 and gates the next step. Total framework through Step 5 = ~43 hr T4.
 
 ### Most surprising finding from the audit
 
@@ -666,7 +666,7 @@ Re-read this morning's three analysis files. Identified `max_updates_per_epoch` 
 
 - **Step A:** Pre-register Step 1 (`preregistration_step1.md`), implement matched-budget script, run on CPU. Hypothesis: L_420 lands within 0.01 NSE of G.
 - **Step B:** Pre-register Step 2 (`preregistration_step2.md`) — write only, run later on GPU.
-- **Step C:** gated on A: write addendum to `5cond_run_analysis.md` if hypothesis confirmed.
+- **Step C:** gated on A: write addendum to `experiments/5cond_factorial/analysis/5cond_run_analysis.md` if hypothesis confirmed.
 
 ### Step 4 (Execute)
 
