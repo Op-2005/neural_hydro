@@ -1,7 +1,7 @@
 # Local-Subgraph Batch — Finding the Right Scale
 
 **Created:** 2026-05-13 (post-professor-meeting).
-**Status:** methodology step toward the paper. Local-first (CPU); no Colab needed.
+**Status:** methodology step toward the paper. Colab/GPU for the full sweep (~30–60 min on T4); CPU-local for quick single-subgraph iteration.
 
 ## The hypothesis
 
@@ -16,13 +16,16 @@ This batch builds the optimized small-scale testing environment to find the scal
 at which graph signal reappears (if it does). That's the methodology path: establish
 the right unit of analysis *before* committing GPU time to large runs.
 
-## Why this is local-first (no Colab)
+## How to run — Colab (GPU, recommended) or local (CPU)
 
-These subgraphs are **13–23 basins**. A 3-condition × 3-seed sweep runs in
-**~15–30 min on a laptop CPU**. Colab / GPU is reserved for *large* runs that
-genuinely need GPU speed — the eventual scale-up of a winning configuration, not
-this fast iteration loop. (An optional Colab notebook for that scale-up lives in
-`notebooks/_optional_scaleup/`.)
+The DirectedGraphLSTM forward pass is a per-timestep Python loop, which GPU
+accelerates heavily — the full 54-training batch is ~30–60 min on a T4 vs several
+hours on CPU. **Use the Colab notebook** (`notebooks/colab_local_subgraphs_run.ipynb`)
+for the full sweep; it's the same connect-GitHub → Run all → save-to-Drive workflow
+as the 5cond run.
+
+CPU-local (`run_all_local.sh`) is kept for quick single-subgraph iteration when you
+don't want to spin up Colab.
 
 ## The tracked invariant
 
@@ -89,7 +92,7 @@ Idempotent — completed runs skip. Outputs land in `runs/local_subgraphs/<sg>/<
 | `basin_lists/` | The 6 subgraph basin/edge files + `subgraph_manifest.csv`. |
 | `configs/` | Auto-generated per-subgraph L configs. |
 | `analysis/` | Invariant table, contrasts, INVARIANT.md. |
-| `notebooks/_optional_scaleup/` | Colab notebook — ONLY for the eventual large scale-up run. Not needed for this batch. |
+| `notebooks/colab_local_subgraphs_run.ipynb` | Colab GPU sweep — connect GitHub, Run all, saves to Drive. The recommended path for the full batch. |
 
 ## Where this sits in the paper methodology
 
