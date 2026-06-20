@@ -1,0 +1,7 @@
+name,seed_basin,radius_km,n_basins,n_edges,depths,n_depths,hucs,n_hucs
+sg_midatlantic,01594950,120,16,45,"0,1,2",3,"02,05",2
+sg_ohio,03026500,120,15,38,"0,1,2",3,"02,05",2
+sg_tennessee,03455500,120,15,50,"0,1",2,"03,06",2
+sg_southeast,02055100,120,13,25,"0,2,3",3,"02,03",2
+sg_northeast,01516500,120,16,54,"0,1,2,3",4,"02,04",2
+sg_texas_pilot,(historical),n/a,23,34,"0,1,2,3",4,12,1
