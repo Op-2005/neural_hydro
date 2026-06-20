@@ -705,3 +705,33 @@ L_420 − G paired (n=549): median Δ = **−0.100**, CI [−0.105, −0.092], 9
 2. **Step 2 from framework** (`preregistration_step2.md`, already written): one-hot ablation. 6 hr on T4. *Gates whether topology features have signal independent of basin-ID.* Independent of #1.
 3. **L learning-curve via existing checkpoints:** evaluate L_seed11 at epochs {1, 5, 10, 20, 30}. ~5 min compute (eval-only). *Tells us where on L's learning curve NSE ≈ 0.609 (G's level) sits — i.e., how many cudalstm-steps equal one graph-trainer-step in NSE terms.*
 
+
+---
+## 2026-06-20 — Pivot: confounds diagnosed, program restarted as a controlled encoding×topology ablation
+
+**Source.** User-run Colab local-subgraph sweep (single subgraph completed before stop) + CRS code audit during a /crs session.
+
+**Signal.** On sg_midatlantic (16 basins), G+T+M median NSE 0.622 < G 0.68 — the *same* direction as the 183-basin 5cond result, now at small scale. The user flagged the key point: **G+T+M < G is a result that shouldn't be possible.** Adding inputs to a model can at worst be ignored; for them to make it *worse* implies a bug or a design fault, not a finding.
+
+**Why it matters — three compounding confounds make every prior negative uninterpretable.**
+1. **Architecture/trainer confound.** Custom DirectedGraphLSTM is undertrained (loss still falling at epoch 30) and not GPU-accelerated; never a fair comparison to NH's tuned cudalstm.
+2. **Encoding redundancy.** NH's 671-dim basin one-hot lets the LSTM memorize per-basin behaviour. The 5 topology scalars (<1% of static input) are informationally redundant with it — topology features *cannot* help by construction. Connects to GNN theory (Kipf-Welling): structure helps most in the can't-memorize regime; the one-hot is the can-memorize regime.
+3. **From-scratch noise injection.** With `--no-warm-start` the topology input-weight columns start random and an undertrained model never suppresses them → added features actively hurt. Confirmed `--no-warm-start` + `use_basin_id_encoding: True` in the sweep.
+
+**Key enabling realization.** NH auto-loads any `camels_attributes_v2.0/camels_*.txt` file as static attributes, and the one-hot is a single config flag. So the topology-feature question runs entirely on **stock cudalstm** — well-tuned, GPU-native, fully trained — with zero custom model code. All three confounds vanish for the topology question. (Message passing still needs custom code; deferred and gated.)
+
+**Decision — restart the program as a controlled experiment, Option A (build the framework) with honest framing.**
+- New self-contained study: `experiments/topology_ablation/`.
+- Foundational experiment: encoding × topology **2×2** (one-hot {on,off} × topology {off,on}) on stock cudalstm. Pre-registered prediction: `(L_noID+T − L_noID) > 0` while `(L+T − L) ≈ 0` → the one-hot subsumes topology features.
+- Single seed until a clear signal; multi-seed only at publication.
+- Built + verified end-to-end this session: topology-attributes generator (671 basins, depth bug fixed to longest-path, adds physically-meaningful `total_upstream_area`); 2×2 config generator; runner; analysis; Colab notebook (standard click→T4→run-all workflow). Confirmed NH ingests the features and the `L_noID+T` config trains.
+- Legacy (`5cond_factorial/`, `local_subgraphs/`) preserved as the confounded-measurement prior; not deleted.
+
+**CRS re-evaluation of the user's "ablation-framework paper > negative/corroboration paper" premise (they asked for an unbiased take).** The instinct toward a reusable *framework* is correct and is the highest-value direction — frameworks outlast one-off numbers. The correction: do **not** pre-commit to the result's *sign* ("show our features outperform"). Value lives in the rigor and the controlled design, not in the headline coming out positive; pre-committing to "it must beat baseline" is the p-hacking trap that produced our 3 weeks of confounded negatives. The encoding×topology 2×2 threads this: it likely yields a positive *and* theory-grounded finding ("structure helps in the can't-memorize regime"), is a framework others can follow, and is publishable whichever way it lands.
+
+**Affected files.** New `experiments/topology_ablation/` (generator, configs, runner, analysis, notebook, README); new `datasets/camels_us/camels_attributes_v2.0/camels_topology.txt` (NH static-attr file). Legacy untouched.
+
+**Open questions.**
+- Does topology help without the one-hot at component-0 scale, at subgraph scale, or both? (Phase 1 answers.)
+- If topology helps without one-hot: does message passing add anything beyond static topology features? (Phase 2, gated.)
+- Is `total_upstream_area` (physically the load-bearing feature) the one carrying any signal? Per-feature importance worth checking if Phase 1 is positive.
