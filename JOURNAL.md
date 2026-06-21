@@ -770,3 +770,20 @@ L_420 − G paired (n=549): median Δ = **−0.100**, CI [−0.105, −0.092], 9
 **Open questions.**
 - Does the oracle help? (running) — decides whether the program continues toward message passing or locks the negative-result paper.
 - Is the +0.012 encoding cost worth reporting as a secondary methodological note? (Probably yes — it quantifies what basin-ID encoding buys.)
+
+---
+## 2026-06-21 (later) — ORACLE PASSED: structure helps as a DYNAMIC signal (+0.037 NSE upper bound)
+
+**Source.** EXP-0 oracle completed (component0, stock cudalstm, single seed 11): L vs L+upstream_q (area-weighted mean of upstream basins' lagged OBSERVED discharge, mm/d).
+
+**Result.** L median NSE 0.653 → L+upstream_q **0.703**. Paired upQ−L: **median +0.037, 67% of basins improve, 58% by ≥0.02** (n=183). Pre-registered success bar +0.02 — cleared ~2×.
+
+**Decision per pre-registration.** SUCCESS (Branch B → reopen Branch A1). The oracle was built to disambiguate "structure is uninformative" from "static representation is too lossy." Verdict: the latter. Static topology features added ~0 (Phase-1 2×2); the actual dynamic upstream flow adds +0.037. **Structure carries real exploitable signal; the topology-feature failure was a representation problem, not a structural one.**
+
+**Why it matters.** This is the first clean positive in the program and it flips the outlook. The thesis ("river-network structure improves LSTM streamflow prediction") is alive, now with a falsifiable, evidence-backed form: structure helps *as a dynamic upstream-state signal*. A learned message-passing model (propagating upstream hidden state) is the realizable proxy for the oracle and is now justified by evidence. CRS prior going in was "likely null" — falsified; good kind of wrong.
+
+**Honest caveat.** The oracle uses observed (ground-truth) upstream discharge → it is an UPPER BOUND, not a deployable model. The realizable gain from learned/predicted upstream signal is some fraction of +0.037. Single seed; publication needs 3. Frame all future message-passing results *against* this +0.037 ceiling ("recovers X% of the bound").
+
+**Next gated move (Branch A1).** Build/justify a correct message-passing model (propagate upstream hidden state, trained on stock-equivalent infra), report vs the +0.037 oracle ceiling. Secondary: does the upstream benefit grow on small local subgraphs (walker machinery ready)?
+
+**Affected files.** `runs/topology_ablation/component0/L_upQ_component0_seed11/`; `updates.md` (note sheet) updated with the positive result and the reframed direction.
