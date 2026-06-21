@@ -1,1 +1,5 @@
-
+network,condition,median_NSE,n_basins
+component0,L,0.6529475952853108,183
+component0,L_T,0.6536686616486219,183
+component0,L_noID,0.6331125570990649,183
+component0,L_noID_T,0.6246846524698805,183

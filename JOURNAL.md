@@ -735,3 +735,38 @@ L_420 − G paired (n=549): median Δ = **−0.100**, CI [−0.105, −0.092], 9
 - Does topology help without the one-hot at component-0 scale, at subgraph scale, or both? (Phase 1 answers.)
 - If topology helps without one-hot: does message passing add anything beyond static topology features? (Phase 2, gated.)
 - Is `total_upstream_area` (physically the load-bearing feature) the one carrying any signal? Per-feature importance worth checking if Phase 1 is positive.
+
+---
+## 2026-06-21 — Phase-1 result: topology features are weak (redundancy hypothesis FALSIFIED) → oracle becomes load-bearing
+
+**Source.** User ran the encoding × topology 2×2 on component0 (stock NH cudalstm, single seed 11) via the Colab notebook; results dropped into `runs/topology_ablation/component0/`. CRS analyzed.
+
+**Signal (single seed, n=183).**
+
+| | median NSE |
+|---|---|
+| L (one-hot ON, no topo) | 0.653 |
+| L+T (one-hot ON, +topo) | 0.654 |
+| L_noID (one-hot OFF) | 0.633 |
+| L_noID+T (one-hot OFF, +topo) | 0.625 |
+
+- `topo benefit WITH one-hot` (L+T − L): **−0.001**
+- `topo benefit WITHOUT one-hot` (L_noID+T − L_noID): **+0.003**
+- interaction: −0.004; encoding cost (L − L_noID): +0.012
+- Per-basin distributions are symmetric noise: ⅓ up / ⅓ down, std 0.18–0.35. Not a median artifact.
+
+**Decision per pre-registration (FORWARD_PLAN Branch B).** The redundancy hypothesis is **falsified**: topology features add ≈0 NSE *whether or not* the one-hot is present. The features are intrinsically weak, not merely masked by basin-ID memorization. Pre-registered consequence: **EXP-0, the upstream-discharge oracle, becomes the load-bearing experiment.**
+
+**Why it matters.** Static topology summaries are a lossy constant. The oracle asks the maximal version of the question: if a downstream basin sees the *actual lagged observed discharge* of its upstream basins (the literal water arriving), does prediction improve? This is the upper bound on every possible structural signal.
+- Oracle helps (Δ ≥ +0.02) → the failure was the static *representation*; message passing is justified (reopen Branch A1).
+- Oracle fails (Δ ≤ +0.005) → the killer control. Structure is uninformative for next-day flow at this scale; the paper is the rigorous controlled NEGATIVE (encoding confound ruled out, training confound ruled out via stock cudalstm, AND oracle ruled out). Corroborates Kirschstein 2024 with far more control.
+
+**Honest qualifications.** Single seed — directionally clear (effects are ~0 vs cross-basin std 0.2) but the publication run needs 3 seeds. The encoding-cost finding (one-hot buys +0.012 NSE) is a minor real result, not the thesis.
+
+**Action taken this session.** Built + launched EXP-0 oracle on component0 (stock cudalstm, L vs L+upstream_q, single seed, CPU, ~15-20 min). Feature builder unit-verified (upstream_q 1.3-1.8 mm/d). Pre-registration in FORWARD_PLAN.md; criteria formalized in this session.
+
+**Affected files.** `runs/topology_ablation/component0/` (4 conditions moved into canonical location); `experiments/topology_ablation/analysis/{RESULTS.md,table.csv,contrasts.csv}`; new `experiments/topology_ablation/run_oracle.py`; new `experiments/topology_ablation/features/upstream_q_component0_lag1.p`.
+
+**Open questions.**
+- Does the oracle help? (running) — decides whether the program continues toward message passing or locks the negative-result paper.
+- Is the +0.012 encoding cost worth reporting as a secondary methodological note? (Probably yes — it quantifies what basin-ID encoding buys.)
