@@ -72,6 +72,7 @@ def main():
         cfg["use_basin_id_encoding"] = use_oh
         cfg["static_attributes"] = BASE_STATIC + (TOPO_STATIC if use_topo else [])
         cfg["metrics"] = ["NSE", "KGE"]
+        cfg["num_workers"] = 2   # Colab boxes have 2 CPUs; 4 triggers a DataLoader warning/slowdown
         out = CFG_DIR / f"{name}.yaml"
         yaml.safe_dump(cfg, open(out, "w"), sort_keys=False)
         written.append(out.name)

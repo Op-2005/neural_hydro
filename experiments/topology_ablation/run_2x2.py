@@ -32,11 +32,20 @@ CONDITIONS = ["L", "L_T", "L_noID", "L_noID_T"]
 
 
 def run(cmd, label):
-    print(f"\n=== {label} ===")
-    r = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
-    out = (r.stdout or "") + (r.stderr or "")
-    print("\n".join(out.rstrip().splitlines()[-5:]))
-    return r.returncode
+    """Stream the subprocess output live (so the cell never looks stalled), while
+    keeping only the lines we care about (epoch loss / metrics / errors)."""
+    import sys as _sys
+    print(f"\n=== {label} ===", flush=True)
+    proc = subprocess.Popen(cmd, cwd=ROOT, stdout=subprocess.PIPE,
+                            stderr=subprocess.STDOUT, text=True, bufsize=1)
+    keep = ("Epoch", "average loss", "validation", "NSE", "KGE",
+            "Stored", "Error", "error", "Traceback", "Wrote", "median")
+    for line in proc.stdout:
+        s = line.rstrip()
+        if any(k in s for k in keep):
+            print("   " + s, flush=True)
+    proc.wait()
+    return proc.returncode
 
 
 def main():
