@@ -1,0 +1,80 @@
+attribute_means:
+  area_gages2: 400.999781420765
+  elev_mean: 483.4124043715847
+  frac_upstream_area: 1.2293131147540983
+  graph_depth: 1.9234972677595628
+  in_degree: 3.4098360655737703
+  n_upstream: 4.890710382513661
+  p_mean: 3.505675280423993
+  pet_mean: 2.5286203490385732
+  slope_mean: 38.674534972677606
+  total_upstream_area: 687.9030054644809
+attribute_stds:
+  area_gages2: 509.5679188950035
+  elev_mean: 281.53846646148367
+  frac_upstream_area: 1.3912153995154877
+  graph_depth: 1.3766677433360397
+  in_degree: 3.3201534909921055
+  n_upstream: 5.656764018669471
+  p_mean: 0.5364189097906766
+  pet_mean: 0.29880001285886787
+  slope_mean: 26.14166585774001
+  total_upstream_area: 1175.2707373184105
+xarray_feature_scale:
+  coords: {}
+  attrs: {}
+  dims: {}
+  data_vars:
+    PRCP(mm/day):
+      dims: []
+      attrs: {}
+      data: 6.57306432723999
+    QObs(mm/d):
+      dims: []
+      attrs: {}
+      data: 2.7247791290283203
+    SRAD(W/m2):
+      dims: []
+      attrs: {}
+      data: 118.8912124633789
+    Tmax(C):
+      dims: []
+      attrs: {}
+      data: 10.60196590423584
+    Tmin(C):
+      dims: []
+      attrs: {}
+      data: 10.60196590423584
+    Vp(Pa):
+      dims: []
+      attrs: {}
+      data: 535.61669921875
+xarray_feature_center:
+  coords: {}
+  attrs: {}
+  dims: {}
+  data_vars:
+    PRCP(mm/day):
+      dims: []
+      attrs: {}
+      data: 3.2846524715423584
+    QObs(mm/d):
+      dims: []
+      attrs: {}
+      data: 1.6024174690246582
+    SRAD(W/m2):
+      dims: []
+      attrs: {}
+      data: 354.6071472167969
+    Tmax(C):
+      dims: []
+      attrs: {}
+      data: 9.462799072265625
+    Tmin(C):
+      dims: []
+      attrs: {}
+      data: 9.462799072265625
+    Vp(Pa):
+      dims: []
+      attrs: {}
+      data: 918.527099609375

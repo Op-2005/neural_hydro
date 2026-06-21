@@ -1,0 +1,91 @@
+2026-06-21 13:43:48,359: Logging to runs/topology_ablation/component0/L_upQ_component0_seed11_2106_134348/output.log initialized.
+2026-06-21 13:43:48,359: ### Folder structure created at runs/topology_ablation/component0/L_upQ_component0_seed11_2106_134348
+2026-06-21 13:43:48,359: ### Run configurations for L_upQ_component0_seed11
+2026-06-21 13:43:48,359: experiment_name: L_upQ_component0_seed11
+2026-06-21 13:43:48,359: run_dir: runs/topology_ablation/component0/L_upQ_component0_seed11_2106_134348
+2026-06-21 13:43:48,359: train_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-06-21 13:43:48,359: validation_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-06-21 13:43:48,359: test_basin_file: topology_analysis/phase1_network_discovery/outputs/component0_basins.txt
+2026-06-21 13:43:48,359: train_start_date: 1990-01-01 00:00:00
+2026-06-21 13:43:48,359: train_end_date: 1999-12-31 00:00:00
+2026-06-21 13:43:48,359: validation_start_date: 2000-01-01 00:00:00
+2026-06-21 13:43:48,360: validation_end_date: 2004-12-31 00:00:00
+2026-06-21 13:43:48,360: test_start_date: 2005-01-01 00:00:00
+2026-06-21 13:43:48,360: test_end_date: 2008-12-31 00:00:00
+2026-06-21 13:43:48,360: device: cpu
+2026-06-21 13:43:48,360: validate_every: 5
+2026-06-21 13:43:48,360: validate_n_random_basins: 10
+2026-06-21 13:43:48,360: metrics: ['NSE', 'KGE']
+2026-06-21 13:43:48,360: model: cudalstm
+2026-06-21 13:43:48,360: head: regression
+2026-06-21 13:43:48,360: output_activation: linear
+2026-06-21 13:43:48,360: hidden_size: 64
+2026-06-21 13:43:48,360: initial_forget_bias: 3
+2026-06-21 13:43:48,360: output_dropout: 0.4
+2026-06-21 13:43:48,360: optimizer: Adam
+2026-06-21 13:43:48,360: loss: MSE
+2026-06-21 13:43:48,360: learning_rate: {0: 0.001}
+2026-06-21 13:43:48,360: batch_size: 256
+2026-06-21 13:43:48,360: epochs: 30
+2026-06-21 13:43:48,360: clip_gradient_norm: 1
+2026-06-21 13:43:48,360: predict_last_n: 1
+2026-06-21 13:43:48,360: seq_length: 30
+2026-06-21 13:43:48,360: num_workers: 2
+2026-06-21 13:43:48,360: log_interval: 5
+2026-06-21 13:43:48,360: log_tensorboard: False
+2026-06-21 13:43:48,360: dataset: camels_us
+2026-06-21 13:43:48,360: data_dir: datasets/camels_us
+2026-06-21 13:43:48,360: use_basin_id_encoding: True
+2026-06-21 13:43:48,360: forcings: ['maurer']
+2026-06-21 13:43:48,360: dynamic_inputs: ['PRCP(mm/day)', 'SRAD(W/m2)', 'Tmax(C)', 'Tmin(C)', 'Vp(Pa)', 'upstream_q']
+2026-06-21 13:43:48,360: target_variables: ['QObs(mm/d)']
+2026-06-21 13:43:48,360: clip_targets_to_zero: ['QObs(mm/d)']
+2026-06-21 13:43:48,360: static_attributes: ['elev_mean', 'area_gages2', 'slope_mean', 'p_mean', 'pet_mean']
+2026-06-21 13:43:48,360: seed: 11
+2026-06-21 13:43:48,360: additional_feature_files: [PosixPath('/Users/om/Desktop/neural_hydrology/experiments/topology_ablation/features/upstream_q_component0_lag1.p')]
+2026-06-21 13:43:48,361: number_of_basins: 183
+2026-06-21 13:43:48,361: train_dir: runs/topology_ablation/component0/L_upQ_component0_seed11_2106_134348/train_data
+2026-06-21 13:43:48,361: img_log_dir: runs/topology_ablation/component0/L_upQ_component0_seed11_2106_134348/img_log
+2026-06-21 13:43:48,362: ### Device cpu will be used for training
+2026-06-21 13:43:48,468: Loading basin data into xarray data set.
+2026-06-21 13:43:56,507: Create lookup table and convert to pytorch tensor
+2026-06-21 13:46:01,268: Epoch 1 average loss: avg_loss: 0.21110, avg_total_loss: 0.21110
+2026-06-21 13:48:25,247: Epoch 2 average loss: avg_loss: 0.15085, avg_total_loss: 0.15085
+2026-06-21 13:50:52,441: Epoch 3 average loss: avg_loss: 0.13386, avg_total_loss: 0.13386
+2026-06-21 13:53:21,589: Epoch 4 average loss: avg_loss: 0.12348, avg_total_loss: 0.12348
+2026-06-21 13:55:41,125: Epoch 5 average loss: avg_loss: 0.11674, avg_total_loss: 0.11674
+2026-06-21 13:55:44,970: Epoch 5 average validation loss: 0.12544 -- Median validation metrics: avg_loss: 0.12544, NSE: 0.69648, KGE: 0.69067
+2026-06-21 13:58:14,836: Epoch 6 average loss: avg_loss: 0.11099, avg_total_loss: 0.11099
+2026-06-21 14:00:41,482: Epoch 7 average loss: avg_loss: 0.10583, avg_total_loss: 0.10583
+2026-06-21 14:03:10,614: Epoch 8 average loss: avg_loss: 0.10274, avg_total_loss: 0.10274
+2026-06-21 14:05:36,676: Epoch 9 average loss: avg_loss: 0.09828, avg_total_loss: 0.09828
+2026-06-21 14:08:04,881: Epoch 10 average loss: avg_loss: 0.09541, avg_total_loss: 0.09541
+2026-06-21 14:08:08,587: Epoch 10 average validation loss: 0.12698 -- Median validation metrics: avg_loss: 0.12698, NSE: 0.69327, KGE: 0.72118
+2026-06-21 14:10:33,758: Epoch 11 average loss: avg_loss: 0.09319, avg_total_loss: 0.09319
+2026-06-21 14:12:59,208: Epoch 12 average loss: avg_loss: 0.08997, avg_total_loss: 0.08997
+2026-06-21 14:15:23,754: Epoch 13 average loss: avg_loss: 0.08719, avg_total_loss: 0.08719
+2026-06-21 14:17:49,296: Epoch 14 average loss: avg_loss: 0.08621, avg_total_loss: 0.08621
+2026-06-21 14:20:16,148: Epoch 15 average loss: avg_loss: 0.08297, avg_total_loss: 0.08297
+2026-06-21 14:20:19,710: Epoch 15 average validation loss: 0.09737 -- Median validation metrics: avg_loss: 0.09737, NSE: 0.71678, KGE: 0.75316
+2026-06-21 14:22:46,880: Epoch 16 average loss: avg_loss: 0.08225, avg_total_loss: 0.08225
+2026-06-21 14:25:06,731: Epoch 17 average loss: avg_loss: 0.07886, avg_total_loss: 0.07886
+2026-06-21 14:27:25,005: Epoch 18 average loss: avg_loss: 0.07857, avg_total_loss: 0.07857
+2026-06-21 14:29:40,356: Epoch 19 average loss: avg_loss: 0.07621, avg_total_loss: 0.07621
+2026-06-21 14:32:03,924: Epoch 20 average loss: avg_loss: 0.07666, avg_total_loss: 0.07666
+2026-06-21 14:32:07,119: Epoch 20 average validation loss: 0.09647 -- Median validation metrics: avg_loss: 0.09647, NSE: 0.67065, KGE: 0.75024
+2026-06-21 14:34:25,501: Epoch 21 average loss: avg_loss: 0.07443, avg_total_loss: 0.07443
+2026-06-21 14:36:43,977: Epoch 22 average loss: avg_loss: 0.07239, avg_total_loss: 0.07239
+2026-06-21 14:39:05,764: Epoch 23 average loss: avg_loss: 0.07229, avg_total_loss: 0.07229
+2026-06-21 14:41:23,607: Epoch 24 average loss: avg_loss: 0.07094, avg_total_loss: 0.07094
+2026-06-21 14:43:41,433: Epoch 25 average loss: avg_loss: 0.06981, avg_total_loss: 0.06981
+2026-06-21 14:43:44,350: Epoch 25 average validation loss: 0.10480 -- Median validation metrics: avg_loss: 0.10480, NSE: 0.69241, KGE: 0.74623
+2026-06-21 14:46:02,120: Epoch 26 average loss: avg_loss: 0.06889, avg_total_loss: 0.06889
+2026-06-21 14:48:18,949: Epoch 27 average loss: avg_loss: 0.06884, avg_total_loss: 0.06884
+2026-06-21 14:50:35,068: Epoch 28 average loss: avg_loss: 0.06645, avg_total_loss: 0.06645
+2026-06-21 14:52:57,425: Epoch 29 average loss: avg_loss: 0.06645, avg_total_loss: 0.06645
+2026-06-21 14:55:21,652: Epoch 30 average loss: avg_loss: 0.06477, avg_total_loss: 0.06477
+2026-06-21 14:55:24,740: Epoch 30 average validation loss: 0.14828 -- Median validation metrics: avg_loss: 0.14828, NSE: 0.61012, KGE: 0.70471
+2026-06-21 14:55:31,118: Logging to /Users/om/Desktop/neural_hydrology/runs/topology_ablation/component0/L_upQ_component0_seed11/output.log initialized.
+2026-06-21 14:55:31,167: Using the model weights from /Users/om/Desktop/neural_hydrology/runs/topology_ablation/component0/L_upQ_component0_seed11/model_epoch030.pt
+2026-06-21 14:56:25,332: Stored metrics at /Users/om/Desktop/neural_hydrology/runs/topology_ablation/component0/L_upQ_component0_seed11/test/model_epoch030/test_metrics.csv
+2026-06-21 14:56:25,358: Stored results at /Users/om/Desktop/neural_hydrology/runs/topology_ablation/component0/L_upQ_component0_seed11/test/model_epoch030/test_results.p

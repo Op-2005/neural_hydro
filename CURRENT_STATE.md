@@ -383,3 +383,13 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **References updated:** CURRENT_STATE.md, JOURNAL.md, preregistration_step1.md, preregistration_step2.md, multi_condition_ablation/README.md — all bare-name refs to the moved files now use full paths.
 - **Smoke test:** no broken refs; all moved files still resolvable from their referrers.
 - **Deferred:** none — clean state.
+
+### CRS Session — 2026-06-20 15:10
+
+- **Reviewed:** post_meeting_plan.md, 5cond invariant (recomputed mean±std), Drive deliverable decks (wk1/4/10), local_subgraphs batch I just built.
+- **Ran:** launched the full local-subgraph batch (6 subgraphs × 3 conditions × 3 seeds = 54 CPU trainings, background task bw81vl3qn). First subgraph L training confirmed in progress.
+- **Result:** pending — multi-hour CPU run. Tracked metric: per-seed median NSE → mean±std; key contrast G+T+M − L per subgraph.
+- **Decision:** pre-registered the local-scale test. Success = G+T+M − L > 0 on ≥1 subgraph (graph beats plain LSTM at small scale). Falsification = ≤0 on all 6 → Phase-4 architectural redesign, NOT further shrinking.
+- **Files:** new experiments/local_subgraphs/preregistration_local_scale.md (committed 0678273 batch + prereg).
+- **Caveats:** subgraphs span 2 HUCs each (graph-coherent, not climate-coherent); only sg_texas_pilot is single-region. 30-epoch runs on small data may under/over-fit differently than the 183-basin run — watch the std.
+- **Next:** on batch completion, run analyze_subgraphs.py, judge vs pre-registration, append JOURNAL entry with the verdict.
