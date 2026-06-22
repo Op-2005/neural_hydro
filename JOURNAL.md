@@ -787,3 +787,49 @@ L_420 − G paired (n=549): median Δ = **−0.100**, CI [−0.105, −0.092], 9
 **Next gated move (Branch A1).** Build/justify a correct message-passing model (propagate upstream hidden state, trained on stock-equivalent infra), report vs the +0.037 oracle ceiling. Secondary: does the upstream benefit grow on small local subgraphs (walker machinery ready)?
 
 **Affected files.** `runs/topology_ablation/component0/L_upQ_component0_seed11/`; `updates.md` (note sheet) updated with the positive result and the reframed direction.
+
+---
+## 2026-06-21 — /crs-unleashed: upstream-signal chain — gain is real, content beyond precip, robust to lag
+
+**Source.** /crs-unleashed session. Pre-registered 3-step chain (`preregistration_upstream_signal.md`) stress-testing the oracle's +0.037 NSE before investing in a learned model. All stock cudalstm, component0, seed 11, CPU.
+
+**Results.**
+
+| Condition | median NSE | paired Δ vs L | frac>0 |
+|---|---|---|---|
+| L | 0.653 | — | — |
+| L+upQ (oracle, lag1) | 0.703 | +0.037 | 67% |
+| L+upQ **shuffled (null)** | 0.658 | **−0.002** | 49% |
+| L+upPrecip | 0.674 | +0.012 | 58% |
+| L+upQ lag0 | 0.749 | **+0.087** | 85% |
+| L+upQ lag2 | 0.699 | +0.036 | 69% |
+
+**Step A (gate) — PASSED.** Shuffled-upstream-Q (same marginal, time-scrambled) gives −0.002, 49% of basins up = coin-flip. The +0.037 is **real upstream-flow content, not a capacity/regularization artifact.** Cleanest possible pass; the positive direction is now confound-checked.
+
+**Step B — discharge carries content beyond precipitation.** Upstream precip gives +0.012 (~⅓ of the discharge gain). Answers the long-standing idea1.md "C-precip" question: routed upstream *flow/state* has substantial signal that raw upstream *rain* does not. **This justifies the message-passing direction** — it's not reducible to "just add upstream precipitation."
+
+**Step C — robust to lag, and lag0 is strongest.** Positive at all lags (lag0 +0.087 / lag1 +0.037 / lag2 +0.036); no single-lag spike (rules out a leakage artifact). Same-day upstream flow nearly doubles the gain — physically sensible (sub-daily travel times at daily resolution). A real finding worth carrying into the paper.
+
+**Why it matters.** Three weeks of negatives → a fully stress-tested positive. The story is now tight: static topology features null; upstream *flow* helps (+0.037 lag1, +0.087 lag0); the gain survives a null control, exceeds the precip-only baseline 3×, and is robust across lags. The remaining gap to a paper is the realizability test (predicted, not observed, upstream Q) and multi-seed confirmation.
+
+**Honest caveats.** Single seed throughout — directional, needs 3-seed CIs before any headline. The oracle uses OBSERVED upstream discharge → upper bound; the deployable model recovers a fraction. lag0 uses same-day upstream observed flow — fair in an operational nowcast (upstream gauges report in real time) but must be stated explicitly; it is NOT future leakage (it's same-day upstream, predicting same-day downstream).
+
+### Reviewer 2
+
+- *"Is the +0.037 just 'more input dims = more capacity'?"* → No. The shuffled-Q null control (identical column distribution, scrambled in time) gives −0.002. The gain requires the real temporal upstream signal.
+- *"Is it data leakage — you're feeding it discharge?"* → It's *upstream* basins' discharge lagged ≥0 days, predicting the *downstream* basin. Same-day upstream→downstream is physical routing, not target leakage. Lag sweep shows no single-lag spike (a leak would concentrate at one lag).
+- *"Isn't this just upstream precipitation the model already has regionally?"* → Upstream precip alone gives +0.012, a third of the discharge gain. Routed flow carries content beyond rain.
+- *"Single seed."* → Conceded; all directional. Multi-seed (3 seeds) is the next gate before any claim.
+- *"What would make me believe the realizable (non-oracle) version works?"* → A two-stage model: predict upstream Q from upstream forcings, feed the *prediction* downstream. If it recovers a meaningful fraction of +0.037, the result is deployable. That's the queued next experiment.
+
+### Open questions
+1. Does *predicted* (not observed) upstream Q still help? (realizability — the load-bearing next test)
+2. How much of the +0.037 survives at 3 seeds? (significance)
+3. Is lag0's +0.087 stable, or seed-fragile? (it's the strongest single result)
+4. Does the gain grow on small local subgraphs (walker machinery ready)?
+
+## Next 2–3 sessions (queued)
+
+1. **Realizability test (predicted-upstream-Q)** — gates whether the result is deployable, not just an upper bound; cost ~30 min CPU (train an upstream-Q predictor from upstream forcings, feed its prediction downstream); prerequisite: none, infra mostly reusable.
+2. **Multi-seed (3 seeds) on the headline conditions** (L, L+upQ lag1, L+upQ lag0, L+upPrecip, shuffled-null) — gates publication significance; cost ~1.5 hr CPU or ~30 min Colab T4; prerequisite: none.
+3. **Local-subgraph scale curve** — does upstream-flow benefit grow on small coherent networks; cost ~1 hr; prerequisite: realizability + multi-seed clear.

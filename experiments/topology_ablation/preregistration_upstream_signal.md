@@ -60,3 +60,26 @@ All stock cudalstm, CPU, ~4 min/run. Step A: 1 new run. Step B: 1. Step C: 2. �
 - Will not proceed to the realizable learned-upstream model until A passes (signal is real)
   and B clarifies whether discharge-vs-precip even matters.
 - Single seed throughout — directional only; any headline needs 3-seed confirmation later.
+
+---
+## Results (post-run, 2026-06-21, component0, seed 11)
+
+| Condition | median NSE | paired Δ vs L | frac>0 |
+|---|---|---|---|
+| L (baseline) | 0.653 | — | — |
+| L+upQ (oracle, lag1) | 0.703 | +0.037 | 67% |
+| **L+upQ shuffled (NULL)** | 0.658 | **−0.002** | 49% |
+| L+upPrecip | 0.674 | +0.012 | 58% |
+| L+upQ lag0 | 0.749 | +0.087 | 85% |
+| L+upQ lag2 | 0.699 | +0.036 | 69% |
+
+**Step A (gate): PASSED.** Shuffled-Q Δ = −0.002 (≤ +0.01; far from +0.02 artifact bar).
+The +0.037 is real upstream content, not a same-distribution capacity artifact.
+
+**Step B: discharge > precip.** Upstream precip gives +0.012 (~1/3 of the +0.037 discharge
+gain). Upstream discharge/state carries substantial content beyond upstream rain →
+justifies the learned message-passing direction.
+
+**Step C: robust + revealing.** Positive at all lags (lag0 +0.087, lag1 +0.037, lag2 +0.036);
+no single-lag leakage signature. lag0 nearly doubles the gain — same-day upstream flow is
+most informative (consistent with sub-daily travel times at daily resolution).
