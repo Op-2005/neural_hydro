@@ -64,16 +64,39 @@ testing that prediction in hydrology — a real, falsifiable, theory-connected c
 
 Single seed until we see a clear signal; multi-seed only for the publication run.
 
+## Experiment phases (results: see `JOURNAL.md`)
+
+1. **Encoding × topology 2×2** — topology static features add ~0 NSE (with or without one-hot). Static network position is not the lever.
+2. **Upstream-signal chain** — feeding *upstream discharge* helps: observed-Q oracle **+0.037 NSE** (lag1; +0.087 lag0), survives a shuffled-Q null control (−0.002), beats upstream-precip 3× (+0.012), lag-robust. Structure helps as a **dynamic** signal.
+3. **Realizability** (in progress) — does the gain survive with *predicted* (not observed) upstream Q? Decides deployable-method vs upper-bound.
+
 ## Files
 
+**Phase 1 — topology features (2×2):**
 | File | Purpose |
 |---|---|
-| `generate_topology_attributes.py` | Computes network-position features (depth, n_upstream, total_upstream_area, in_degree, frac_upstream_area) on the full inferred network; writes `camels_topology.txt` that NH auto-loads. Run once. |
-| `make_configs.py` | Generates the 4 stock-cudalstm configs for a network/seed. |
-| `run_2x2.py` | Trains + evaluates the 4 conditions per network. Idempotent. |
-| `analyze_2x2.py` | The 2×2 table + the four contrasts + RESULTS.md. |
-| `notebooks/colab_topology_2x2.ipynb` | Colab GPU runner — connect GitHub, T4, Run all, saves to Drive. |
-| `configs/`, `analysis/` | Generated configs and outputs. |
+| `generate_topology_attributes.py` | Computes network-position features (depth, n_upstream, total_upstream_area, in_degree, frac_upstream_area); writes `camels_topology.txt` that NH auto-loads. Run once. |
+| `make_configs.py` | Generates the 4 stock-cudalstm 2×2 configs for a network/seed. |
+| `run_2x2.py` / `analyze_2x2.py` | Train the 4 conditions / produce the 2×2 table + contrasts + RESULTS.md. |
+| `notebooks/colab_topology_2x2.ipynb` | Colab GPU runner for the 2×2. |
+
+**Phase 2 — upstream-signal chain:**
+| File | Purpose |
+|---|---|
+| `build_upstream_discharge_feature.py` | The ORACLE feature: area-weighted mean of upstream basins' lagged **observed** discharge (mm/d). Upper bound on structural signal. |
+| `build_upstream_variants.py` | Null/content variants: shuffled-Q (null control) and upstream-precip. |
+| `run_upstream_feature.py` | Generic runner: train stock cudalstm + any upstream feature pickle, evaluate. |
+| `run_oracle.py` | Convenience runner for the L vs L+upstream_q oracle pair. |
+| `preregistration_upstream_signal.md` | Pre-reg + results for the chain (null/precip/lag). |
+
+**Phase 3 — realizability (predicted, not observed):**
+| File | Purpose |
+|---|---|
+| `build_predicted_upstream_q.py` | Stage 1: re-evaluate trained L over full span 1990–2008 → predicted Q per basin (cached in `runs/.../_Lfullspan_eval/`). Stage 2: aggregate upstream **predicted** Q into a feature. Deployable, no target leakage. |
+| `notebooks/colab_realizability.ipynb` | Colab runner for the realizability test (needs full CAMELS dataset). |
+| `preregistration_realizability.md` | Pre-reg: success ≥ +0.015 (≥40% of the +0.037 ceiling). |
+
+**Generated:** `configs/` (per-run YAMLs), `features/` (upstream-Q pickles, gitignored), `analysis/` (2×2 outputs). Run outputs land in `runs/topology_ablation/component0/` (see its `NOTES.md`).
 
 ## How to run
 

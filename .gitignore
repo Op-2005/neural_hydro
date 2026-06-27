@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Heavy run artifacts — keep results (test_metrics.csv, config.yml, NOTES.md, run_config.json)
+# but exclude multi-MB checkpoints, optimizer states, caches, and prediction dumps.
+# (These caused git divergence/stash conflicts when committed.)
+**/model_epoch*.pt
+**/optimizer_state_epoch*.pt
+**/test_results.p
+**/train_data/
+**/img_log/
+**/output.log
+
+# Generated feature pickles (regenerable from builders)
+experiments/topology_ablation/features/*.p
+
+# NH eval scratch dirs
+**/_Lfullspan_eval/
+
+# OS
+.DS_Store
