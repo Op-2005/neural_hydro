@@ -55,8 +55,12 @@ def full_span_predictions():
     for basin, byfreq in res.items():
         ds = byfreq[next(iter(byfreq))]["xr"]
         sim = ds["QObs(mm/d)_sim"].values.flatten()
-        dates = pd.to_datetime(ds["date"].values)
-        pred[str(basin)] = pd.Series(sim, index=dates)
+        # Index MUST be named 'date' — NH concatenates additional_feature_files onto the
+        # per-basin dynamic df (indexed by a 'date' column); an unnamed index raises
+        # KeyError: 'date' during training. (The observed-Q builders inherit the name from
+        # load_camels_us_discharge's series; this builder must set it explicitly.)
+        idx = pd.DatetimeIndex(pd.to_datetime(ds["date"].values), name="date")
+        pred[str(basin)] = pd.Series(sim, index=idx)
     return pred
 
 
