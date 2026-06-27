@@ -19,7 +19,7 @@ ROOT = Path(__file__).parent.parent.parent
 DATA_DIR = ROOT / "datasets" / "camels_us"
 TOPO_TXT = DATA_DIR / "camels_attributes_v2.0" / "camels_topo.txt"
 OUT_DIR = Path(__file__).parent / "features"
-L_RUN = ROOT / "runs" / "topology_ablation" / "component0" / "L_component0_seed11"
+# L_RUN set per --seed in main()
 
 
 def files_for(net):
@@ -30,9 +30,10 @@ def files_for(net):
             ROOT / f"experiments/local_subgraphs/basin_lists/{net}_edges.csv")
 
 
-def full_span_predictions():
+def full_span_predictions(seed):
     """Copy L run, override eval period to 1990-2008, run evaluate, read predicted Q."""
-    eval_dir = ROOT / "runs" / "topology_ablation" / "component0" / "_Lfullspan_eval"
+    L_RUN = ROOT / "runs" / "topology_ablation" / "component0" / f"L_component0_seed{seed}"
+    eval_dir = ROOT / "runs" / "topology_ablation" / "component0" / f"_Lfullspan_eval_seed{seed}"
     if not (eval_dir / "test" / "model_epoch030" / "test_results.p").exists():
         if eval_dir.exists():
             shutil.rmtree(eval_dir)
@@ -68,6 +69,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--network", default="component0")
     ap.add_argument("--lag-days", type=int, default=1)
+    ap.add_argument("--seed", type=int, default=11)
     args = ap.parse_args()
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -83,7 +85,7 @@ def main():
         if r["parent_id"] in basins and r["child_id"] in basins:
             G.add_edge(r["parent_id"], r["child_id"])
 
-    pred = full_span_predictions()   # {basin: predicted Q series}
+    pred = full_span_predictions(args.seed)   # {basin: predicted Q series}
 
     feats, n_conn = {}, 0
     for b in basins:
@@ -107,7 +109,7 @@ def main():
         feats[b] = pd.DataFrame({"upstream_q": agg.values}, index=idx)
         n_conn += 1
 
-    out = OUT_DIR / f"upstream_q_pred_{args.network}_lag{args.lag_days}.p"
+    out = OUT_DIR / f"upstream_q_pred_{args.network}_seed{args.seed}_lag{args.lag_days}.p"
     pickle.dump(feats, open(out, "wb"))
     vals = np.concatenate([np.abs(d["upstream_q"].values) for d in feats.values()])
     print(f"Wrote upstream_q_pred for {len(feats)} basins ({n_conn} with upstream) -> {out}")

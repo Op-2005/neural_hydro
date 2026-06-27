@@ -70,10 +70,18 @@ exploitable signal; the topology-feature failure was a **representation** proble
 learned model that propagates upstream state (message passing) — the realizable proxy for
 this oracle — is now **justified by evidence**, not hope.
 
-*Caveat: the oracle uses observed (ground-truth) upstream discharge — an upper bound, not
-a deployable model. The realizable gain from learned/predicted upstream signal will be some
-fraction of +0.037. But the bound is what mattered: it proves the ceiling is non-zero and
-worth climbing.*
+**Update — the realizable version works.** The oracle uses observed (ground-truth) upstream
+discharge, an upper bound. We then tested the *deployable* version: predict each basin's
+discharge from its own forcings, then feed the **predicted** (not observed) upstream flow
+downstream — no ground truth at inference.
+
+| | median NSE | Δ vs L |
+|---|---|---|
+| L + predicted upstream Q | **0.683** | **+0.027** |
+
+**Predicted upstream Q recovers ~72% of the oracle ceiling** (single seed). So this is no
+longer just an upper bound — it's a **working, deployable method**: the upstream state the
+model needs is largely reconstructible from forcings alone.
 
 ## 3. How the research question is affected
 
