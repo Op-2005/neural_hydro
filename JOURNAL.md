@@ -940,3 +940,35 @@ L_420 − G paired (n=549): median Δ = **−0.100**, CI [−0.105, −0.092], 9
 1. **Local-subgraph scale curve (Step C)** — pre-registered; ~30 min Colab T4.
 2. **2-hop predicted-Q** — ~20 min CPU/seed; tests recoverable headroom to the oracle.
 3. **Seed-11 realizable re-eval** — restores full 3-seed paired analyses; ~10 min once L_upQpred_seed11 checkpoint is re-run or re-downloaded.
+
+---
+## 2026-07-01 (later) — /crs-unleashed: methodology-compliance audit — study is PUBLICATION-VALID
+
+**Source.** Full methodology sweep. Byte-level config diff of all headline runs + re-analysis of stored predictions (`analyze_compliance.py` → `analysis/COMPLIANCE.md`), seeds 13/17. Pre-reg `preregistration_compliance.md`.
+
+**Core finding — standardization is exemplary.** All 4 headline conditions (L, L+upQ, L+upQ_pred, L+upQshuf) run byte-identical configs: cudalstm, hidden 64, dropout 0.4, forget-bias 3, Adam 1e-3, batch 256, 30 epochs, seq 30, maurer forcings, 5 static attrs, one-hot on, same 1990-99/2005-08 split, same seed. **The ONLY difference is a single dynamic input (`upstream_q`).** This is the cleanest-possible ablation and directly resolves the architecture-confound that invalidated the earlier DirectedGraphLSTM 5cond work (different trainer, undertrained). By moving the whole study onto stock cudalstm + one input, "the difference maker is our addition" is literally true at the config level.
+
+**Step A — metric robustness (added log-NSE, our methodology's 3rd metric): PASS, strengthens the result.** Realizable Δ: NSE +0.022 / log-NSE +0.019. Gain holds across the flow regime. Null control goes NEGATIVE in log-NSE (−0.023) — shuffled input hurts low flows, so the real gain is even more clearly genuine.
+
+**Step B — baseline is not a straw man: PASS.** Realizable gain persists on well-predicted basins (L NSE > 0.6): +0.012 (n=230); larger on bad basins but positive everywhere → real signal, not rescue.
+
+**Scale + literature positioning (assessment).** 183 basins × 3 seeds is adequate for a regional/workshop paper and exceeds the 5cond design; it is NOT a national benchmark. Kratzert 2019 = 531 basins + EA-LSTM (~0.74); our cudalstm on 183 eastern basins (0.653) is a legitimate strong baseline for this scope — report honestly, claim no SOTA. Crucially the study BUILDS ON the cited work: it resolves Kirschstein 2024's GNN-adjacency null (static topology is inert — we show it directly) and executes Jiang 2025's physics-aware-operator direction (dynamic upstream flow is what helps). 531-basin scale-up is named future work.
+
+**Verdict: PUBLICATION-VALID methodology.** Nothing broken. Standardization exemplary, comparison fair, metrics now complete, not baseline-rescue, positioned in the literature. Only honest framing (regional scope, no SOTA claim) + the cheap seed-11 re-eval remain.
+
+### Reviewer 2
+- *Conditions truly standardized?* Byte-identical configs; one input differs. Confirmed on disk.
+- *183 basins enough?* Adequate for regional/workshop; frame as eastern-US sub-network, not national. Scale-up = future work.
+- *Baseline a straw man?* No — Step B: gain persists on good basins. Baseline is honest cudalstm, no SOTA claim.
+- *Builds on the papers?* Yes — resolves Kirschstein null, executes Jiang direction.
+- *Leakage?* Upstream lagged Q → downstream; target basin's own flow never enters; deployable version uses predicted Q.
+
+### Open questions / TODO
+1. Re-eval seed-11 realizable (restore clean 3-seed paired set) — cheap.
+2. 531-basin scale-up for a top-tier (vs workshop) venue — large compute.
+3. NHDPlus ground-truth edges vs our heuristic edges (robustness a reviewer may want).
+
+## Next 2–3 sessions (queued)
+1. **Seed-11 realizable re-eval** — restores full 3-seed set; ~10 min once L_upQpred_seed11 retrained/re-downloaded.
+2. **Local-subgraph scale curve** — does gain grow at small scale; ~30 min Colab (pre-registered).
+3. **Draft the paper skeleton** — methods (the byte-identical ablation), results (null topology → dynamic-flow gain → routing mechanism), positioning (Kirschstein/Jiang). The science is essentially complete for a regional workshop paper.
