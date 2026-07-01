@@ -95,8 +95,17 @@ Single seed until we see a clear signal; multi-seed only for the publication run
 | `build_predicted_upstream_q.py` | Stage 1: re-evaluate trained L over full span 1990–2008 → predicted Q per basin (cached in `runs/.../_Lfullspan_eval/`). Stage 2: aggregate upstream **predicted** Q into a feature. Deployable, no target leakage. |
 | `notebooks/colab_realizability.ipynb` | Colab runner for the realizability test (needs full CAMELS dataset). |
 | `preregistration_realizability.md` | Pre-reg: success ≥ +0.015 (≥40% of the +0.037 ceiling). |
+| `notebooks/colab_multiseed.ipynb` | Colab runner for the multi-seed confirmation (seeds 11/13/17). |
 
-**Generated:** `configs/` (per-run YAMLs), `features/` (upstream-Q pickles, gitignored), `analysis/` (2×2 outputs). Run outputs land in `runs/topology_ablation/component0/` (see its `NOTES.md`).
+**Phase 4 — multi-seed, robustness, compliance (all CPU re-analysis of committed runs):**
+| File | Purpose |
+|---|---|
+| `analyze_multiseed.py` | Cross-seed mean±std + paired Δ + realizable-vs-null (Step A) + depth-stratified gain (Step B). Writes `analysis/MULTISEED.md`. |
+| `analyze_confound.py` | Depth-gradient confound check: routing (n_upstream) vs basin size (area), partial control within area terciles. Writes `analysis/CONFOUND.md`. |
+| `analyze_compliance.py` | Methodology audit: all-3-metric contrasts (incl. log-NSE) + baseline-strength stratification. Writes `analysis/COMPLIANCE.md`. |
+| `preregistration_{multiseed,robustness_chain,confound_check,compliance}.md` | Pre-regs + results for the above. |
+
+**Generated:** `configs/` (per-run YAMLs), `features/` (upstream-Q pickles, gitignored), `analysis/` (all `*.md` + CSV outputs). Run outputs land in `runs/topology_ablation/component0/` (see its `NOTES.md`).
 
 ## How to run
 

@@ -1,6 +1,6 @@
 # Neural Hydrology — Graph-LSTM Experiments (Baker Lab @ UCLA)
 
-Graph-based extensions to the [NeuralHydrology](https://github.com/neuralhydrology/neuralhydrology) framework (Kratzert et al., JKU Linz). This fork investigates whether river-network topology and inter-basin message passing improve streamflow prediction over a strong multi-basin LSTM baseline on CAMELS-US.
+Extensions to the [NeuralHydrology](https://github.com/neuralhydrology/neuralhydrology) framework (Kratzert et al., JKU Linz) that ask **when and how river-network structure improves LSTM streamflow prediction** over a strong multi-basin LSTM baseline on CAMELS-US. The study is a controlled ablation on stock NeuralHydrology: every condition shares an identical model and training setup, and the only thing that varies is the structural signal added as an input — first static topology features, then dynamic upstream flow. This directly resolves the "does graph structure help streamflow LSTMs?" question left open by prior work (Kirschstein 2024's null; Jiang 2025's physics-aware direction).
 
 ## What this is
 
@@ -10,14 +10,16 @@ A research codebase, not a finished product. The work is ongoing; current result
 
 | If you want… | Go to |
 |---|---|
-| The current research direction | `idea1.md` |
-| Latest experiment results and what they mean | `experiments/5cond_factorial/analysis/` |
-| The running log of decisions, pivots, and PI feedback | `JOURNAL.md` |
-| Chronological history of all sessions | `CURRENT_STATE.md` |
+| The current study (controlled ablation, upstream-signal) | `experiments/topology_ablation/` (has its own README) |
+| The running log of decisions, results, and pivots | `JOURNAL.md` |
+| A quick plain-language status brief | `updates.md` |
+| The original research direction + protocol | `idea1.md` |
+| Earlier confounded work (kept for provenance) | `experiments/5cond_factorial/`, `experiments/local_subgraphs/` |
 | Training scripts, configs, analysis tools | `experiments/` (each subfolder has its own README) |
 | Per-experiment run outputs | `runs/` |
 | River-network inference (Phase 1) | `topology_analysis/` |
 | Literature review and positioning | `research_papers.md` |
+| Chronological session history | `CURRENT_STATE.md` |
 | The upstream NH framework (unmodified) | `neuralhydrology/` |
 | Alternative direction set aside in April 2026 | `idea2/` |
 
