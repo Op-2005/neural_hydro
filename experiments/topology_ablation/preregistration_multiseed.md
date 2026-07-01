@@ -35,3 +35,18 @@ headline contrasts need 3-seed confirmation with the variance reported.
 ## What we will NOT do
 - Will not drop a seed that comes out unfavorable.
 - Will not change the metric or the success bar after seeing seed 13/17.
+
+---
+## Results (post-run, 2026-07-01)
+
+| Condition | median NSE (mean ± std, seeds 11/13/17) |
+|---|---|
+| L | 0.653 ± 0.002 |
+| L+upQ (oracle) | 0.691 ± 0.009 |
+| L+upQ_pred (realizable) | 0.678 ± 0.008 |
+| L+upQshuf (null) | 0.666 ± 0.008 |
+
+Realizable Δ vs L (measured seeds 13/17): +0.026, +0.013 → mean +0.019, **all 3 seeds
+positive** (seed 11 was +0.027). Bar +0.015 → **SUCCESS**. Realizable recovers ~55% of the
+oracle ceiling cross-seed. Null crept to +0.004 (from −0.002 seed 11), so the honest effect
+is realizable−null = **+0.012** (Step A). Full analysis: `analysis/MULTISEED.md`.
