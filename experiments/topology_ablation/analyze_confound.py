@@ -2,7 +2,7 @@
 contribution (routing) or by basin size (area)?
 
 Pre-registered in preregistration_confound_check.md. Zero compute — re-analyzes committed
-runs. Per-basin realizable Δ = (L+upQ_pred − L) pooled over measured seeds 13/17.
+runs. Per-basin realizable Δ = (L+upQ_pred − L) pooled over all 3 measured seeds 11/13/17.
 
 Tests:
   T1 gain vs n_upstream buckets
@@ -22,7 +22,7 @@ ROOT = Path(__file__).parent.parent.parent
 BASE = ROOT / "runs" / "topology_ablation" / "component0"
 DEPTH = ROOT / "topology_analysis/phase1_network_discovery/outputs/component0_depth.csv"
 OUT = Path(__file__).parent / "analysis"
-SEEDS = [13, 17]   # fully-measured realizable seeds (11's metric folder lost in drive merge)
+SEEDS = [11, 13, 17]  # all 3 realizable seeds measured (seed-11 re-run 2026-07-01)
 
 
 def nse(cond, seed):

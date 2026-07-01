@@ -5,7 +5,7 @@ Step A: compute log-NSE per basin from test_results.p (obs/sim), re-report headl
 Step B: baseline-strength stratification — does the realizable gain persist on WELL-predicted
         basins (L NSE > 0.6), or only rescue catastrophic ones?
 
-Seeds 13/17 (fully measured). Writes analysis/COMPLIANCE.md.
+Seeds 11/13/17 (all measured). Writes analysis/COMPLIANCE.md.
 """
 import pickle
 from pathlib import Path
@@ -15,7 +15,7 @@ import pandas as pd
 ROOT = Path(__file__).parent.parent.parent
 BASE = ROOT / "runs" / "topology_ablation" / "component0"
 OUT = Path(__file__).parent / "analysis"
-SEEDS = [13, 17]
+SEEDS = [11, 13, 17]  # seed-11 re-measured
 CONDS = ["L", "L_upQ", "L_upQpred", "L_upQshuf"]
 
 

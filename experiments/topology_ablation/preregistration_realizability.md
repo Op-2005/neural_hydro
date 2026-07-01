@@ -67,3 +67,10 @@ Stage 1 evaluate over full span (~183 basins × 18 yr): ~3–5 min CPU. Stage 2 
 (Note: the oracle Δ here is +0.050 vs the +0.037 used to set the ceiling; the +0.037 was
 the lag1 paired contrast reported earlier and is the conservative ceiling reference. Even
 against the larger +0.050 oracle gain, predicted-Q recovers 53%.)
+
+---
+## 3-seed update (2026-07-01): seed-11 re-measured
+
+Seed-11 realizable re-run reproduces the original exactly (Δ +0.0265). Full measured set:
+seed11 +0.0265, seed13 +0.0258, seed17 +0.0131 → cross-seed +0.0218 ± 0.0062, all positive.
+Recovery of oracle: 72% / 55% / 61%. The 3-seed paired comparison is now fully measured.

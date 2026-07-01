@@ -972,3 +972,29 @@ L_420 − G paired (n=549): median Δ = **−0.100**, CI [−0.105, −0.092], 9
 1. **Seed-11 realizable re-eval** — restores full 3-seed set; ~10 min once L_upQpred_seed11 retrained/re-downloaded.
 2. **Local-subgraph scale curve** — does gain grow at small scale; ~30 min Colab (pre-registered).
 3. **Draft the paper skeleton** — methods (the byte-identical ablation), results (null topology → dynamic-flow gain → routing mechanism), positioning (Kirschstein/Jiang). The science is essentially complete for a regional workshop paper.
+
+---
+## 2026-07-01 (later) — Seed-11 realizable re-eval: full 3-seed set now MEASURED (reproduces exactly)
+
+**Source.** Restored the seed-11 realizable run (lost in the drive merge — no ckpt/metrics on disk). Re-ran the two-stage pipeline locally: (1) full-span L_seed11 evaluate → predicted Q (the step that failed on the Mac subset before — worked cleanly this time, transient earlier failure), (2) build predicted-Q feature, (3) train L_upQpred_seed11.
+
+**Result — reproduces the original exactly + strengthens the record.** Seed-11 realizable: L 0.6529 → 0.6833, paired Δ **+0.0265** — identical to the original run (confirms determinism, not a fluke). Complete measured 3-seed set:
+
+| seed | realizable Δ | recovery of oracle |
+|---|---|---|
+| 11 | +0.0265 | 72% |
+| 13 | +0.0258 | 55% |
+| 17 | +0.0131 | 61% |
+
+**Cross-seed realizable Δ +0.0218 ± 0.0062, all 3 seeds positive** — no more "seed-11 recorded" asterisk. All three analyses re-run on the full measured set (`SEEDS=[11,13,17]`):
+- Step A (realizable−null): +0.017 all-positive (was +0.012 on 2 seeds).
+- Step B depth gradient: intact (depth0 +0.002 → rising).
+- Confound: corr(Δ,area)=+0.015 (~0) vs corr(Δ,depth)=+0.158; routing survives 3/3 area terciles.
+- Compliance log-NSE: realizable +0.027 (stronger than NSE +0.022); null −0.003; baseline-not-strawman +0.012 on good basins.
+
+**The open TODO from the compliance audit is closed.** The multi-seed paired comparison is now fully measured and clean. Nothing changed in the conclusions; the record is just tighter.
+
+## Next 2–3 sessions (queued)
+1. **Paper skeleton** — the science is complete for a regional workshop paper (static topology null → dynamic upstream flow helps, 3-seed measured → deployable predicted-Q → routing mechanism, confound-checked → robust across NSE/KGE/log-NSE → not baseline-rescue).
+2. **Local-subgraph scale curve** — does the gain grow at small scale (Colab, pre-registered).
+3. **531-basin scale-up** — only for a top-tier (vs workshop) venue; large compute.
