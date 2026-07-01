@@ -912,3 +912,31 @@ L_420 − G paired (n=549): median Δ = **−0.100**, CI [−0.105, −0.092], 9
 1. **Area-stratified + depth-vs-area partial analysis** — rules out the size/aridity confound on the depth gradient; CPU/free re-analysis; prerequisite: none.
 2. **Local-subgraph scale curve (Step C)** — does realizable gain grow at small scale; ~30 min Colab T4; prereg written.
 3. **2-hop predicted-Q** — feed predicted Q from 2 hops upstream (iterated); tests if more of the oracle gap is recoverable; ~20 min CPU per seed.
+
+---
+## 2026-07-01 (later) — Confound check: depth gradient is ROUTING, not basin size (paper-ready)
+
+**Source.** `/crs` follow-up. Pre-registered `preregistration_confound_check.md`; ran `analyze_confound.py` (zero compute, re-analysis of seeds 13/17 realizable runs, n=366 basin×seed). Depth correlates with area (r=0.38), so the depth-gradient result needed a partial control before anchoring the paper.
+
+**Result — confound decisively ruled out.**
+- **T3 (partial control, load-bearing): PASS 3/3 area terciles.** depth≥2 vs depth0 realizable gain within each size class: small +0.021, mid +0.036, large +0.050. The depth effect survives holding area fixed, and is *strongest* in large basins (opposite of an area-confound).
+- **T4:** corr(Δ, area) = −0.008 (essentially zero) vs corr(Δ, depth) = +0.134. Area does not predict the gain; graph position does.
+- **T2:** area-tercile spread only +0.006 (flat).
+- **T1:** step change headwaters(−0.003) → any-upstream(+0.022), then saturates in n_upstream count — routing signal is the binary "downstream vs headwater," captured by the area-weighted upstream aggregate.
+
+**Why it matters.** The depth gradient (the mechanistic heart of the paper) is genuinely about *upstream routing*, not basin size. The strongest reviewer objection to the routing story is now closed. Combined with the multi-seed confirmation and the null control, the finding is paper-ready.
+
+### Reviewer 2
+- *Depth proxies size?* Refuted — within-tercile gaps hold (+0.021/+0.036/+0.050), corr(Δ,area)≈0.
+- *T1 not monotonic in n_upstream count?* Gain saturates; the step is "has upstream vs not." Consistent with routing.
+- *Only 2 seeds?* n=366 basin×seed is ample for stratified medians; seed-11 realizable re-eval is a cheap TODO.
+
+### Open questions
+1. Does the gain grow on small local subgraphs (scale curve, Colab)?
+2. Can 2-hop / iterated predicted-Q recover more of the oracle gap?
+3. Re-evaluate seed-11 realizable to restore the full 3-seed paired set (cheap).
+
+## Next 2–3 sessions (queued)
+1. **Local-subgraph scale curve (Step C)** — pre-registered; ~30 min Colab T4.
+2. **2-hop predicted-Q** — ~20 min CPU/seed; tests recoverable headroom to the oracle.
+3. **Seed-11 realizable re-eval** — restores full 3-seed paired analyses; ~10 min once L_upQpred_seed11 checkpoint is re-run or re-downloaded.
