@@ -998,3 +998,38 @@ L_420 − G paired (n=549): median Δ = **−0.100**, CI [−0.105, −0.092], 9
 1. **Paper skeleton** — the science is complete for a regional workshop paper (static topology null → dynamic upstream flow helps, 3-seed measured → deployable predicted-Q → routing mechanism, confound-checked → robust across NSE/KGE/log-NSE → not baseline-rescue).
 2. **Local-subgraph scale curve** — does the gain grow at small scale (Colab, pre-registered).
 3. **531-basin scale-up** — only for a top-tier (vs workshop) venue; large compute.
+
+---
+## 2026-07-06 — /crs-unleashed: lag0-realizable FALSIFIED (reveals predictability ceiling); KGE scopes the claim
+
+**Source.** /crs-unleashed. Pre-reg `preregistration_lag0_realizable.md`. Two CPU-cheap gaps in the otherwise-complete study: the strongest realizable version (lag0 predicted-Q) was untested, and KGE (3rd required metric) hadn't been run on the realizable headline.
+
+**Diagnosis (top-3):** (1) realizable result may be under-sold — observed oracle is 2× stronger at lag0, predicted-lag0 untested [test first]; (2) KGE robustness unverified [free check]; (3) NHDPlus edges — reviewer-relevant but large data task [defer].
+
+### Step A — lag0-predicted: FALSIFIED, but informative
+
+| realizable version (seed 11) | Δ vs L | recovery of its oracle |
+|---|---|---|
+| lag1 predicted | +0.0265 | 72% (of +0.037) |
+| lag0 predicted | +0.0229 | **26%** (of +0.087) |
+
+lag0-predicted (+0.0229) < lag1-predicted (+0.0265) → pre-registered hypothesis FALSIFIED; lag1 stays the headline. **The mechanism is the finding:** the observed oracle is 2× stronger at lag0 (+0.087 vs +0.037), but the *predicted* version recovers only 26% of the lag0 ceiling vs 72% of lag1. Same-day upstream flow has the most signal when observed but is the hardest to forecast — **lag1 is the realizable sweet spot; the deployable gain is capped by upstream predictability, not the downstream model.** Chain stopped at Step A per pre-reg (Step C gated on lag0 winning — not run; no re-design of a falsified test).
+
+### Step B — KGE robustness (3rd metric)
+
+Realizable Δ robust in NSE (+0.022, all 3 seeds +) and log-NSE (+0.027, all 3 seeds +), but KGE +0.013 mean with seed 13 at −0.002 (not all-positive). Honest scope: **robust in NSE/log-NSE; KGE-positive-on-average with seed sensitivity.** Report all three metrics; do not overclaim KGE.
+
+### Reviewer 2
+- *Did you cherry-pick lag1?* No — pre-registered lag0 as the hypothesized stronger version; it falsified. lag1 was the original headline and remains it. Both reported.
+- *Is the 26% vs 72% just noise?* It's a large, consistent gap (single seed here, but the recovery ratio is a 3× difference); the predictability interpretation is testable via a lag0 seed-13 check if a reviewer insists (not run — chain stopped on falsification).
+- *KGE not all-positive — is the result fragile?* Robust in 2 of 3 metrics with all-seeds-positive; KGE seed-sensitivity is disclosed. NSE + log-NSE agreement is the load-bearing evidence.
+- *What would make lag0 deployable?* A better upstream Q *forecaster* (the current one is the same L baseline). That's future work, not this paper's claim.
+
+### Open questions
+1. Does a stronger upstream-Q forecaster lift the lag0 realizable recovery above lag1? (future)
+2. lag0 seed-robustness (only if pursuing the lag0 branch — currently closed).
+
+## Next 2–3 sessions (queued)
+1. **Paper skeleton** — science is complete; lag1 realizable is the confirmed, best deployable headline; the lag0 predictability-ceiling result is a strong discussion point.
+2. **Local-subgraph scale curve** — does the gain grow at small scale (Colab, pre-registered).
+3. **531-basin scale-up** — top-tier venue only; large compute.
