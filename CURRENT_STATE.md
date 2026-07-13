@@ -393,3 +393,30 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Files:** new experiments/local_subgraphs/preregistration_local_scale.md (committed 0678273 batch + prereg).
 - **Caveats:** subgraphs span 2 HUCs each (graph-coherent, not climate-coherent); only sg_texas_pilot is single-region. 30-epoch runs on small data may under/over-fit differently than the 183-basin run — watch the std.
 - **Next:** on batch completion, run analyze_subgraphs.py, judge vs pre-registration, append JOURNAL entry with the verdict.
+
+### CRS-Unleashed Session — 2026-07-12 (analysis-only hardening chain)
+
+- **Reviewed (deep orient):** git log (last 30), current_implementation.md, README, all 6 analysis/*.md, MULTISEED/CONFOUND/COMPLIANCE, FORWARD_PLAN, JOURNAL tail (open TODOs), analysis-script signatures. Key reuse discovery: every headline run stores `test_results.p` (per-timestep obs/sim) → any metric/stratification is zero-compute.
+- **Diagnosed (top-3 load-bearing claims):** (1) routing-not-artifact [medium-conf, high-imp → tested]; (2) deployable gain significant vs null [high-conf, high-imp → tested]; (3) log-NSE/KGE robustness [medium → tested].
+- **Pre-registered:** `preregistration_hardening_chain.md` — 3 gated analysis-only steps, written before execution.
+- **Ran (zero training compute), all 3 steps PASSED:**
+  - **Step A — significance** (`analyze_significance.py` → `analysis/SIGNIFICANCE.md`): realizable-vs-L Wilcoxon p=6e-19; **realizable-vs-null p=2.3e-12**, bootstrap 95% CI on median Δ [+0.011,+0.022] excludes 0. Per-seed: sig in 3/3 (vs-L) and 2/3 (vs-null; seed17 p=0.061, disclosed). Upgrades "all-seeds-positive" → "statistically significant, capacity-controlled, with CI."
+  - **Step B — routing vs feature-magnitude confound** (`analyze_feature_magnitude_confound.py` → `analysis/FEATURE_MAGNITUDE_CONFOUND.md`): feature magnitude *decreases* with depth (corr −0.369) while gain *increases* → confound runs OPPOSITE to effect. Within-tercile deep>shallow 3/3. Partial corr(Δ, depth | area, fmag)=+0.149 (p=4e-4); reverse fmag|depth,area drops to +0.080 (p=0.061, n.s.). Depth is load-bearing; feature scale is not. Resolves the CONFOUND.md depth-vs-n_upstream ambiguity: the routing variable is **depth**.
+  - **Step C — metric honesty** (`analyze_metric_honesty.py` → `analysis/METRIC_HONESTY.md`): log-NSE realizable Δ stable +0.027→+0.030 across 100× eps sweep (null stays negative). KGE seed-13 dip **localized**: realizable improves timing (KGE-r positive in ALL 3 seeds, Δr +0.018/+0.021/+0.005); the dip is a variability-ratio (γ) overshoot, not a timing loss.
+- **Net effect:** three of the paper's most-attackable joints hardened — significance (with CI), mechanism (confound runs backwards), and metric honesty (KGE weakness now understood as γ-overshoot with r always improving). No result changed sign; the record is materially stronger and better-scoped. No new runs; all on stored predictions.
+- **Reviewer-2:** addressed pooling non-independence (per-seed corroborates), collinearity (direction argument dominates partial corr), eps non-standardness (swept 100×, sign stable), γ-overshoot (honest limitation, r-always-positive shows timing intact).
+- **Caveats/TODO:** oracle seed-11 `test_results.p` lost in drive merge (metrics.csv survives) → Step C oracle column blank at seed11 only, non-load-bearing. Follow-up: report at NH's default fixed eps for direct comparability.
+- **Next:** paper skeleton (science + hardening complete); the 3 new artifacts feed the results/discussion directly.
+
+### CRS-Unleashed Session — 2026-07-12 (later): routing-baseline chain (queue re-scoped)
+
+- **Re-scoped the stale queue (validity-first).** Queued items 2–3 were mis-costed: oracle seed-11 re-eval needs RETRAINING (checkpoint lost in drive merge; only config+test survive), and the scale curve needs GPU (no subgraph runs on disk). Neither is CPU-cheap. Instead executed the reviewer baseline `FORWARD_PLAN.md` names as "near-free once EXP-0 infra exists" and which the paper genuinely lacks.
+- **Pre-registered:** `preregistration_routing_baseline_chain.md` — 3 gated analysis-only steps.
+- **Ran (zero training), all 3 PASSED:**
+  - **Step A — no-ML routing baseline** (`analyze_routing_baseline.py` → `analysis/ROUTING_BASELINE.md`): least-squares routing fit on TRAIN, scored on TEST. R1 pure routing +0.324; R2 routing+L_sim +0.675; L +0.654; realizable +0.686; oracle +0.717. **Realizable beats every no-ML baseline (ML earns its complexity)** — but the margin over the strong R2 (+0.010) is modest and honestly reported. This is the reviewer's first question, now answered in-paper.
+  - **Step B — per-depth significance** (`analyze_depth_significance.py` → `analysis/DEPTH_SIGNIFICANCE.md`): per-stratum Wilcoxon. depth0 n.s. (p=0.24, expected); depth1 p=2.6e-9; depth2 p=4.7e-12; depth3 p=8.4e-4; depth4 n.s. (n=6). **The routing gain is statistically significant exactly where water arrives and absent at headwaters** — the gradient now has per-stratum teeth, not just a median trend.
+  - **Step C — consolidated paper table** (`build_paper_table.py` → `analysis/PAPER_TABLE.md`): Table 1 (conditions × NSE/KGE/log-NSE × Δ-vs-L p), Table 2 (routing baselines), Table 3 (depth significance). The Results section assembled in one auditable place. Surfaced honestly: null-vs-L is weakly sig (p=0.047), which is why realizable-vs-null (p=2.3e-12, prior artifact) is the load-bearing contrast.
+- **Net effect:** the paper gains its missing reviewer baseline, upgrades the depth story to per-stratum significance, and now has a single consolidated Results table. All from stored data — zero training.
+- **Reviewer-2:** addressed R2-near-miss (R2 uses L's own sim; standalone no-ML is R1 at +0.324; honest margin), train/test split (no leakage), depth-4 n.s. (n=6, no power), seed-11-only baseline (fullspan eval availability; 3-seed extension is a cheap follow-up).
+- **Corrected queue:** oracle 3-seed completion and scale curve both require compute not available this session; logged accurately for next time.
+- **Next:** paper skeleton — every Results artifact now exists; the write-up is the natural next move.

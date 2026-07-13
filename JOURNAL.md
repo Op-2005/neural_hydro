@@ -1033,3 +1033,101 @@ Realizable Δ robust in NSE (+0.022, all 3 seeds +) and log-NSE (+0.027, all 3 s
 1. **Paper skeleton** — science is complete; lag1 realizable is the confirmed, best deployable headline; the lag0 predictability-ceiling result is a strong discussion point.
 2. **Local-subgraph scale curve** — does the gain grow at small scale (Colab, pre-registered).
 3. **531-basin scale-up** — top-tier venue only; large compute.
+
+---
+## 2026-07-12 — /crs-unleashed: analysis-only hardening chain (significance → mechanism-confound → metric-honesty), all PASS
+
+**Source.** /crs-unleashed. The core study is complete and publication-valid; this session hardened its three most-attackable joints with zero training compute, exploiting a reuse discovery: every headline run stores `test_results.p` (per-timestep obs/sim), so any metric or stratification is a pure re-analysis. Pre-reg: `preregistration_hardening_chain.md` (written before execution).
+
+**Orient (what was read).** git log (30), current_implementation.md (the full paper narrative), README, all `analysis/*.md` (MULTISEED, CONFOUND, COMPLIANCE, RESULTS), FORWARD_PLAN, JOURNAL tail (open TODOs: paper skeleton / scale curve / 531-scale / NHDPlus), and the signatures of `analyze_multiseed.py` / `analyze_confound.py` / `analyze_compliance.py` / `build_predicted_upstream_q.py`. Confirmed all 4 headline conditions × 3 seeds have metrics on disk; `test_results.p` present for all except `L_upQ` seed11 (lost in the drive merge — non-load-bearing).
+
+**Diagnosis (top-3 load-bearing claims, ranked).**
+1. *The gain is routing (rises with depth), not a size/aggregation artifact* — medium confidence, high importance → **test first**. Only area had been controlled; feature-magnitude and the depth-vs-n_upstream ambiguity had not.
+2. *The deployable +0.022 is significant vs the null, not three noisy seeds agreeing in sign* — high confidence, high importance → **verify rigorously** (no paired significance test existed).
+3. *log-NSE/KGE robustness* — medium → verify + defer (log-NSE eps choice untested; KGE seed-13 dip unexplained).
+
+### Step A — significance (PASS) — `analysis/SIGNIFICANCE.md`
+Paired Wilcoxon signed-rank on per-basin NSE deltas, pooled seeds (n=549).
+- realizable − L: median +0.0225, 66% of basins positive, **p=6.0e-19**, bootstrap 95% CI on median [+0.0175, +0.0281].
+- **realizable − null (capacity-controlled): median +0.0167, p=2.3e-12, CI [+0.0106, +0.0216] excludes 0.**
+- Per-seed (independent basins, n=183): realizable-vs-L significant 3/3; realizable-vs-null significant 2/3 (seed17 p=0.061 — weakest, **disclosed**).
+- **Upgrade:** "all-seeds-positive in the mean" → "statistically significant, capacity-controlled, with a CI." Gate passed → Step B.
+
+### Step B — routing vs feature-magnitude confound (PASS, stronger than expected) — `analysis/FEATURE_MAGNITUDE_CONFOUND.md`
+Tests whether the depth→Δ gradient is really upstream routing or just that deeper basins have a larger `upstream_q` feature. Feature magnitude = per-basin mean |upstream_q| (lag-1 predicted feature).
+- **Direction (decisive):** feature magnitude *decreases* with depth (corr −0.369; depth1 median 1.85 → depth3 1.39 mm/d) while the gain *increases* (depth1 +0.020 → depth3 +0.044). The confound runs **opposite** to the effect — it cannot manufacture it.
+- Within each feature-magnitude tercile, deeper (depth≥3) beats shallower (depth1) in **3/3** terciles (+0.012 to +0.019).
+- Partial corr(Δ, depth | area, fmag) = **+0.149 (p=4.4e-4)**; reverse partial corr(Δ, fmag | area, depth) = +0.080 (p=0.061, **not significant**). Depth is load-bearing; feature scale is not.
+- **Resolves the CONFOUND.md tension** (its T1 flagged "monotonic in n_upstream: False" while the story rests on depth): the routing variable that carries the gradient is **graph depth**, not raw n_upstream count and not feature magnitude. Gate passed → Step C.
+- *Binning note:* the first-cut within-tercile depth0-vs-depth2 test returned all-n/a because depth0 ⟺ fmag=0 by construction (headwaters have no upstream); corrected to a connected-basin (depth1 vs depth≥3) comparison. Documented in the artifact, not swept under.
+
+### Step C — metric honesty (PASS) — `analysis/METRIC_HONESTY.md`
+- **C1 log-NSE eps-sensitivity:** realizable Δ stable +0.0270 → +0.0303 across eps ∈ {1e-2,1e-3,1e-4}×mean-flow (100× sweep); null stays negative (−0.003 → −0.010) and the contrast *sharpens* as eps shrinks. **The +0.027 headline is not an eps artifact.**
+- **C2 KGE decomposition (the useful discovery):** the disclosed seed-13 KGE dip (ΔKGE −0.005) is **not** a timing failure. The correlation component **r improves in all 3 seeds** (Δr +0.018/+0.021/+0.005) — upstream flow consistently sharpens hydrograph timing. The seed-13 dip is a **variability-ratio (γ) overshoot** (Δγ −0.036) plus a bias (β) shift. Honest-scope statement sharpened from "KGE is seed-sensitive" to "upstream flow improves timing (KGE-r positive in all seeds); the seed-13 KGE dip is a γ-overshoot, not a timing loss."
+
+**Net effect.** No result changed sign. The paper's three most-attackable joints are materially stronger: the deployable effect now carries a significance test and CI; the routing mechanism survives a confound that runs directionally *against* it; and the metric weak-spot (KGE) is now understood mechanistically (γ-overshoot with r always improving) rather than merely disclosed. All from stored predictions — zero training.
+
+### Reviewer 2
+- *Pooled 549 as independent — basins repeat across seeds?* Per-seed tests (n=183, independent) corroborate: 3/3 vs-L, 2/3 vs-null. Pooled p is not carried alone.
+- *Seed17 vs-null p=0.061 — not significant?* Disclosed; claim is "significant pooled and in 2/3 seeds," not "every seed." One-sided is pre-registered (directional physical H1), and two-sided still clears 0.01.
+- *Depth/n_upstream/area collinear — partial corr can't separate them?* The direction argument dominates: fmag *decreases* with depth while gain rises; a confound opposite to the effect can't create it.
+- *Heuristic edges → depth is noise?* Noise doesn't produce a monotone gradient surviving area + fmag controls at p=4e-4.
+- *eps scaling non-standard?* Swept 100×, sign never moved; a fixed-eps reviewer reaches the same conclusion (TODO: report NH default eps for comparability).
+- *KGE γ-overshoot = model adds spurious variance?* Honest limitation; but r-always-positive shows timing is intact — it's a bias/variance calibration issue, addressable with a variance-penalized loss (future).
+
+### Open questions
+1. Report log-NSE at NH's default fixed eps for direct comparability (cheap).
+2. Does a variance-penalized loss fix the KGE-γ overshoot without losing the r gain? (a run — future).
+3. Restore `L_upQ` seed11 `test_results.p` (re-eval) to complete the oracle log-NSE/KGE columns (cheap, ~10 min).
+
+## Next 2–3 sessions (queued)
+1. **Paper skeleton** — gates the write-up; cost ~1 session; prerequisite none (science + hardening complete). The 3 new artifacts (SIGNIFICANCE, FEATURE_MAGNITUDE_CONFOUND, METRIC_HONESTY) drop straight into Results/Discussion.
+2. **Oracle seed11 test_results.p re-eval** — gates complete 3-seed oracle log-NSE/KGE; cost ~10 min CPU; prerequisite the L_upQ_seed11 checkpoint (re-run the two-stage eval as in the 2026-07-01 seed-11 restore).
+3. **Local-subgraph scale curve** — gates the "does the gain grow at small scale" secondary figure; cost ~30 min Colab T4; prerequisite GPU (pre-registered in `experiments/local_subgraphs/preregistration_local_scale.md`).
+
+---
+## 2026-07-12 (later) — /crs-unleashed: routing-baseline chain (queue re-scoped for validity), all PASS
+
+**Source.** /crs-unleashed, executing the queued next sessions. On inspection the queue was stale: "oracle seed-11 re-eval" needs RETRAINING (its checkpoint was lost in the drive merge — only `config.yml`+`test/` survive, no `.pt`), and "local-subgraph scale curve" needs GPU (no subgraph runs on disk; the 2026-06-20 batch left nothing). Neither is the CPU-cheap step the queue implied. The optimal available move — genuinely paper-contributing and CPU-cheap — is the reviewer baseline `FORWARD_PLAN.md` explicitly names and the paper still lacks: the **no-ML routing baseline** ("if our model can't beat simple physical routing, the ML isn't earning its complexity"). Pre-reg: `preregistration_routing_baseline_chain.md`.
+
+### Step A — no-ML routing baseline (PASS) — `analysis/ROUTING_BASELINE.md`
+Least-squares routing predictors, coefficients fit on TRAIN 1990-99, scored on TEST 2005-08 (no test fitting), seed 11, connected basins (n=150). Data on disk: observed `upstream_q` lag1 feature + the `_Lfullspan_eval` run (obs + L-sim over full 1990-2008).
+- **R1 pure routing** (a·upstream_q + b): median NSE **+0.324**.
+- **R2 routing + local** (a·upstream_q + c·L_sim + b): **+0.675**.
+- L +0.654 | L+upQ_pred (realizable) **+0.686** | L+upQ (oracle) +0.717.
+- **Verdict PASS:** realizable and oracle both beat R1 (pure routing); realizable beats R2. The LSTM's learned use of upstream flow beats naive physical routing — the ML earns its complexity.
+- **Honest nuance (now in-paper):** the margin over the *strong* R2 baseline is only +0.010. R2 nearly matches the realizable LSTM — but R2 *uses the L baseline's own sim* as an input (it is "LSTM + linear upstream correction," not ML-free); the standalone no-ML predictor is R1 at +0.324. The LSTM's real advantage is integrating upstream flow WITH local rainfall-runoff, which linear routing cannot. This is exactly the reviewer's first question, answered head-on instead of ambushed.
+
+### Step B — per-depth significance (PASS) — `analysis/DEPTH_SIGNIFICANCE.md`
+Per-depth paired Wilcoxon (one-sided) on realizable Δ, pooled seeds (n=549).
+
+| depth | n | median Δ | p | sig |
+|---|---|---|---|---|
+| 0 (headwater) | 99 | +0.002 | 0.24 | **no** (expected — no upstream) |
+| 1 | 243 | +0.020 | 2.6e-9 | yes |
+| 2 | 153 | +0.031 | 4.7e-12 | yes |
+| 3 | 48 | +0.044 | 8.4e-4 | yes |
+| 4 | 6 | +0.015 | 0.34 | no (n=6, no power) |
+
+**The routing gain is statistically significant exactly where upstream flow arrives (depth 1-3) and statistically absent at headwaters.** The depth gradient is upgraded from a median trend to a per-stratum-significant result — the strongest form of the routing claim.
+
+### Step C — consolidated publication table (PASS) — `analysis/PAPER_TABLE.md`
+Assembled the Results section into one auditable file: Table 1 (conditions × NSE/KGE/log-NSE mean±std × Δ-vs-L Wilcoxon p), Table 2 (routing baselines R1/R2 vs LSTM), Table 3 (depth significance). Surfaced honestly: the shuffled null is *weakly* significant vs L on raw NSE (Δ +0.012, p=0.047) — which is precisely why the realizable-vs-**null** contrast (p=2.3e-12, from SIGNIFICANCE.md) is the load-bearing test, not realizable-vs-L. The table makes the honest comparison visible.
+
+**Net effect.** The paper gains (1) its missing reviewer baseline with an honest margin discussion, (2) per-stratum significance for the routing mechanism, and (3) a single consolidated Results table. Six-plus analysis artifacts now cover: significance + CI, capacity control, feature-magnitude confound, metric honesty (log-NSE eps + KGE decomposition), no-ML routing baseline, per-depth significance. The empirical case is as hard as it can be made without new compute. No result changed sign.
+
+### Reviewer 2
+- *R2 (+0.675) nearly matches your model — LSTM barely helps?* R2 uses the LSTM's own sim as an input; ML-free routing is R1 at +0.324. Realizable still wins; oracle shows headroom. Honest margin disclosed.
+- *Per-basin routing fit = leakage?* No — coefficients fit on train, scored on test.
+- *depth-4 not significant?* n=6, no test power; depths 1-3 (well-populated) all significant and rising.
+- *Baseline only seed 11?* Uses observed upstream_q (seed-independent) + the one fullspan eval on disk; 3-seed extension needs the other fullspan evals (cheap follow-up).
+- *Null weakly sig vs L?* Yes (p=0.047) — added capacity has a tiny effect; that's why realizable-vs-null (p=2e-12) is the load-bearing contrast, now explicit in the table.
+
+### Open questions
+1. 3-seed routing baseline (needs fullspan L-sim at seeds 13/17 — re-eval the L checkpoints, cheap).
+2. Oracle seed-11 `test_results.p`: requires RETRAINING L_upQ_seed11 (checkpoint lost), not a re-eval — correct cost logged.
+
+## Next 2–3 sessions (queued, costs corrected)
+1. **Paper skeleton** — ALL Results artifacts now exist (PAPER_TABLE.md is the spine). Cost ~1 session, no prerequisite. The natural, highest-leverage next move.
+2. **3-seed routing baseline + oracle log-NSE completion** — re-eval L and L_upQ checkpoints at seeds 13/17 over the full span; ~30-45 min CPU (this is training-eval, not free — corrected from the prior queue).
+3. **Local-subgraph scale curve** — GPU-bound secondary figure; ~30 min Colab T4; pre-registered in `experiments/local_subgraphs/preregistration_local_scale.md`. Only when GPU is available.
