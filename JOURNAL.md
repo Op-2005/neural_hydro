@@ -1131,3 +1131,77 @@ Assembled the Results section into one auditable file: Table 1 (conditions × NS
 1. **Paper skeleton** — ALL Results artifacts now exist (PAPER_TABLE.md is the spine). Cost ~1 session, no prerequisite. The natural, highest-leverage next move.
 2. **3-seed routing baseline + oracle log-NSE completion** — re-eval L and L_upQ checkpoints at seeds 13/17 over the full span; ~30-45 min CPU (this is training-eval, not free — corrected from the prior queue).
 3. **Local-subgraph scale curve** — GPU-bound secondary figure; ~30 min Colab T4; pre-registered in `experiments/local_subgraphs/preregistration_local_scale.md`. Only when GPU is available.
+
+---
+## 2026-07-14 — /crs-unleashed: graph-robustness chain — the over-connectivity threat is CLOSED, all PASS
+
+**Source.** /crs-unleashed. After 90400e0 the empirical case was heavily hardened, but the prior session's graph-similarity analysis had surfaced one unaddressed validity threat that outranked the queued "paper skeleton": the heuristic edges OVER-CONNECT vs real hydrography (child in-degree mean 4.16 / max 15; 66/150 children have >3 parents; real confluences join 2-3 tributaries). A hydrology reviewer's first attack would be "your routing gain is an artifact of an unrealistically dense graph." Writing a paper on an unvalidated graph is premature — so this session tests that threat head-on. Pre-reg: `preregistration_graph_robustness_chain.md`.
+
+**Orient / reuse insight.** The R1 lstsq routing baseline (from the prior session's `analyze_routing_baseline.py`) scores an upstream-flow feature's signal strength WITHOUT training a model. Combined with observed Q per basin (fullspan eval) + area weights + editable edge sets, this makes alternative graphs testable at ZERO training cost. So the over-connectivity threat — which naively needs a per-graph LSTM re-train (GPU, hours) — becomes a cheap CPU probe of *signal content* invariance.
+
+**Diagnosis (top-3, ranked).** (1) routing signal survives on a hydrography-realistic pruned graph — low confidence, high importance → test first; (2) depth hierarchy stable under pruning — med/high; (3) edge-choice-noise robustness — med/med.
+
+### Step A — pruned-graph robustness (PASS, decisive)
+Full graph (624 edges): R1 median test-NSE +0.325 (n=150). Prune to k nearest parents per child:
+
+| pruning (nearest) | edges | R1 NSE | % of full |
+|---|---|---|---|
+| in-degree ≤ 1 | 150 | +0.319 | 98% |
+| in-degree ≤ 2 | 266 | +0.326 | 100% |
+| in-degree ≤ 3 | 359 | +0.326 | 100% |
+
+**Capping in-degree at a hydrography-realistic ≤2 retains 100% of the routing signal; even ≤1 (76% of edges deleted) retains 98%.** The signal lives in the NEAREST parents — exactly the ones real hydrography keeps — and the heuristic's excess edges contribute ~nothing. The study's single biggest reviewer attack is closed. (Robustness: `smallest-ratio` selection retains only 81-97%, proving the metric responds to graph changes AND that nearest-parent selection — shortest travel time — is the physically meaningful rule.)
+
+### Step B — depth-structure stability (PASS)
+Under k=2 pruning: 95% of basins retain depth within ±1 (173/183), DAG preserved, max depth 5→4. The depth-gradient routing signature is not an artifact of edge density.
+
+### Step C — edge-dropout sensitivity (PASS)
+Random 20% edge dropout (5 fixed-seed draws): R1 NSE +0.3244 ± 0.0023 (100% of full, spread 0.006). 40% dropout: 99%, spread 0.014. The signal is anchored in aggregate graph structure, not any specific edges.
+
+**Net effect.** The over-connectivity caveat — previously the study's most serious unquantified limitation — is now contained with hard evidence: the routing signal is INVARIANT across a 4× range of graph densities (in-degree 1→4.16), invariant to which nearest parents are kept, and robust to 20-40% random edge noise. The paper can now state the heuristic-edge caveat AND show the result does not depend on it. Paper write-up is unblocked.
+
+### Reviewer 2
+- *Only the R1 proxy, not the LSTM?* Pre-registered scope limit. R1 is a monotone proxy for the feature's signal content; content invariance (0-2%) means the LSTM has the same information under any graph in the range. Full per-graph LSTM re-train is the GPU follow-up.
+- *k=2 nearest isn't real NHDPlus?* Correct — it's a hydrography-plausible proxy. The point is invariance across the density range, so wherever true connectivity falls within it, the result holds. NHDPlus is the definitive future check.
+- *R1 NSE saturated/insensitive?* No — smallest-ratio pruning moves it to 0.263 (81%), so the metric is responsive; nearest-parent invariance is a real finding, not saturation.
+- *Cherry-picked draws?* Deterministic seeds (1000·draw + frac·100), set before running, 5 draws, mean±std + spread reported.
+- *What would make it fully real?* An NHDPlus edge set scored identically + a full LSTM re-train on k=2. Both named; neither expected to overturn a 0-2% invariance.
+
+### Open questions
+1. NHDPlus ground-truth edges scored via the same R1 pipeline (definitive; needs the NHDPlus flowline data — a data-acquisition task).
+2. Full LSTM re-train on the k=2 pruned graph (confirms the LSTM, not just the proxy, is pruning-invariant; ~GPU).
+
+## Next 2–3 sessions (queued)
+1. **Paper skeleton** — every Results artifact now exists AND the graph caveat is contained (GRAPH_ROBUSTNESS.md). Highest leverage, no prerequisite. The natural next move.
+2. **3-seed routing baseline + oracle log-NSE completion** — re-eval L / L_upQ at seeds 13/17 over full span; ~30-45 min CPU (training-eval, not free).
+3. **NHDPlus edge validation OR k=2 LSTM re-train** — the definitive graph checks; NHDPlus needs flowline data acquisition, LSTM re-train needs GPU. Either closes the graph question fully.
+
+---
+## 2026-07-16 — /crs: 3-seed routing baseline DONE (margin widens); oracle + k=2 LSTM re-trains are GPU-blocked, staged turnkey
+
+**Source.** /crs, executing the two queued items (3-seed routing baseline + oracle log-NSE completion; and the definitive graph check). CRS triage up front: the two asks are not equals, and one has a hidden dependency.
+
+**Orient correction.** Two disk facts reset the plan: (1) all THREE fullspan evals exist (seeds 11/13/17), so the "3-seed routing baseline" needs NO re-eval — it's zero-training, not the "~30-45 min CPU" I'd queued. (2) The "oracle log-NSE completion" is one specific hole — `L_upQ seed11` lost both checkpoint and results.p; L/L_upQ seeds 13/17 are complete. NHDPlus flowline data is NOT on disk, so the NHDPlus option for the "definitive graph check" is data-blocked; the executable option is a k=2 LSTM re-train (the named follow-up to the 2026-07-14 R1-proxy graph-robustness result).
+
+**Part 1 — 3-seed routing baseline: PASS, and it strengthened the paper.** `analyze_routing_baseline_3seed.py` → `analysis/ROUTING_BASELINE_3SEED.md`. R1 pure routing +0.324 at every seed (seed-independent — uses observed upstream_q). The realizable-vs-R2 margin **widens to +0.019 across 3 seeds** from the single-seed +0.010 — seed-11 (the prior single seed) was the pessimistic one. All 3 seeds: realizable & oracle beat R1. The "ML earns its complexity" conclusion is multi-seed-robust, and Table 2's margin was previously understated. Zero compute.
+
+**Parts 2 & 3 — BLOCKED on this machine; not faked.** Attempted the oracle seed-11 re-train. Per CRS discipline, smoke-tested first (1 epoch). `nh_run.py train` aborts with **SIGABRT (exit 134) at startup** on both `device: mps` and `device: cpu` — an AVX illegal-instruction crash from an AVX-compiled dependency on this CPU (the "TensorFlow compiled for AVX" warning is the tell; the crash kills the full training stack though NH itself imports fine in isolation). Confirmed the prior runs were **all trained on Colab** (`device: cuda:0` in on-disk configs); this Mac has only ever run analysis. No degraded local run is even possible, so none was faked.
+
+**Staged turnkey for GPU (all zero-training prep done this session):**
+- Part 2: `configs/L_upQ_component0_seed11.yaml` — set device cuda:0, train, evaluate → restores oracle log-NSE/KGE (the one blank column in PAPER_TABLE).
+- Part 3: built the k=2 nearest-parent pruned edge set (`component0_edges_k2.csv`, 266 edges from 624), the k=2 oracle + realizable features (`features/upstream_q_{obs,pred}_component0_k2_lag1.p`), and the two configs (`L_upQ_k2_...`, `L_upQpred_k2_...`). On GPU: train both, compare Δ vs L against full-graph +0.037/+0.027. Success = k=2 realizable Δ within ±0.010 of +0.027 → confirms the LSTM (not just the R1 proxy) is pruning-invariant, closing the over-connectivity threat at the model level.
+
+### Reviewer 2
+- *Is the +0.019 margin real or a seed artifact?* Multi-seed (all 3), and it's LARGER than the single-seed +0.010 — the prior number understated it. R1 is fixed; the widening is in the LSTM rows.
+- *Did you give up on training too early?* No — smoke-tested, got a hard SIGABRT at startup on both devices, and confirmed via on-disk configs that training was always done on Colab. This is an environment block, not a config error.
+- *Why k=2 LSTM over NHDPlus for the "definitive" check?* NHDPlus needs flowline data not on disk (acquisition task); k=2 needs only Colab (already used) and directly tests the same threat. k=2 first; NHDPlus stays named future work.
+- *Will the k=2 re-train just confirm the proxy trivially?* Not guaranteed — the R1 proxy is linear; the LSTM could exploit the excess edges nonlinearly. The pre-registered falsification (k=2 Δ collapses) is a live possibility worth the run.
+
+### Open questions
+1. Does the LSTM-level k=2 Δ match the full-graph Δ (proxy/LSTM agreement)? — the live Part-3 question, GPU.
+2. Does the restored seed-11 oracle reproduce 0.703 (determinism)? — Part 2, GPU.
+
+## Next 2–3 sessions (queued)
+1. **[GPU] Parts 2 & 3** — run the 3 staged configs on Colab (~20-40 min each); completes oracle metrics + closes the graph threat at the LSTM level. All prep done; turnkey.
+2. **Paper skeleton** — unblocked after Part 3 lands (or now, if the R1-proxy graph result is accepted as sufficient). PAPER_TABLE + ROUTING_BASELINE_3SEED + GRAPH_ROBUSTNESS are the spine.
+3. **NHDPlus edge acquisition** — only if a reviewer demands ground-truth hydrography beyond the k=2 check; data-acquisition task on the user.

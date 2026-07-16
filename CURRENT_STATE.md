@@ -420,3 +420,27 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Reviewer-2:** addressed R2-near-miss (R2 uses L's own sim; standalone no-ML is R1 at +0.324; honest margin), train/test split (no leakage), depth-4 n.s. (n=6, no power), seed-11-only baseline (fullspan eval availability; 3-seed extension is a cheap follow-up).
 - **Corrected queue:** oracle 3-seed completion and scale curve both require compute not available this session; logged accurately for next time.
 - **Next:** paper skeleton — every Results artifact now exists; the write-up is the natural next move.
+
+### CRS-Unleashed Session — 2026-07-14 (graph-robustness: over-connectivity threat CLOSED)
+
+- **Reviewed:** git log (post-90400e0 clean tree), last queued plan, and the prior session's graph-similarity finding (the one unaddressed validity threat). Reuse insight: the R1/R2 lstsq routing baseline scores any upstream-flow feature WITHOUT training, so alternative graphs are testable at zero compute.
+- **Diagnosed (top-3):** (1) routing signal survives on a hydrography-realistic pruned graph [low-conf, high-imp → test first]; (2) depth hierarchy stable under pruning [med, high]; (3) edge-choice-noise robustness [med, med].
+- **Pre-registered:** `preregistration_graph_robustness_chain.md` — 3 gated zero-training steps.
+- **Ran (`analyze_graph_robustness.py` → `analysis/GRAPH_ROBUSTNESS.md`), all 3 PASSED:**
+  - **Step A — over-connectivity is NOT the source.** Full graph (in-degree mean 4.16/max 15) R1 NSE +0.325. Prune to hydrography-realistic in-degree≤2 (nearest) → +0.326, **100% retained**; even in-degree≤1 (76% of edges deleted) retains 98%. The signal lives in the nearest parents; the heuristic's excess edges contribute ~nothing. **The study's single biggest reviewer attack is closed.**
+  - **Step B — depth hierarchy stable:** 95% of basins keep depth ±1 under k=2 pruning; DAG preserved; max depth 5→4. The routing-signature (depth gradient) is not an edge-density artifact.
+  - **Step C — edge-noise robust:** random 20% edge dropout → +0.324 ± 0.002 (100%, spread 0.006); 40% → 99%. Anchored in aggregate structure, not specific edges.
+- **Key nuance:** `nearest`-parent pruning is invariant (physically meaningful — nearest = shortest travel time); `smallest-ratio` pruning drops to 81%, proving the metric responds to graph changes (not saturated). Signal is invariant across a 4× density range (in-degree 1→4.16).
+- **Scope (honest):** tested via the R1 lstsq signal-content proxy, not a full LSTM re-train per graph (GPU follow-up). Signal-content invariance is the load-bearing fact and is established; NHDPlus ground-truth edges remain the definitive future check.
+- **Reviewer-2:** addressed proxy-vs-LSTM (content invariance → same info for the LSTM), k=2-not-real-NHDPlus (invariance across the density range is the point), metric-saturation (smallest-ratio moves it → responsive), seed cherry-picking (deterministic seeds, 5 draws, mean±std).
+- **Next:** paper skeleton — the graph caveat is now contained with quantified evidence; write-up is unblocked.
+
+### CRS Session — 2026-07-16
+
+- **Reviewed:** last queued plan (JOURNAL), all L/L_upQ/fullspan run availability on disk, GPU/MPS status, training entry points, prior-run configs.
+- **Ran:** Part 1 — 3-seed no-ML routing baseline (`analyze_routing_baseline_3seed.py` → `analysis/ROUTING_BASELINE_3SEED.md`), zero-training. Attempted Parts 2/3 training; smoke-tested the pipeline.
+- **Result:** Part 1 PASS — realizable-vs-R2 margin **widens to +0.019** (multi-seed) from the single-seed +0.010; all 3 seeds beat R1 (+0.324). Corrects an understatement in Table 2. Parts 2/3 **BLOCKED**: `nh_run.py train` SIGABRTs (exit 134) at startup on this Mac (AVX illegal-instruction from an AVX-compiled dep) on both mps AND cpu. Prior runs were all trained on Colab (`cuda:0`); this machine only does analysis.
+- **Decision:** Part 1 delivered locally. Parts 2 (oracle seed-11 restore) & 3 (k=2 LSTM graph check) deferred to GPU — staged turnkey. NHDPlus (the other "definitive check" option) is data-blocked (no flowline data on disk); recommend k=2 LSTM re-train over NHDPlus since it needs only Colab, not new data.
+- **Files:** `analyze_routing_baseline_3seed.py`, `analysis/ROUTING_BASELINE_3SEED.md`, `preregistration_baseline_completion_and_k2.md` (+ dated amendment), `configs/L_upQ_k2_component0_seed11.yaml`, `configs/L_upQpred_k2_component0_seed11.yaml`, `features/upstream_q_{obs,pred}_component0_k2_lag1.p`, `topology_analysis/.../component0_edges_k2.csv`.
+- **Caveats:** Part 1 R1 is seed-independent by construction (uses observed upstream_q); the multi-seed gain is in the R2/L/LSTM rows. Training genuinely cannot run here — not a config fix.
+- **Next:** on Colab GPU — run Part 2 (1 config) + Part 3 (2 configs, all staged); ~20-40 min each. Then paper skeleton.
