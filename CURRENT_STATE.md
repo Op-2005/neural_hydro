@@ -477,3 +477,12 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Decisions:** do NOT overwrite recorded 0.703 (flag both with env caveat); do NOT use the +0.112 log-NSE; user must confirm Drive persistence before we trust the restore.
 - **Files:** `preregistration_baseline_completion_and_k2.md` (amendment), `notebooks/colab_oracle_seed11_restore.ipynb` (corrected tolerance, vetted log-NSE, persistence cell).
 - **Next:** user re-runs (or confirms Drive); this is cosmetic (log-NSE column only) and NON-load-bearing — the paper skeleton does not depend on it.
+
+### CRS Session — 2026-07-16 (night, cont.): oracle seed-11 restore CONFIRMED on Drive; log-NSE transcribed
+
+- **Result:** user re-ran the fixed notebook. Persistence check = **results.p in Drive: True** (safe). Vetted `analyze_metric_honesty.py` ran over the restored file → oracle log-NSE column now filled: **+0.045/+0.055/+0.063** across eps (realizable still +0.029→+0.033, null still negative). The bad inline +0.112 is confirmed dead — the real oracle log-NSE at eps=1e-3 is +0.055.
+- **Decision (user choice):** transcribed the verified Colab numbers into the repo (no local file transfer). Updated `METRIC_HONESTY.md` C1 oracle column + seed-11 oracle KGE (0.7575), and `PAPER_TABLE.md` Table 1 with a provenance footnote. All flagged as "restored on Drive, transcribed; rebuild locally once synced."
+- **Honest scope:** the r/β/γ decomposition for the seed-11 oracle KGE row is still pending (not in the pasted output); PAPER_TABLE oracle log-NSE cell is 2-seed-at-build + a footnote with the seed-11 value. Fully-3-seed regeneration needs the Drive file copied to the Mac.
+- **Net:** the last cosmetic gap is closed to the extent it can be without a file transfer. Result unchanged; the oracle upper bound is now confirmed stronger than realizable in log-space too (+0.055 vs +0.032), as expected.
+- **Files:** `METRIC_HONESTY.md`, `PAPER_TABLE.md` updated.
+- **Next:** paper skeleton — nothing else is blocking.

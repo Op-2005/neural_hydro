@@ -11,6 +11,12 @@ Zero training — assembly of prior artifacts. Component 0, 183 basins, stock cu
 | L+upQ_pred (realizable) | 0.678 ± 0.008 | 0.723 ± 0.005 | 0.672 ± 0.020 | +0.0253 (p=6.0e-19) |
 | L+upQ_shuf (null) | 0.666 ± 0.008 | 0.718 ± 0.015 | 0.628 ± 0.023 | +0.0123 (p=4.7e-02) |
 
+*Oracle-row note: NSE/KGE are 3-seed (all `test_metrics.csv` present). The oracle **log-NSE**
+here was built over seeds 13/17 only — seed-11 oracle `test_results.p` was lost in a drive merge.
+It has since been **restored** (`notebooks/colab_oracle_seed11_restore.ipynb`, verified on Drive):
+the seed-11 oracle log-NSE Δ vs L is **+0.055** (eps=1e-3), see `METRIC_HONESTY.md`. Rebuild
+`build_paper_table.py` once the restored file is synced locally to make this cell fully 3-seed.*
+
 ## Table 2 — no-ML routing baselines vs LSTM (connected basins, seed 11)
 
 | predictor | median test NSE | ML? | uses upstream? |
