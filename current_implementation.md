@@ -4,7 +4,8 @@
 found. Written as a catch-up reference after several autonomous CRS sessions. Every number
 here is on disk and reproducible; sources are cited to the analysis files.*
 
-**Last updated:** 2026-07-06. **Active work:** `experiments/topology_ablation/`.
+**Last updated:** 2026-07-16. **Active work:** `experiments/topology_ablation/` (empirical case
+complete; graph-robustness threat closed at model level; paper skeleton is next).
 
 ---
 
@@ -262,6 +263,29 @@ when observed but is the hardest to *forecast* — lag 1 is the realizable sweet
 deployable gain is capped by upstream *predictability*, not the downstream model.** lag1 stays
 the headline.
 
+### Result 7 — the gain is not a heuristic-edge artifact (graph robustness)
+
+The edges are heuristic and **over-connected** vs real hydrography: child in-degree averages
+4.16 (max 15), whereas real river confluences join 2–3 tributaries. The obvious reviewer attack:
+the routing gain is an artifact of an unrealistically dense graph. It is not, on two independent
+levels:
+
+- **Signal-content (zero-training, `analysis/GRAPH_ROBUSTNESS.md`).** Rebuilding `upstream_q` on
+  the graph pruned to hydrography-realistic in-degree ≤ 2 (266 edges vs 624) retains **100%** of
+  the R1 routing-signal proxy; even in-degree ≤ 1 (76% of edges deleted) retains 98%. Feature
+  magnitude *decreases* with depth while the gain *rises* — the density confound runs *opposite*
+  to the effect. 20% random edge dropout → 100% retained (±0.002).
+- **Trained-model (GPU, `analysis/K2_GRAPH_CHECK.md`).** Re-training the actual LSTM on the k=2
+  pruned graph (seed 11): realizable Δ = **+0.021 NSE / +0.034 log-NSE** (p=4e-4), ~78% of the
+  full-graph realizable on the same basins; the **oracle *strengthens*** to +0.049 (> full-graph
+  +0.046). Dropping the excess distant parents *sharpens* the observed signal — nearest parents
+  = shortest travel time = most-aligned flow.
+
+**Finding:** the routing gain lives in the physically-meaningful nearest-parent structure, not in
+the heuristic's excess edges. The over-connectivity caveat is contained — the result is robust to
+it at both the signal and model level. (k=2 model check is single-seed; 3-seed replication is a
+named robustness extension.)
+
 ---
 
 ## 6.5 How it all comes together — the paper as one clean narrative
@@ -326,7 +350,10 @@ empirical result (§9).
   *deployable* number is the realizable +0.022. Always framed against the ceiling.
 - **KGE is the weakest of the three metrics** (positive on average, one seed slightly negative).
   Reported honestly.
-- **Heuristic edges**, not NHDPlus ground-truth hydrography. Named as future work.
+- **Heuristic edges**, not NHDPlus ground-truth hydrography, and *over-connected* (in-degree mean
+  4.16 vs real ~2–3). **But the result is robust to this** — pruning to hydrography-realistic
+  in-degree ≤ 2 retains the gain at both the signal-proxy and trained-LSTM level (Result 7).
+  NHDPlus ground-truth edges remain a named future check the k=2 result largely pre-empts.
 - **3 seeds, 1 run each** — enough for stable medians and sign agreement, not a large-N sweep.
 
 ---
@@ -362,17 +389,23 @@ as a single input, tested against a null control and an oracle upper bound. It i
 **Status: the core study is complete, clean, and publication-valid for a regional workshop
 paper.** The full evidence chain:
 
-> static topology null → dynamic upstream flow helps (multi-seed, all seeds positive) →
-> deployable via *predicted* upstream Q at lag 1 (the predictability-optimal lag) → via
-> *routing* (depth gradient, confound-checked against area) → robust in NSE and log-NSE
-> (KGE positive-on-average) → not baseline-rescue → on a byte-identical stock-cudalstm ablation.
+> static topology null → dynamic upstream flow helps (multi-seed, all seeds positive,
+> realizable-vs-null **p=2.3e-12** with a bootstrap CI excluding 0) → deployable via *predicted*
+> upstream Q at lag 1 (the predictability-optimal lag) → via *routing* (depth gradient,
+> per-stratum significant, confound-checked against area *and* feature magnitude) → robust in NSE
+> and log-NSE (KGE positive-on-average) → beats a no-ML routing baseline (3-seed) → not
+> baseline-rescue → **not a heuristic-edge artifact** (survives pruning to real-confluence
+> connectivity at both the signal and trained-model level) → on a byte-identical stock-cudalstm ablation.
 
 **Queued next steps (none are load-bearing for the core claim):**
-1. **Paper skeleton** — the science is complete; the natural next move.
-2. **Local-subgraph scale curve** — does the gain grow on small locally-coherent networks
-   (subgraph + shortest-path-walker machinery already built). A strong secondary figure.
-3. **531-basin scale-up / NHDPlus edges** — only needed to target a top-tier (vs workshop)
-   venue; large compute.
+1. **Paper skeleton** — the science is complete and the graph-robustness threat is closed; the
+   natural next move. `analysis/PAPER_TABLE.md` is the Results spine.
+2. **3-seed k=2 replication + oracle seed-11 restore** — makes the graph-robustness check
+   multi-seed and fills the one blank oracle metric column; both turnkey in the idempotent
+   `notebooks/colab_oracle_completion_and_k2.ipynb`. Robustness/cosmetic, not load-bearing.
+3. **Local-subgraph scale curve** — does the gain grow on small locally-coherent networks. A
+   strong secondary figure. GPU.
+4. **531-basin scale-up / NHDPlus edges** — only for a top-tier (vs workshop) venue; large compute.
 
 **Where to read more:**
 - Running decision log + every result with reasoning: `JOURNAL.md`

@@ -22,10 +22,24 @@ Topology features add ~0 NSE either way → static network position is not the l
 | `L_upPrecip_component0_seed11` | + upstream precipitation | 0.674 | +0.012 |
 | `L_upQ_lag0_component0_seed11` | upstream Q, lag 0 | 0.749 | +0.087 |
 | `L_upQ_lag2_component0_seed11` | upstream Q, lag 2 | 0.699 | +0.036 |
-| `L_upQpred_component0_seed11` | + upstream PREDICTED Q (realizability) | (running) | TBD |
+| `L_upQpred_component0_seed11` | + upstream PREDICTED Q (realizability) | 0.683 | **+0.027** |
 
-Oracle (observed upstream Q) is an UPPER BOUND. Realizability run tests the deployable
-version (predicted Q). Pre-reg: `../../../experiments/topology_ablation/preregistration_*.md`.
+Oracle (observed upstream Q) is an UPPER BOUND. Realizability PASSED — predicted Q is
+deployable. Pre-reg: `../../../experiments/topology_ablation/preregistration_*.md`.
+
+## Multi-seed (seeds 13/17 added; headline invariant)
+`L`, `L_upQ`, `L_upQpred`, `L_upQshuf` also present at `_seed13` / `_seed17`. Cross-seed
+realizable Δ = **+0.022 ± 0.006**, all 3 positive (`analysis/MULTISEED.md`, `SIGNIFICANCE.md`).
+
+## k=2 pruned-graph check (graph-robustness, seed 11)
+| Run | What | median NSE | Δ vs L (connected) |
+|---|---|---|---|
+| `L_upQ_k2_component0_seed11` | oracle on in-degree≤2 pruned graph (266 edges) | 0.710 | **+0.049** (p=2e-12) |
+| `L_upQpred_k2_component0_seed11` | realizable on k=2 pruned graph | 0.675 | **+0.021** (p=4e-4) |
+
+Pruning the over-connected heuristic graph to hydrography-realistic connectivity does NOT
+kill the gain (realizable holds; oracle strengthens). Over-connectivity threat closed at the
+model level. See `analysis/K2_GRAPH_CHECK.md`, `GRAPH_ROBUSTNESS.md`.
 
 ## `_Lfullspan_eval/` (intermediate artifact)
 The trained L baseline re-evaluated over the FULL span 1990-2008 (not just test) to

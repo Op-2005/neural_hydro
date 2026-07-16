@@ -10,7 +10,9 @@ A research codebase, not a finished product. The work is ongoing; current result
 
 | If you want… | Go to |
 |---|---|
+| The full study reference (question → method → every result → paper narrative) | `current_implementation.md` |
 | The current study (controlled ablation, upstream-signal) | `experiments/topology_ablation/` (has its own README) |
+| The consolidated Results tables | `experiments/topology_ablation/analysis/PAPER_TABLE.md` |
 | The running log of decisions, results, and pivots | `JOURNAL.md` |
 | A quick plain-language status brief | `updates.md` |
 | The original research direction + protocol | `idea1.md` |

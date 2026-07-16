@@ -4,6 +4,27 @@
 
 ---
 
+## 0. Current status (2026-07-16)
+
+**The empirical case is complete for a regional workshop paper; the paper skeleton is the next
+move.** Full chain, all on stock cudalstm, component0 (183 basins):
+
+> static topology features add ~0 → **dynamic upstream flow helps** (oracle +0.037) → **deployable**
+> via predicted upstream Q (realizable **+0.022**, 3 seeds, realizable-vs-null **p=2.3e-12**) → the
+> mechanism is **routing** (gain rises with graph depth, per-stratum significant, confound-checked
+> vs area *and* feature magnitude) → **beats a no-ML routing baseline** (3-seed) → robust in
+> NSE/log-NSE → **not a heuristic-edge artifact** (survives pruning the over-connected graph to
+> real-confluence connectivity at both the R1-proxy and trained-LSTM level: k=2 realizable +0.021,
+> p=4e-4; oracle strengthens to +0.049).
+
+Latest session (2026-07-16) landed the **k=2 graph-robustness check** — the study's biggest
+remaining validity threat (over-connected heuristic edges) is now closed. See
+`analysis/K2_GRAPH_CHECK.md` + `GRAPH_ROBUSTNESS.md`; consolidated Results in `analysis/PAPER_TABLE.md`.
+Remaining items (3-seed k=2, oracle seed-11 restore, scale curve) are robustness/cosmetic, not
+load-bearing. Full log: `JOURNAL.md`.
+
+---
+
 ## 1. What changed since last session
 
 The prior negative results (the 5-condition factorial: graph features + message

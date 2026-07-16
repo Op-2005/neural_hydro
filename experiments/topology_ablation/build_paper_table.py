@@ -121,6 +121,20 @@ def main():
            "exactly where upstream flow arrives (depth≥1) and absent at headwaters. Confound-"
            "checked vs area and feature-magnitude (FEATURE_MAGNITUDE_CONFOUND.md).*", ""]
 
+    # --- graph robustness (from GRAPH_ROBUSTNESS.md + K2_GRAPH_CHECK.md) ---
+    md += ["## Table 4 — graph robustness: the gain is not a heuristic-edge artifact", "",
+           "The heuristic edges over-connect (in-degree mean 4.16 / max 15 vs real confluences "
+           "~2–3). Pruning to hydrography-realistic in-degree≤2 (266 edges vs 624):", "",
+           "| level | metric | full graph | k=2 pruned | verdict |", "|---|---|---|---|---|",
+           "| R1 signal proxy (zero-train) | median NSE | +0.325 | +0.326 | 100% retained |",
+           "| LSTM realizable (seed 11) | Δ NSE (connected) | +0.034 | +0.021 (p=4e-4) | holds |",
+           "| LSTM realizable (seed 11) | Δ log-NSE | — | +0.034 | holds |",
+           "| LSTM oracle (seed 11) | Δ NSE (connected) | +0.046 | +0.049 (p=2e-12) | strengthens |",
+           "",
+           "*The routing gain lives in the physically-meaningful nearest-parent structure, not the "
+           "heuristic's excess edges — confirmed at both the signal-content and trained-model level "
+           "(GRAPH_ROBUSTNESS.md, K2_GRAPH_CHECK.md). k=2 model check is single-seed.*", ""]
+
     OUT.write_text("\n".join(md) + "\n")
     print("\n".join(md))
     print(f"\n-> wrote {OUT}")

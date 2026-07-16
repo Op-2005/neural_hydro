@@ -64,11 +64,13 @@ testing that prediction in hydrology — a real, falsifiable, theory-connected c
 
 Single seed until we see a clear signal; multi-seed only for the publication run.
 
-## Experiment phases (results: see `JOURNAL.md`)
+## Experiment phases (results: see `JOURNAL.md`; consolidated table: `analysis/PAPER_TABLE.md`)
 
 1. **Encoding × topology 2×2** — topology static features add ~0 NSE (with or without one-hot). Static network position is not the lever.
 2. **Upstream-signal chain** — feeding *upstream discharge* helps: observed-Q oracle **+0.037 NSE** (lag1; +0.087 lag0), survives a shuffled-Q null control (−0.002), beats upstream-precip 3× (+0.012), lag-robust. Structure helps as a **dynamic** signal.
-3. **Realizability** (in progress) — does the gain survive with *predicted* (not observed) upstream Q? Decides deployable-method vs upper-bound.
+3. **Realizability** (PASS) — the gain survives with *predicted* (not observed) upstream Q: realizable **+0.022 NSE** (3 seeds, all positive), recovering ~55–72% of the oracle ceiling. Deployable, no ground truth at inference.
+4. **Rigor hardening** (all CPU re-analysis) — realizable-vs-null significant (**p=2.3e-12**, bootstrap CI excludes 0); depth gradient is routing not size/feature-magnitude (partial corr survives); per-depth Wilcoxon significant at depth 1–3; robust in NSE + log-NSE; beats a no-ML routing baseline (3-seed, margin +0.019).
+5. **Graph robustness** — the routing gain does **not** depend on the heuristic graph's over-connectivity (in-degree mean 4.16/max 15). Pruning to hydrography-realistic in-degree≤2 (266 edges vs 624) retains the R1 signal proxy (100%) **and** the trained-LSTM gain (realizable **+0.021 NSE / +0.034 log-NSE**, p=4e-4; oracle *strengthens* to +0.049). Threat closed at both proxy and model level.
 
 ## Files
 
@@ -103,9 +105,26 @@ Single seed until we see a clear signal; multi-seed only for the publication run
 | `analyze_multiseed.py` | Cross-seed mean±std + paired Δ + realizable-vs-null (Step A) + depth-stratified gain (Step B). Writes `analysis/MULTISEED.md`. |
 | `analyze_confound.py` | Depth-gradient confound check: routing (n_upstream) vs basin size (area), partial control within area terciles. Writes `analysis/CONFOUND.md`. |
 | `analyze_compliance.py` | Methodology audit: all-3-metric contrasts (incl. log-NSE) + baseline-strength stratification. Writes `analysis/COMPLIANCE.md`. |
-| `preregistration_{multiseed,robustness_chain,confound_check,compliance}.md` | Pre-regs + results for the above. |
+| `analyze_significance.py` | Paired Wilcoxon + bootstrap CI for the realizable gain vs L and vs the null. Writes `analysis/SIGNIFICANCE.md`. |
+| `analyze_feature_magnitude_confound.py` | Second confound check: is the depth gradient really feature-magnitude? (It runs opposite.) Writes `analysis/FEATURE_MAGNITUDE_CONFOUND.md`. |
+| `analyze_metric_honesty.py` | log-NSE eps-sensitivity sweep + KGE (r/β/γ) decomposition of the seed-13 dip. Writes `analysis/METRIC_HONESTY.md`. |
+| `analyze_depth_significance.py` | Per-depth Wilcoxon of the realizable gain (significant at depth 1–3, absent at headwaters). Writes `analysis/DEPTH_SIGNIFICANCE.md`. |
+| `analyze_routing_baseline.py` / `analyze_routing_baseline_3seed.py` | No-ML lstsq routing baselines (R1 pure, R2 routing+local) vs the LSTM; single- and 3-seed. Writes `analysis/ROUTING_BASELINE{,_3SEED}.md`. |
+| `preregistration_{multiseed,robustness_chain,confound_check,compliance,hardening_chain}.md` | Pre-regs + results for the above. |
+
+**Phase 5 — graph robustness (is the routing gain a heuristic-edge artifact?):**
+| File | Purpose |
+|---|---|
+| `analyze_graph_robustness.py` | Rebuilds `upstream_q` on pruned graphs (in-degree≤k, random dropout) and scores signal strength via the R1 lstsq proxy — ZERO training. Writes `analysis/GRAPH_ROBUSTNESS.md`. |
+| `analyze_k2_graph_check.py` | The **model-level** confirmation: analyzes the GPU-trained k=2 (in-degree≤2) oracle + realizable runs vs L. Writes `analysis/K2_GRAPH_CHECK.md`. |
+| `build_paper_table.py` | Consolidates all conditions × metrics × significance + routing baselines + depth table into `analysis/PAPER_TABLE.md` (the paper's Results spine). |
+| `notebooks/colab_oracle_completion_and_k2.ipynb` | Idempotent Colab runner: oracle seed-11 restore + k=2 graph-check re-trains. |
+| `preregistration_{graph_robustness_chain,baseline_completion_and_k2,routing_baseline_chain}.md` | Pre-regs for the above. |
+| `component0_edges_k2.csv` (in `topology_analysis/.../outputs/`) | The k=2 nearest-parent pruned edge set (266 edges). |
 
 **Generated:** `configs/` (per-run YAMLs), `features/` (upstream-Q pickles, gitignored), `analysis/` (all `*.md` + CSV outputs). Run outputs land in `runs/topology_ablation/component0/` (see its `NOTES.md`).
+
+**Analysis-file index (`analysis/`):** `PAPER_TABLE.md` (consolidated Results — start here) · `RESULTS.md` (2×2) · `MULTISEED.md` · `SIGNIFICANCE.md` · `CONFOUND.md` + `FEATURE_MAGNITUDE_CONFOUND.md` (routing vs size/magnitude) · `DEPTH_SIGNIFICANCE.md` · `COMPLIANCE.md` + `METRIC_HONESTY.md` (3-metric rigor) · `ROUTING_BASELINE.md` + `ROUTING_BASELINE_3SEED.md` (no-ML baseline) · `GRAPH_ROBUSTNESS.md` + `K2_GRAPH_CHECK.md` (edge-density robustness).
 
 ## How to run
 
