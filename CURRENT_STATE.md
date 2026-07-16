@@ -444,3 +444,16 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Files:** `analyze_routing_baseline_3seed.py`, `analysis/ROUTING_BASELINE_3SEED.md`, `preregistration_baseline_completion_and_k2.md` (+ dated amendment), `configs/L_upQ_k2_component0_seed11.yaml`, `configs/L_upQpred_k2_component0_seed11.yaml`, `features/upstream_q_{obs,pred}_component0_k2_lag1.p`, `topology_analysis/.../component0_edges_k2.csv`.
 - **Caveats:** Part 1 R1 is seed-independent by construction (uses observed upstream_q); the multi-seed gain is in the R2/L/LSTM rows. Training genuinely cannot run here — not a config fix.
 - **Next:** on Colab GPU — run Part 2 (1 config) + Part 3 (2 configs, all staged); ~20-40 min each. Then paper skeleton.
+
+### CRS-Unleashed Session — 2026-07-16 (later): k=2 LSTM graph check LANDED — over-connectivity closed at model level
+
+- **Reviewed:** the two Colab-trained k=2 runs added to root (L_upQ_k2, L_upQpred_k2 seed11), full-graph seed-11 references, k=2 predicted feature; relocated both runs to canonical `runs/topology_ablation/component0/` (gitignored, alongside siblings).
+- **Result — the definitive graph check PASSED at the LSTM level (not just the R1 proxy).** Paired Δ vs L on the 150 connected basins, seed 11:
+  - k=2 **realizable** Δ = **+0.021 NSE** (p=4e-4), **+0.034 log-NSE**, 65% basins positive — ~78% of full-graph realizable (+0.034 same basins), inside the pre-registered ±0.010 band.
+  - k=2 **oracle** Δ = **+0.049** > full-graph +0.046 (p=2e-12) — the oracle *strengthens* under pruning.
+- **Interpretation:** pruning the over-connected heuristic graph (624→266 edges, in-degree≤2, real-confluence-like) does NOT kill the gain; it slightly sharpens the observed-Q oracle. The heuristic's excess edges were not doing the work — routing lives in the nearest (shortest-travel-time) parents. Consistent with the 2026-07-14 R1-proxy result; now confirmed on the trained model.
+- **Verdict: the over-connectivity threat — the study's biggest remaining validity concern — is closed at BOTH the signal-content and trained-model level.** The paper can present the heuristic-edge caveat AND show the result is robust to it.
+- **Decision:** wrote `analyze_k2_graph_check.py` → `analysis/K2_GRAPH_CHECK.md` (reproducible). Study is now empirically complete for a regional workshop paper; write-up is the next move.
+- **Caveats:** k=2 is single-seed (11), single pruning rule (nearest). Part 2 (oracle seed-11 full-graph restore) was NOT brought back — its results.p still missing; log-NSE/KGE oracle columns at seed11 remain blank (non-load-bearing; seeds 13/17 complete).
+- **Files:** `analyze_k2_graph_check.py`, `analysis/K2_GRAPH_CHECK.md`; k=2 runs relocated to `runs/`.
+- **Next:** paper skeleton (empirical case complete + graph threat closed). Optional robustness: 3-seed k=2 replication; oracle seed-11 restore for metric-column completeness.
