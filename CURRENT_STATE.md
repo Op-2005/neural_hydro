@@ -457,3 +457,13 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Caveats:** k=2 is single-seed (11), single pruning rule (nearest). Part 2 (oracle seed-11 full-graph restore) was NOT brought back — its results.p still missing; log-NSE/KGE oracle columns at seed11 remain blank (non-load-bearing; seeds 13/17 complete).
 - **Files:** `analyze_k2_graph_check.py`, `analysis/K2_GRAPH_CHECK.md`; k=2 runs relocated to `runs/`.
 - **Next:** paper skeleton (empirical case complete + graph threat closed). Optional robustness: 3-seed k=2 replication; oracle seed-11 restore for metric-column completeness.
+
+### CRS Session — 2026-07-16 (later): dedicated oracle seed-11 restore notebook
+
+- **Reviewed:** L_upQ seed11 surviving files, run_upstream_feature idempotency logic, realizable-restore determinism precedent.
+- **Key correction:** the seed-11 oracle already has NSE (0.703) AND KGE (0.757) in the surviving test_metrics.csv; the ONLY missing metric is log-NSE (needs test_results.p). Narrower than "oracle metrics blank."
+- **Idempotency trap found + fixed:** both the generic runner and my earlier notebook guard skip on `test_metrics.csv` — but that file survived the merge while `test_results.p` did not, so the guard would falsely skip the restore. Dedicated notebook keys idempotency on `test_results.p` and ALWAYS re-evaluates.
+- **Built:** `notebooks/colab_oracle_seed11_restore.ipynb` — single experiment, path-of-least-friction (T4 → Run all). Mirrors the byte-identical stock L_upQ config (reproduces original 0.703, determinism-checked), and computes the seed-11 oracle log-NSE Δ inline against the existing L seed-11 run — end-to-end, no manual script step.
+- **Decision:** retrain is unavoidable (checkpoint lost, same as the 2026-07-01 realizable restore which reproduced exactly); NH training is deterministic so this confirms rather than risks the number.
+- **Files:** `notebooks/colab_oracle_seed11_restore.ipynb`.
+- **Next:** user runs it on Colab; then paper skeleton (this is the last cosmetic gap).
