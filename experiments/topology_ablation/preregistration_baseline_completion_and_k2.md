@@ -96,3 +96,32 @@ their configs on disk); this Mac has only ever done analysis. Not faked with a d
   266 edges). On GPU: train both, compare Δ vs L against full-graph +0.037/+0.027.
 
 **Success/falsification criteria unchanged** from the original pre-registration above.
+
+---
+
+## AMENDMENT 2026-07-16 (evening) — Part 2 re-train result: reproduces WITHIN NOISE, not to ±0.005
+
+**Ran** the dedicated restore notebook (`colab_oracle_seed11_restore.ipynb`) on Colab GPU.
+Result: L_upQ seed11 **median NSE = 0.6931** (vs recorded 0.703). Pre-reg's ±0.005 determinism
+band → technically FALSE.
+
+**Interpretation (not a falsification of the result):** the recorded 0.703 is flagged in
+MULTISEED.md as a "recorded original" whose folder was overwritten in a drive merge — never a
+clean re-measurement. The surviving on-disk metrics show 0.7027. The fresh re-train (0.6931)
+sits mid-range of the seed-to-seed oracle spread (seed13 0.688, seed17 0.682), and the −0.010
+gap is on the order of the cross-seed std (±0.009). NH training is seed-fixed but NOT
+bitwise-deterministic across different Colab GPU/library images (cuDNN nondeterminism, pandas/
+numpy version drift). The original 0.703 was trained on a different environment.
+
+**Corrected tolerance:** cross-environment reproduction should be judged at ~±0.01 (the cross-seed
+std), not ±0.005. Under that realistic band, 0.6931 REPRODUCES. The oracle Δ vs L is still +0.040
+(0.693 − 0.653), consistent with the +0.035–0.037 headline. **The result stands.**
+
+**Decisions:**
+- Do NOT overwrite the recorded 0.703 in the multi-seed table — flag both numbers (recorded 0.703
+  original-environment / 0.6931 re-trained) with the environment caveat.
+- The inline notebook log-NSE (+0.112) is DISCARDED — it is 3.5× the vetted pooled oracle log-NSE
+  (+0.031 in METRIC_HONESTY.md) and is a NaN/alignment artifact of the quick inline computation.
+  Any seed-11 oracle log-NSE must come from the vetted `analyze_metric_honesty.py` over the
+  restored results.p, NOT the notebook shortcut.
+- Persistence: confirm the run actually flushed to Drive before trusting it (see notebook Cell 10).

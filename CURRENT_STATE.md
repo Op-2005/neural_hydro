@@ -467,3 +467,13 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Decision:** retrain is unavoidable (checkpoint lost, same as the 2026-07-01 realizable restore which reproduced exactly); NH training is deterministic so this confirms rather than risks the number.
 - **Files:** `notebooks/colab_oracle_seed11_restore.ipynb`.
 - **Next:** user runs it on Colab; then paper skeleton (this is the last cosmetic gap).
+
+### CRS Session — 2026-07-16 (night): oracle seed-11 re-train result — reproduces within noise; two problems flagged
+
+- **Ran:** user executed the restore notebook on Colab. Result: L_upQ seed11 median NSE = **0.6931** (vs recorded 0.703); pre-reg ±0.005 → technically FALSE.
+- **Verdict — NOT a falsification.** 0.6931 sits mid-range of the seed-to-seed oracle spread (seed13 0.688 / seed17 0.682); the recorded 0.703 is itself a drive-merge "recorded original" (surviving on-disk = 0.7027); ±0.010 (cross-seed std) is the realistic cross-environment tolerance, not ±0.005. Oracle Δ vs L still +0.040. Result stands. Amended the pre-reg (dated) with the corrected tolerance.
+- **Problem 1 — discarded a bad number.** The notebook's INLINE log-NSE (+0.1123) is 3.5× the vetted pooled oracle log-NSE (+0.031, METRIC_HONESTY.md) — a NaN/alignment artifact of the quick calc. Discarded. Any seed-11 oracle log-NSE must come from `analyze_metric_honesty.py`, not the inline shortcut. Fixed the notebook to say so + run the vetted script.
+- **Problem 2 — persistence unconfirmed.** User did not see the run in Drive. `results.p present: True` was inside the VM; the Drive symlink flush is unverified → the run may be lost on recycle. Added a persistence-check + force-flush cell to the notebook.
+- **Decisions:** do NOT overwrite recorded 0.703 (flag both with env caveat); do NOT use the +0.112 log-NSE; user must confirm Drive persistence before we trust the restore.
+- **Files:** `preregistration_baseline_completion_and_k2.md` (amendment), `notebooks/colab_oracle_seed11_restore.ipynb` (corrected tolerance, vetted log-NSE, persistence cell).
+- **Next:** user re-runs (or confirms Drive); this is cosmetic (log-NSE column only) and NON-load-bearing — the paper skeleton does not depend on it.
