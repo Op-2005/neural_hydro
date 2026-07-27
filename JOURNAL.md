@@ -1244,3 +1244,38 @@ Random 20% edge dropout (5 fixed-seed draws): R1 NSE +0.3244 ± 0.0023 (100% of 
 1. **Paper skeleton** — the empirical case is complete AND the graph threat is closed at the model level. Highest leverage, no prerequisite. K2_GRAPH_CHECK + GRAPH_ROBUSTNESS + PAPER_TABLE + SIGNIFICANCE are the spine; the graph-robustness pair is now a full subsection ("the result does not depend on heuristic edge density").
 2. **[GPU] 3-seed k=2 + oracle seed-11 restore** — robustness + metric-column completeness; both in the existing idempotent notebook (change SEED / re-run Cell 8). ~20-40 min each.
 3. **NHDPlus edge validation** — only if a reviewer demands ground-truth hydrography beyond the k=2 check; data-acquisition task. The k=2 result largely pre-empts this.
+
+---
+## 2026-07-26 — /crs-unleashed: directionality controls staged (the Kirschstein mirror test) + notebook protocol skilled
+
+**Source.** /crs-unleashed, prompted by the user's ML-conference acceptance report. Used the report to **de-bias** prior advice (not overfit to it): ICLR/ICML explicitly state SOTA is not required when the work delivers new insight, so my earlier "national 531-basin scale-up is the gate" was over-weighted. The real top-tier lever is the **mechanism**, and the single most valuable missing experiment is the one that most directly engages the rebutted literature.
+
+**The gap.** Kirschstein & Sun (2024) diagnosed river-network GNN failure as *directional insensitivity* — GNNs perform similarly whether edges are maintained, reversed, or permuted. Our controls (shuffled-time null, upstream precip, lag sweep, depth gradient) never tested whether OUR feature is direction-**sensitive**. If reversing the edges collapses the gain, we exhibit exactly the property whose absence explains the GNN null — turning the routing claim from correlational (gain rises with depth) into causal (gain requires correct flow direction).
+
+**Staged (pre-registered, turnkey Colab):**
+- `preregistration_directionality_controls.md` — hypothesis, criteria, honest falsification.
+- `build_directionality_variants.py` — builds two observed-Q feature variants, identical aggregation to the forward builder, ONLY the edge set differs: **reversed** (parent↔child swapped → aggregates downstream flow) and **random** (degree-preserving rewire, seed 42 → each basin keeps its in-degree but random parents). name='date' fix baked in.
+- `notebooks/colab_directionality_controls.ipynb` — idempotent run-all; builds features, ensures L + forward oracle, trains L_upQrev + L_upQrand, prints the pre-registered verdict + persistence check.
+
+**Design checks (dry-run on the real edge set).** Forward 624 edges/150 connected; reversed 624/130 (outlets become disconnected); random 624/150 (in-degree preserved exactly). All Δ evaluated on the **forward-connected 150 basins** — the set where the routing question is defined — for apples-to-apples.
+
+**Pre-registered criteria.** Directional sensitivity: forward − reversed ≥ +0.015. Topology specificity: forward − random ≥ +0.015. **Falsification (real risk):** if reversed ≈ forward (gap < +0.005), the gain is direction-INSENSITIVE → generic spatial correlation, not routing → the mechanism narrative must be rewritten, not re-scoped. Honest note: reversed won't hit 0 (downstream flow is weather-correlated with the target); the *contrast* is the test.
+
+**Why it matters for the paper.** This is the experiment that converts "careful ablation" into "explains a field-wide null and demonstrates the fix." If it lands: the gain is causally directional, mirroring Kirschstein's insensitivity, grounding the routing mechanism and the general principle (structure-as-dynamic-state vs structure-as-label). If it falsifies: we learn the routing story is weaker than believed — better to know before submission.
+
+**Also:** codified the Colab notebook protocol as a reusable skill (`~/.claude/skills/colab-notebook/SKILL.md`) — the idempotency-key trap, the name='date' feature fix, the VM-vs-Drive persistence check, determinism tolerance, push-before-link, and the validate-via-IPython-transform step. Standard protocol now, not re-derived each time.
+
+### Reviewer 2
+- *Is reversed a fair control?* Yes — identical everything (model, config, discharge source, lag), only edges reversed. Direct analog of Kirschstein's "edges reversed" but on our method.
+- *Won't reversed just be ~0?* No, and the pre-reg says so — downstream flow shares weather with the target, so reversed carries residual correlation. The forward>reversed gap is the finding, not reversed=0.
+- *Single seed?* Yes, per protocol (signal first, multi-seed at publication). If it lands, 3-seed it — same notebook, change SEED.
+- *Random rewire fair?* Degree-preserving (each basin keeps its in-degree), so only *which* neighbors changes, not *how many* — isolates topology from feature-count.
+
+### Open questions
+1. Does reversed collapse (directional) or hold (generic)? — the live question.
+2. If it lands, 3-seed both variants for the publication figure.
+
+## Next 2–3 sessions (queued)
+1. **[GPU] Run the directionality notebook** — turnkey; result grounds or revises the mechanism. Highest leverage.
+2. **Reframe the paper's contribution as the transferable principle** (structure-as-dynamic-state vs structure-as-label), instantiated in hydrology — the "foundation-building" elevation, done carefully without overclaiming generality.
+3. **3-seed the k=2 graph check + (if landed) the directionality controls** — publication-grade robustness on the two single-seed results.

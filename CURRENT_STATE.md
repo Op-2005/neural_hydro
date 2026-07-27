@@ -486,3 +486,13 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Net:** the last cosmetic gap is closed to the extent it can be without a file transfer. Result unchanged; the oracle upper bound is now confirmed stronger than realizable in log-space too (+0.055 vs +0.032), as expected.
 - **Files:** `METRIC_HONESTY.md`, `PAPER_TABLE.md` updated.
 - **Next:** paper skeleton — nothing else is blocking.
+
+### CRS-Unleashed Session — 2026-07-26: directionality controls staged (the Kirschstein mirror test)
+
+- **Reviewed:** the ML-conference acceptance report (used to de-bias, not overfit); existing controls on disk (shuffled null, precip, lag) — found the missing one.
+- **The gap (de-biased read):** ICLR/ICML explicitly value insight over SOTA, so the top-tier path runs through the *mechanism*, not the 531-basin scale-up I over-weighted before. The single highest-leverage missing experiment is the **directionality control** — the mirror image of Kirschstein 2024's "GNNs are direction-insensitive" diagnosis. We had no reversed-edge or random-rewire control.
+- **Staged (turnkey Colab, pre-registered):** `preregistration_directionality_controls.md`, `build_directionality_variants.py` (reversed + degree-preserving random rewire, observed-Q, name='date' fix), `notebooks/colab_directionality_controls.ipynb` (idempotent, run-all). Dry-ran the edge logic: reversed 130 connected, random 150 (in-degree preserved) — eval on the forward-connected 150 for apples-to-apples.
+- **Pre-reg criteria:** forward − reversed ≥ +0.015 (direction matters) AND forward − random ≥ +0.015 (topology matters). Falsify: reversed ≈ forward → gain is generic correlation, not routing → routing narrative needs revision (a real risk, not a rubber stamp).
+- **Also:** codified the Colab-notebook protocol as a reusable skill (`~/.claude/skills/colab-notebook/`) — idempotency-key discipline, name='date' fix, persistence check, push-before-link.
+- **Files:** pre-reg, builder, notebook, skill. Notebook validated (24 cells, 0 syntax errors).
+- **Next:** user runs it on Colab; result either causally grounds the routing mechanism (elevates the paper) or forces an honest narrative revision.
