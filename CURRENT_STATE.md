@@ -507,3 +507,12 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Impact on paper:** this is a genuine mechanism result that engages the rebutted literature. It strengthens the topology story and adds a nuanced directional finding. The +0.008/p=0.19 directional gap is the single thing a 3-seed run would resolve.
 - **Files:** analyze_directionality.py, analysis/DIRECTIONALITY.md; runs relocated to runs/.
 - **Next:** 3-seed the directionality controls (resolve the directional test) — the one clear follow-up. Then write.
+
+### CRS Session — 2026-07-27 (later): staged the 3-seed mechanism consolidation (the last pre-writing run)
+
+- **Decision (independent):** the 3-seed run IS necessary — but scoped to BOTH single-seed mechanism experiments, not just directionality. Audit: core claim already 3-seed (realizable +0.022, p=2e-12); but directionality AND k=2 graph-robustness are seed-11-only, and the directionality forward−reversed gap (+0.008, p=0.19) is unresolved. A single-seed mechanism claim is a specific reviewer objection ("error bars on key results"). Both use the same notebook/cost → one session closes both.
+- **Verified all prerequisites on disk:** L baselines (seeds 13/17), per-seed fullspan evals (for k2-predicted), k2 + reversed/random edge sets committed. Nothing blocks it.
+- **Pre-registered** `preregistration_multiseed_mechanism.md` — trains L_upQrev/L_upQrand/L_upQ_k2/L_upQpred_k2 at seeds 13/17 (8 runs). Random rewire uses the SAME RNG seed (42) across training seeds so only LSTM init varies (isolates training noise, not graph noise). Falsification: k2 realizable collapses at 13/17 → seed-fragile robustness. Directionality: resolves whether forward−reversed becomes significant pooled — either outcome reportable, neither gates the paper.
+- **Built + validated** `notebooks/colab_multiseed_mechanism.ipynb` (turnkey, idempotent, 22 cells, 0 syntax errors; runner flags confirmed). Followed the new colab-notebook skill.
+- **Explicitly NOT doing:** 4th seed, re-running the 3-seed core, national scale-up (workshop-tier decision holds).
+- **Next:** user runs it (~40 min GPU); then every load-bearing claim is multi-seed and the paper skeleton is unblocked.
