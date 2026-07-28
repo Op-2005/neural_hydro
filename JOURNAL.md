@@ -1279,3 +1279,47 @@ Random 20% edge dropout (5 fixed-seed draws): R1 NSE +0.3244 ± 0.0023 (100% of 
 1. **[GPU] Run the directionality notebook** — turnkey; result grounds or revises the mechanism. Highest leverage.
 2. **Reframe the paper's contribution as the transferable principle** (structure-as-dynamic-state vs structure-as-label), instantiated in hydrology — the "foundation-building" elevation, done carefully without overclaiming generality.
 3. **3-seed the k=2 graph check + (if landed) the directionality controls** — publication-grade robustness on the two single-seed results.
+
+---
+## 2026-07-27 — /crs-unleashed: directionality controls RESULT — topology-specific (strong), directionally-preferential (partial)
+
+**Source.** /crs-unleashed. User ran the staged directionality notebook (the Kirschstein mirror test) on Colab and added L_upQrev + L_upQrand (seed 11) to the repo. This session ingests, computes the pre-registered contrast, and files the result with honest scope. Pre-reg: `preregistration_directionality_controls.md`.
+
+**Result — paired Δ vs L, forward-connected basins (n=150), seed 11:**
+
+| edge set | median Δ | Wilcoxon p vs L |
+|---|---|---|
+| forward (true upstream) | +0.046 | 7.6e-6 |
+| reversed (downstream) | +0.026 | 1.3e-6 |
+| random (rewired, in-degree preserved) | +0.014 | **0.10 (n.s.)** |
+
+Monotone gradient: forward > reversed > random > 0. **Both pre-registered median-gap criteria PASS** (forward−reversed +0.020 ≥ +0.015; forward−random +0.032 ≥ +0.015).
+
+**The honest split (the paired head-to-head, which the median-gap hid):**
+- forward > random: median +0.041, **p=3e-4** — topology-specificity, strong & significant.
+- reversed > random: median +0.026, **p=2e-4** — even wrong-direction *real* edges beat random.
+- forward > reversed: median +0.008, **p=0.19 — NOT significant per-basin.**
+
+**Interpretation.**
+- **Topology-specificity is the clean win.** Random rewiring (same in-degree, wrong neighbors) drops the gain to +0.014, not even significant vs L. The signal lives in the REAL river structure, not any regional flow aggregate. This is a strong, defensible result.
+- **Directionality is present but partial.** Reversed edges retain ~57% of forward (+0.026); forward beats reversed on the median but not at paired per-basin significance. Exactly as the pre-reg anticipated: downstream flow is weather-correlated with the target (shared precip; the basin's own routed water), so reversal weakens rather than destroys the signal. Here the residual is larger than a strictly-directional mechanism would predict.
+- **Scope decision (no overclaim):** the correct framing is *the model exploits the real hydrological network, preferring the physically-correct upstream direction* — NOT *the gain requires correct direction*. Claiming strict directionality is unsupported by the paired test. Report the gradient honestly.
+
+**Kirschstein mirror — appropriately scoped.** Their GNNs were topology-INsensitive (any/no adjacency ≈ same). Our feature is sharply topology-SENSITIVE (real edges >> random, p=3e-4) — the property their GNNs lacked. On direction specifically our advantage is a median preference, not a significant per-basin effect; we report that honestly rather than claiming the stronger inverted-mirror result.
+
+**Why this is not a falsification.** The pre-reg's falsification was "reversed ≈ forward (gap < +0.005) → generic correlation, not routing." We got a +0.020 median gap and a clean forward>reversed>random ordering — the gain is NOT generic correlation (random confirms that). The mechanism is real; its directional component is just weaker than its topological component. That is a nuanced true result, not a failed one.
+
+### Reviewer 2
+- *Your pre-reg criterion passed but the paired directional test is n.s. — misleading criterion?* Reported openly. Topology-specificity is the solid headline; directionality is scoped as a preference. Under-claiming by choice.
+- *Random-rewire fair?* Degree-preserving — only which neighbors changed. Its drop to non-significance is the strongest topology-specificity evidence available.
+- *Single seed?* Yes — the main limitation, and precisely what a 3-seed run would resolve for the +0.008 directional gap.
+- *Does reversed retaining 57% undercut you?* No — it's physically expected (downstream flow shares weather), and forward still leads. It makes the story richer, not weaker.
+
+### Open questions
+1. Does the +0.008 forward−reversed paired gap become significant (or vanish) at 3 seeds? — the one unresolved question.
+2. Would a shorter-lag or high-flow-event-only slice sharpen directionality (routing is clearest during storm pulses)? — possible future refinement.
+
+## Next 2–3 sessions (queued)
+1. **[GPU] 3-seed the directionality controls** (L_upQrev/L_upQrand at seeds 13/17) — resolves the directional test; turnkey (same notebook, change SEED). ~40 min. The one clear follow-up.
+2. **Write the paper skeleton** — mechanism now includes topology-specificity (strong) + directional preference (honest). PAPER_TABLE + DIRECTIONALITY + GRAPH_ROBUSTNESS + K2_GRAPH_CHECK are the mechanism spine. No prerequisite.
+3. **Reframe contribution as the transferable principle** (structure-as-dynamic-state vs structure-as-label), instantiated in hydrology, scoped honestly. Writing.

@@ -496,3 +496,14 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Also:** codified the Colab-notebook protocol as a reusable skill (`~/.claude/skills/colab-notebook/`) — idempotency-key discipline, name='date' fix, persistence check, push-before-link.
 - **Files:** pre-reg, builder, notebook, skill. Notebook validated (24 cells, 0 syntax errors).
 - **Next:** user runs it on Colab; result either causally grounds the routing mechanism (elevates the paper) or forces an honest narrative revision.
+
+### CRS-Unleashed Session — 2026-07-27: directionality controls result — topology-specific (strong), directionally-preferential (partial)
+
+- **Ran:** the staged directionality notebook returned L_upQrev + L_upQrand (seed 11). Relocated to runs/; computed pre-reg contrast; wrote analyze_directionality.py → analysis/DIRECTIONALITY.md.
+- **Result (paired Δ vs L, forward-connected n=150):** forward +0.046 > reversed +0.026 > random +0.014 > 0. **Both pre-reg criteria PASS** (forward−reversed +0.020 ≥ +0.015; forward−random +0.032 ≥ +0.015).
+- **The nuance (honest, load-bearing):** the pre-reg median gaps pass, but the *paired* head-to-head splits the finding: **topology-specificity is strong AND significant** (forward−random +0.041, p=3e-4; random alone is n.s. vs L at p=0.10 — real edges are essential), while **directionality is preferential but NOT per-basin significant** (forward−reversed +0.008, p=0.19). Reversed retains ~57% of forward because downstream flow is weather-correlated with the target — exactly as the pre-reg predicted.
+- **Scope decision:** claim *"the model exploits the real river network, preferring the physically-correct upstream direction"* — NOT *"the gain requires correct direction."* Overclaiming strict directionality is unsupported. Topology-specificity is the clean headline; directionality is a preference.
+- **Kirschstein mirror:** holds strongly for TOPOLOGY-sensitivity (their GNNs insensitive; ours sharply sensitive) — appropriately scoped, not overclaimed on direction.
+- **Impact on paper:** this is a genuine mechanism result that engages the rebutted literature. It strengthens the topology story and adds a nuanced directional finding. The +0.008/p=0.19 directional gap is the single thing a 3-seed run would resolve.
+- **Files:** analyze_directionality.py, analysis/DIRECTIONALITY.md; runs relocated to runs/.
+- **Next:** 3-seed the directionality controls (resolve the directional test) — the one clear follow-up. Then write.
