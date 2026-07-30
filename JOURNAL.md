@@ -1323,3 +1323,39 @@ Monotone gradient: forward > reversed > random > 0. **Both pre-registered median
 1. **[GPU] 3-seed the directionality controls** (L_upQrev/L_upQrand at seeds 13/17) — resolves the directional test; turnkey (same notebook, change SEED). ~40 min. The one clear follow-up.
 2. **Write the paper skeleton** — mechanism now includes topology-specificity (strong) + directional preference (honest). PAPER_TABLE + DIRECTIONALITY + GRAPH_ROBUSTNESS + K2_GRAPH_CHECK are the mechanism spine. No prerequisite.
 3. **Reframe contribution as the transferable principle** (structure-as-dynamic-state vs structure-as-label), instantiated in hydrology, scoped honestly. Writing.
+
+---
+## 2026-07-29 — /crs-unleashed: 3-seed mechanism results — topology-specificity + k=2 CONFIRMED; directionality is a mild pooled preference (downgraded)
+
+**Source.** /crs-unleashed. User ran the 3-seed mechanism notebook; 8 runs (L_upQrev/rand/_k2/pred_k2 × seeds 13/17) landed. This session computes the pooled 3-seed verdicts, reconciles them against the user's Cell 9 output, and files the honest scope. Supersedes single-seed DIRECTIONALITY.md / K2_GRAPH_CHECK.md. → analysis/MECHANISM_MULTISEED.md.
+
+**k=2 graph-robustness — CONFIRMED, strong, 3-seed.**
+
+| condition | per-seed Δ (11/13/17) | pooled Δ | p |
+|---|---|---|---|
+| full realizable | +0.034/+0.030/+0.015 | +0.023–0.026 | 3e-15 |
+| k2 realizable | +0.021/+0.033/+0.021 | +0.025 | 1e-14 |
+| k2 oracle | +0.049/+0.074/+0.048 | +0.059 | 3e-43 |
+
+k2-realizable ≈ full-realizable (indistinguishable), all seeds positive. The over-connectivity threat is closed multi-seed at the LSTM level. Clean, publishable.
+
+**Topology-specificity — CONFIRMED, strong, 3-seed.** forward−random paired pooled +0.037, p=3e-20; every seed. The gain requires the REAL river structure (random rewire retains ~26%). Headline mechanism result + the Kirschstein mirror (their GNNs topology-insensitive; ours sharply sensitive).
+
+**Directionality — downgraded to a mild, aggregate-only preference (reconciliation).** The user's Cell 9 reported forward−reversed one-sided p significant; my two-sided p=0.06 initially read as n.s. Reconciled: the pre-registered hypothesis is directional, so **one-sided is correct → pooled p≈0.03, significant.** BUT stress-testing showed it is small and seed-fragile: median +0.006, only 54% of basins favor forward, per-seed p=0.19/0.07/0.23, and **seed 17 has reversed ≈ forward (Δ −0.001).** Reversed retains 57/79/90% of forward. Physically expected (downstream flow is weather-correlated). **Verdict: report as "a mild, aggregate-detectable preference for the physically-correct direction" — NOT "direction-sensitive."** The pre-reg falsification (reversed≈forward → generic correlation) is not triggered, but no strong directional claim is supported either.
+
+**Why the 3-seed run was worth it.** At single seed (11) the directional gap looked cleaner (+0.008 with a plausible story). The 3-seed data revealed it's fragile (null at seed 17). Running this BEFORE writing prevented an overclaim of "direction-sensitivity" that a reviewer with the multi-seed data would have shredded. This is the run earning its cost — exactly the /crs discipline (multi-seed before claiming).
+
+### Reviewer 2
+- *One-sided vs two-sided — did you p-hack?* One-sided is pre-registered (H1: forward improves). Reported alongside the weakness (54% of basins, null seed). Not a strong claim either way.
+- *Is topology-specificity also fragile?* No — forward−random +0.037, p=3e-20, every seed. Rock solid; that's the headline.
+- *k=2 robustness real?* 3 seeds, k2 ≈ full within noise, p=1e-14. Yes.
+- *Why report directionality at all if weak?* Transparency — the gradient forward>reversed>random is real in aggregate; we show it and scope it honestly rather than hiding an inconvenient middle result.
+
+### Open questions
+1. Could directionality be sharpened by conditioning on high-flow events (routing clearest during storm pulses)? — a possible future refinement, NOT needed for the paper.
+2. None load-bearing remain. Every mechanism claim is multi-seed.
+
+## Next 2–3 sessions (queued)
+1. **Write the paper skeleton** — NO further experiments needed for workshop tier. Mechanism spine: static-topology null → dynamic flow gain (3-seed, p=2e-12) → topology-specific (real≫random, p=3e-20) → deployable (predicted-Q) → graph-density-robust (k2≈full, 3-seed) → mild directional preference (honest). PAPER_TABLE + MECHANISM_MULTISEED + SIGNIFICANCE are the spine.
+2. **Reframe contribution as the transferable principle** (structure-as-dynamic-state vs structure-as-label), instantiated in hydrology, honestly scoped.
+3. **[Optional, top-tier only] National 531-basin scale-up** — deferred; not needed for workshop (decision 2026-07-26). Only if targeting a main track after the workshop version.

@@ -516,3 +516,14 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Built + validated** `notebooks/colab_multiseed_mechanism.ipynb` (turnkey, idempotent, 22 cells, 0 syntax errors; runner flags confirmed). Followed the new colab-notebook skill.
 - **Explicitly NOT doing:** 4th seed, re-running the 3-seed core, national scale-up (workshop-tier decision holds).
 - **Next:** user runs it (~40 min GPU); then every load-bearing claim is multi-seed and the paper skeleton is unblocked.
+
+### CRS-Unleashed Session — 2026-07-29: 3-seed mechanism results — topology-specificity + k=2 CONFIRMED; directionality DOWNGRADED
+
+- **Ran:** the 8 mechanism runs (L_upQrev/rand/_k2/pred_k2 × seeds 13/17) landed. Relocated to runs/; computed pooled 3-seed verdicts; stress-tested directionality; wrote analysis/MECHANISM_MULTISEED.md (supersedes single-seed DIRECTIONALITY/K2 framings).
+- **k=2 graph-robustness — CONFIRMED, strong.** Pooled 3-seed: k2-realizable +0.025 (p=1e-14) ≈ full-realizable +0.026 — indistinguishable; k2-oracle +0.059. Per-seed all positive (11/13/17). The over-connectivity threat is closed multi-seed at the LSTM level. Clean win.
+- **Topology-specificity — CONFIRMED, strong.** forward−random pooled +0.034, p=2.3e-14, all seeds. The gain requires the REAL river structure (random rewire retains ~26%). This is the headline mechanism result + the Kirschstein mirror (their GNNs topology-insensitive; ours sharply sensitive).
+- **Directionality — DOWNGRADED to weak preference, NOT a claim.** The single-seed hint did NOT hold: pooled forward−reversed two-sided p=0.063 (n.s.); seed 17 has reversed ≈ forward (retains 90%); per-seed noisy (p 0.19/0.07/0.23). Reversed retains 57/79/90% across seeds. Physically expected (downstream flow weather-correlated). Do NOT claim direction-sensitivity — report as a mild median preference only.
+- **Why this mattered:** at single seed I might have written "direction-sensitive"; the 3-seed data says don't. The run earned its cost by preventing an overclaim.
+- **Net:** every load-bearing mechanism claim now multi-seed — topology-specificity + graph-robustness are strong and significant; directionality honestly scoped down. Writing is unblocked.
+- **Files:** analysis/MECHANISM_MULTISEED.md; 8 runs relocated to runs/.
+- **Next:** write the paper skeleton. No further experiments needed for the workshop tier.
