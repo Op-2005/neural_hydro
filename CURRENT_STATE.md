@@ -527,3 +527,12 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Net:** every load-bearing mechanism claim now multi-seed — topology-specificity + graph-robustness are strong and significant; directionality honestly scoped down. Writing is unblocked.
 - **Files:** analysis/MECHANISM_MULTISEED.md; 8 runs relocated to runs/.
 - **Next:** write the paper skeleton. No further experiments needed for the workshop tier.
+
+### CRS-Unleashed Session — 2026-07-30: Methodology section PLAN (end-to-end + math framework)
+
+- **Planning session, not experiment chain** — fell back to plan-only per crs-unleashed; handed structure/math to ml-paper-writer + ml-math-rigor.
+- **Grounded deeply against code:** exact feature aggregation (area-weighted MEAN, lag-1, build_upstream_discharge_feature.py), two-stage predicted-Q (build_predicted_upstream_q.py), edge rule (area≥1.5×, elev-decreasing, ≤150km — discover_network.py:23-24), cudalstm = InputLayer(concat)→LSTM(64)→linear head, MSE loss, full config.
+- **Deliverable:** `paper/METHODOLOGY_PLAN.md` — 7 subsections (4.1 notation → 4.7 eval) + the full mathematical framework: 11 equations in write-order, each with purpose, the honesty ceiling baked in (Eq.6 = fixed directed 1-hop precompute, NOT message passing), dimensional/edge-case checks, Reviewer-2 math attacks, build order + cite map, config table plan.
+- **Decision — cite the NH model zoo we build on:** YES. §4.3 describes stock cudalstm precisely and cites kratzert2022joss (software) + kratzert2019 (the multi-basin LSTM this instantiates) + kratzert2018 (LSTM-for-rainfall-runoff). Frame novelty as the ablation FINDING + deployable feature, not a new architecture (honest).
+- **All 4 [verify] items resolved:** InputLayer concatenates (no embedding keys); loss=MSE; log-NSE eps=frac×mean-flow @1e-3; 5 static attrs confirmed. Zero unknowns remain for drafting.
+- **Next:** draft the Methodology prose + equations via ml-math-rigor (notation/correctness/flow audits).
