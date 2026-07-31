@@ -33,38 +33,115 @@
 \maketitle
 
 \begin{abstract}
-Abstract placeholder. Setup only; content to be written.
+River basins form a physical network in which water flows downstream, so a basin's
+discharge should depend on its upstream neighbors. Yet strong multi-basin LSTMs treat
+every basin independently and match physics-based models, and when the river network is
+added as graph structure it typically fails to help. We ask whether the network is
+genuinely uninformative or is simply being supplied in the wrong form. To separate these,
+we run a controlled ablation on stock NeuralHydrology \texttt{cudalstm}, byte-identical
+across conditions, in which the only thing that changes is a single input carrying
+network information---removing the architecture, training, and encoding confounds that
+muddied prior attempts. On a 183-basin eastern-US sub-network of CAMELS-US, we find that
+the network helps only as a \emph{dynamic} signal: adding a basin's fixed topological
+position (graph depth, upstream count, upstream area) yields essentially no change in
+skill, whether or not the model also has a basin-identity encoding, whereas feeding the
+\emph{dynamic upstream discharge} arriving from upstream neighbors improves median test
+NSE by $+0.038$ under an observed-flow oracle ($p=2.6\times10^{-17}$, three seeds). The
+same network, opposite outcomes: the information lives in structure-as-flow, not
+structure-as-label, which explains in one stroke why static graph approaches have failed.
+The gain is real and deployable---it survives a shuffled-flow null control, holds in
+log-NSE, and a two-stage model that \emph{predicts} upstream flow from forcings (no ground
+truth at inference) recovers $+0.025$ NSE, about 55--72\% of the oracle ceiling and
+positive across all three seeds. It is also mechanistic: the improvement rises
+monotonically with graph depth and is zero at headwaters, the signature of physical
+routing, and it persists when the heuristic graph is pruned to hydrography-realistic
+connectivity. We conclude that river-network structure improves streamflow LSTMs when, and
+only when, it is delivered as a dynamic upstream-flow signal rather than a static
+topological descriptor.
 \end{abstract}
 
 \keywords{streamflow prediction, LSTM, river-network topology, CAMELS}
 
 \section{Introduction}
-% content TBD
+% Skeleton (6 moves — see paper/SKELETON.md):
+% 1. Multi-basin LSTMs match physics models yet treat basins independently [kratzert2019].
+% 2. Adding the river network via GNNs has not helped [kirschstein2024] — unexplained null.
+% 3. Our idea: the network may be informative AS DYNAMIC FLOW even if inert AS A STATIC LABEL.
+% 4. Contributions (C1 static-null/dynamic-gain; C2 topology-specific; C3 deployable+robust).
+% 5. Evidence one-liners (oracle +0.038 p=2.6e-17; topology-specificity p=2.3e-14).
+% 6. Scope: regional (183 eastern-US basins), no SOTA claim, heuristic edges.
 
 \section{Related Work}
-% content TBD
+% Context + difference, not a dump:
+% - kratzert2019 (HESS): the strong per-basin LSTM baseline our L condition is.
+% - kirschstein2024 (ICML): GNNs on river adjacency give no benefit; "does not explain why."
+%   We explain it — topology-as-label is inert; topology-as-flow is specific.
+% - jiang2025 (ICML): physics-aware directional operator recovers gains; we operationalize the
+%   direction as a plain input feature, no message passing.
+
+\section{Data and Experimental Setup}
+% Grounded from current_implementation.md §3:
+% - CAMELS-US; Component 0 = 183 basins, 6 HUC regions, 624 heuristic directed edges
+%   (distance/area/elevation), depth <=4. Edges heuristic, NOT NHDPlus — stated here.
+% - Inputs: 5 Maurer forcings, 5 static attrs, 671-dim basin one-hot. Target QObs(mm/d).
+% - Split: train 1990-99 / val 2000-04 / test 2005-08 (all reported numbers on test).
 
 \section{Methods}
-% content TBD
+% MATH MODE — invoke ml-math-rigor when writing.
+\subsection{The controlled ablation}
+% Stock cudalstm, byte-identical config (hidden 64, dropout 0.4, forget-bias 3, Adam 1e-3,
+% batch 256, 30 epochs, seq 30, predict_last_n 1). ONLY the upstream_q input varies.
+% [equation: the input vector x_i(t) = [forcings || statics || one-hot || u_i(t)] — "one var changes"]
+
+\subsection{The upstream-flow feature}
+% The one real equation (state as a FIXED, DIRECTED, 1-HOP PRECOMPUTE — not message passing):
+% u_i(t) = ( sum_{j in P(i)} A_j q_j(t-tau) ) / ( sum_{j in P(i)} A_j )
+% P(i)=immediate upstream parents, A_j=drainage area, tau=1 day.
+% Conditions = substitutions for q_j: observed (oracle) / predicted (realizable) / shuffled (null)
+% / reversed-edges / random-rewire. No leakage (upstream, lagged >=1 day).
+
+\subsection{Metrics}
+% NSE (primary), KGE, log-NSE — define each; verify definitions against COMPLIANCE.md.
 
 \section{Experiments}
-% content TBD
+% Each answers a question; pre-registered; multi-seed 11/13/17.
+% E1 static vs dynamic (C1) · E2 shuffled null · E3 deployable predicted-Q · E4 no-ML routing
+% baseline · E5 depth gradient · E6 topology-specificity (reversed/random) · E7 k=2 robustness.
 
 \section{Results}
-% content TBD
+% Interpret tables, don't paste. Numbers grounded in PAPER_TABLE / MECHANISM_MULTISEED /
+% ROUTING_BASELINE_3SEED. (Table stubs below — fill from those files.)
+
+\subsection{Static topology is inert; dynamic upstream flow helps}
+% Table 1: L 0.653 -> realizable 0.678 (Δ+0.025, p=6.0e-19); static-feature 2x2 ~0.
+
+\subsection{The gain is topology-specific}
+% MECHANISM §1: forward +0.046 / reversed +0.031 / random +0.012; forward-random +0.034, p=2.3e-14.
+% THE headline mechanism result. Directionality: one honest paragraph (mild, seed-fragile, not a claim).
+
+\subsection{Deployable and robust}
+% Table 2 routing baselines (3-seed: R1 +0.324, R2 +0.664±0.008, realizable +0.683±0.008).
+% Table 4 depth gradient. k=2 robustness (MECHANISM §2: k=2 realizable +0.025 ≈ full +0.026, 3-seed).
 
 \section{Discussion}
-% content TBD
+% Resolves kirschstein2024 null (label inert / flow specific). Operationalizes jiang2025 direction
+% without message passing. Transferable principle (structure-as-dynamic-state vs static-label) —
+% stated as a hypothesis this instantiates, NOT overclaimed to other domains.
 
 \section{Limitations}
-% content TBD
+% Regional (183 eastern-US basins), not national SOTA (baseline 0.653, not ~0.74 EA-LSTM).
+% Heuristic edges (robust to density, not NHDPlus ground-truth). Modest effect size.
+% Directionality only a weak aggregate preference. 3 seeds, 1 run each.
 
 \section{Conclusion}
-% content TBD
+% One paragraph: contribution sentence restated + forward pointer (national scale-up / NHDPlus edges).
 
 % ---- references (manual thebibliography — no bibtex, per toolchain) ----
+% Grounded cites: kratzert2019, kirschstein2024, jiang2025. Others -> [CITE?] verify before use.
 \begin{thebibliography}{9}
-\bibitem{placeholder} Placeholder reference.
+\bibitem{kratzert2019} Kratzert, F., Klotz, D., Shalev, G., Klambauer, G., Hochreiter, S., \& Nearing, G. (2019). Towards learning universal, regional, and local hydrological behaviors via machine learning applied to large-sample datasets. \emph{Hydrology and Earth System Sciences}. % [verify page/volume]
+\bibitem{kirschstein2024} Kirschstein, N., \& Sun, Y. (2024). The merit of river network topology for neural flood forecasting. \emph{Proceedings of the 41st International Conference on Machine Learning (ICML)}, PMLR 235, pp.\ 24713--24725.
+\bibitem{jiang2025} Jiang, H., Wang, J., Zhu, X., \& He, Y. (2025). Topology-aware neural flux prediction guided by physics. \emph{Proceedings of the 42nd International Conference on Machine Learning (ICML)}, PMLR 267. % [verify page]
 \end{thebibliography}
 
 \end{document}
