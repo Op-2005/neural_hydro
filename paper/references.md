@@ -70,6 +70,21 @@ before camera-ready are flagged `[verify]`.
     — **Role:** the CAMELS **forcing/timeseries** dataset citation (Daymet/Maurer/NLDAS forcings we
       use; the SAC-SMA benchmark). Source: hess.copernicus.org/articles/19/209/2015/.
 
+11b. **newman2014data** — Newman, A., Sampson, K., Clark, M.P., Bock, A., Viger, R.J., & Blodgett,
+    D. (2014). *A large-sample watershed-scale hydrometeorological dataset for the contiguous USA*
+    [data set]. Boulder, CO: UCAR/NCAR. **DOI:10.5065/D6MW2F4D** (verified: resolves live).
+    — **Role:** the **CAMELS data PRODUCT** citation — the actual multi-GB downloadable archive
+      (forcings + USGS streamflow) we run on, distinct from the two describing HESS papers. Data
+      hosts request this dataset DOI be cited when the files are used. Source:
+      ral.ucar.edu/solutions/products/camels ; DOI dx.doi.org/10.5065/D6MW2F4D.
+
+12b. **kratzert2022joss** — Kratzert, F., Gauch, M., Nearing, G., & Klotz, D. (2022).
+    *NeuralHydrology — A Python library for Deep Learning research in hydrology.* Journal of Open
+    Source Software, 7(71), 4050. **DOI:10.21105/joss.04050**.
+    — **Role:** the **codebase/software** citation. Source: the repo's own `CITATION.cff` +
+      `README.md` (authoritative — the maintainers' requested citation). All experiments run on
+      stock NeuralHydrology `cudalstm`, so this must be cited.
+
 12. **hoedt2021** — Hoedt, P.-J., Kratzert, F., Klotz, D., Halmich, C., Holzleitner, M., Nearing,
     G., Hochreiter, S., & Klambauer, G. (2021). *MC-LSTM: Mass-Conserving LSTM.* arXiv:2101.05186.
     (ICML 2021.) `[verify: confirm ICML 2021 proceedings vs arXiv-only before camera-ready]`
