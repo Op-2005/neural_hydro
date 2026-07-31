@@ -59,7 +59,10 @@ before camera-ready are flagged `[verify]`.
 10. **addor2017** — Addor, N., Newman, A.J., Mizukami, N., & Clark, M.P. (2017). *The CAMELS data
     set: catchment attributes and meteorology for large-sample studies.* Hydrology and Earth System
     Sciences, 21, 5293–5313. DOI:10.5194/hess-21-5293-2017.
-    — **Role:** the CAMELS **attributes** dataset citation (our static attributes + basin set).
+    — **Role: the PRIMARY dataset citation.** This is the canonical citation for the **CAMELS US
+      catchment attributes v2.0** package we use (the `camels_attributes_v2.0` folder with
+      `camels_{clim,geol,hydro,name,soil,topo,vege}.txt`), confirmed on disk. Cite this for the
+      dataset. Full provenance + the ready-to-use dataset sentence: `paper/DATASET.md`.
       Source: hess.copernicus.org/articles/21/5293/2017/.
 
 11. **newman2015** — Newman, A.J., Clark, M.P., Sampson, K., Wood, A., Hay, L.E., Bock, A., et al.
