@@ -86,7 +86,7 @@ topological descriptor.
 % - Inputs: 5 Maurer forcings, 5 static attrs, 671-dim basin one-hot. Target QObs(mm/d).
 % - Split: train 1990-99 / val 2000-04 / test 2005-08 (all reported numbers on test).
 
-\section{Methods}
+\section{Methodology}
 % MATH MODE — invoke ml-math-rigor when writing.
 \subsection{The controlled ablation}
 % Stock cudalstm, byte-identical config (hidden 64, dropout 0.4, forget-bias 3, Adam 1e-3,
@@ -137,11 +137,31 @@ topological descriptor.
 % One paragraph: contribution sentence restated + forward pointer (national scale-up / NHDPlus edges).
 
 % ---- references (manual thebibliography — no bibtex, per toolchain) ----
-% Grounded cites: kratzert2019, kirschstein2024, jiang2025. Others -> [CITE?] verify before use.
-\begin{thebibliography}{9}
-\bibitem{kratzert2019} Kratzert, F., Klotz, D., Shalev, G., Klambauer, G., Hochreiter, S., \& Nearing, G. (2019). Towards learning universal, regional, and local hydrological behaviors via machine learning applied to large-sample datasets. \emph{Hydrology and Earth System Sciences}. % [verify page/volume]
+% All entries verified this session; see paper/references.md for roles + sources.
+% [verify] flags = confirm page/DOI/venue at camera-ready.
+\begin{thebibliography}{99}
+
+% --- hydrology: LSTM + datasets ---
+\bibitem{kratzert2018} Kratzert, F., Klotz, D., Brenner, C., Schulz, K., \& Herrnegger, M. (2018). Rainfall--runoff modelling using Long Short-Term Memory (LSTM) networks. \emph{Hydrology and Earth System Sciences}, 22, 6005--6022.
+\bibitem{kratzert2019} Kratzert, F., Klotz, D., Shalev, G., Klambauer, G., Hochreiter, S., \& Nearing, G. (2019). Towards learning universal, regional, and local hydrological behaviors via machine learning applied to large-sample datasets. \emph{Hydrology and Earth System Sciences}, 23, 5089--5110.
+\bibitem{hoedt2021} Hoedt, P.-J., Kratzert, F., Klotz, D., Halmich, C., Holzleitner, M., Nearing, G., Hochreiter, S., \& Klambauer, G. (2021). MC-LSTM: Mass-Conserving LSTM. \emph{Proceedings of the 38th International Conference on Machine Learning (ICML)}. arXiv:2101.05186. % [verify ICML 2021 vs arXiv-only]
+\bibitem{nearing2021} Nearing, G.S., Kratzert, F., Sampson, A.K., Pelissier, C.S., Klotz, D., Frame, J.M., Prieto, C., \& Gupta, H.V. (2021). What role does hydrological science play in the age of machine learning? \emph{Water Resources Research}, 57(3), e2020WR028091.
+
+% --- datasets: CAMELS ---
+\bibitem{newman2015} Newman, A.J., Clark, M.P., Sampson, K., Wood, A., Hay, L.E., Bock, A., et al. (2015). Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA. \emph{Hydrology and Earth System Sciences}, 19, 209--223.
+\bibitem{addor2017} Addor, N., Newman, A.J., Mizukami, N., \& Clark, M.P. (2017). The CAMELS data set: catchment attributes and meteorology for large-sample studies. \emph{Hydrology and Earth System Sciences}, 21, 5293--5313.
+
+% --- river-network / topology-aware neural models ---
 \bibitem{kirschstein2024} Kirschstein, N., \& Sun, Y. (2024). The merit of river network topology for neural flood forecasting. \emph{Proceedings of the 41st International Conference on Machine Learning (ICML)}, PMLR 235, pp.\ 24713--24725.
 \bibitem{jiang2025} Jiang, H., Wang, J., Zhu, X., \& He, Y. (2025). Topology-aware neural flux prediction guided by physics. \emph{Proceedings of the 42nd International Conference on Machine Learning (ICML)}, PMLR 267. % [verify page]
+
+% --- GNN foundations + limitations ---
+\bibitem{kipf2017} Kipf, T.N., \& Welling, M. (2017). Semi-supervised classification with graph convolutional networks. \emph{International Conference on Learning Representations (ICLR)}. arXiv:1609.02907.
+\bibitem{zhang2021magnet} Zhang, X., He, Y., Brugnone, N., Perlmutter, M., \& Hirn, M. (2021). MagNet: A Neural Network for Directed Graphs. \emph{Advances in Neural Information Processing Systems 34 (NeurIPS)}. arXiv:2102.11391.
+\bibitem{topping2022} Topping, J., Di Giovanni, F., Chamberlain, B.P., Dong, X., \& Bronstein, M.M. (2022). Understanding over-squashing and bottlenecks on graphs via curvature. \emph{International Conference on Learning Representations (ICLR)}. arXiv:2111.14522.
+\bibitem{rusch2022} Rusch, T.K., Chamberlain, B.P., Rowbottom, J., Mishra, S., \& Bronstein, M.M. (2022). Graph-coupled oscillator networks. \emph{Proceedings of the 39th International Conference on Machine Learning (ICML)}, PMLR 162. arXiv:2202.02296.
+\bibitem{bodnar2022} Bodnar, C., Di Giovanni, F., Chamberlain, B.P., Li\`o, P., \& Bronstein, M.M. (2022). Neural sheaf diffusion: A topological perspective on heterophily and oversmoothing in GNNs. \emph{Advances in Neural Information Processing Systems 35 (NeurIPS)}. arXiv:2202.04579.
+
 \end{thebibliography}
 
 \end{document}
