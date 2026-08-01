@@ -19,8 +19,10 @@ before camera-ready are flagged `[verify]`.
    — **Role:** the GNN-topology null we explain (topology-as-label inert; topology-as-flow specific).
 
 3. **jiang2025** — Jiang, H., Wang, J., Zhu, X., & He, Y. (2025). *Topology-aware neural flux
-   prediction guided by physics.* ICML 2025, PMLR 267.
+   prediction guided by physics.* ICML 2025, PMLR 267:27670–27684. arXiv:2506.05676.
    — **Role:** physics-aware directional operator; we operationalize the direction as a plain feature.
+   Page range + arXiv id verified this session (was `[verify page]`); public code at
+   github.com/HaoyangJiang-WM/PhysicsNFP.
 
 4. **nearing2021** — Nearing, G.S., Kratzert, F., Sampson, A.K., Pelissier, C.S., Klotz, D., Frame,
    J.M., Prieto, C., & Gupta, H.V. (2021). *What role does hydrological science play in the age of

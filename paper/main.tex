@@ -352,14 +352,14 @@ significance tests. A structural claim is credited only when it holds across see
 \subsection{Reproducibility and compute}
 \label{sec:protocol-repro}
 
-Because the study runs entirely on a stock model with published configurations, its cost is modest
-and its artifacts are complete. Each run is a single \texttt{cudalstm} trained for $30$ epochs on
-$183$ basins on one GPU, on the order of tens of minutes. The full study is a few dozen such runs
-across conditions and seeds. We retain, for every run, the exact configuration and the per-basin
-test predictions and metrics, so that every number in this paper can be recomputed from stored
-outputs without retraining. The structural inputs are deterministic functions of the released
-discharge and the inferred graph, and the graph follows from Eq.~\eqref{eq:edge}. Both are
-regenerable from the public dataset. Code and configurations are released.
+The study runs entirely on a stock model with published configurations, so its artifacts are
+complete and its cost is modest: each condition is a single \texttt{cudalstm} trained for $30$
+epochs on $183$ basins, and the full study is a few dozen such runs across conditions and seeds. We
+retain, for every run, the exact configuration and the per-basin test predictions and metrics, so
+that every number in this paper can be recomputed from stored outputs without retraining. The
+structural inputs are deterministic functions of the released discharge and the inferred graph, and
+the graph follows from Eq.~\eqref{eq:edge}. Both are regenerable from the public dataset. Code and
+configurations are released.
 
 \section{Results}
 \label{sec:results}
@@ -411,7 +411,7 @@ regenerable from the public dataset. Code and configurations are released.
 
 % --- river-network / topology-aware neural models ---
 \bibitem{kirschstein2024} Kirschstein, N., \& Sun, Y. (2024). The merit of river network topology for neural flood forecasting. \emph{Proceedings of the 41st International Conference on Machine Learning (ICML)}, PMLR 235, pp.\ 24713--24725.
-\bibitem{jiang2025} Jiang, H., Wang, J., Zhu, X., \& He, Y. (2025). Topology-aware neural flux prediction guided by physics. \emph{Proceedings of the 42nd International Conference on Machine Learning (ICML)}, PMLR 267. % [verify page]
+\bibitem{jiang2025} Jiang, H., Wang, J., Zhu, X., \& He, Y. (2025). Topology-aware neural flux prediction guided by physics. \emph{Proceedings of the 42nd International Conference on Machine Learning (ICML)}, PMLR 267, pp.\ 27670--27684. arXiv:2506.05676.
 
 % --- GNN foundations + limitations ---
 \bibitem{kipf2017} Kipf, T.N., \& Welling, M. (2017). Semi-supervised classification with graph convolutional networks. \emph{International Conference on Learning Representations (ICLR)}. arXiv:1609.02907.
