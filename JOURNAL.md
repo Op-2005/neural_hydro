@@ -1359,3 +1359,34 @@ k2-realizable ≈ full-realizable (indistinguishable), all seeds positive. The o
 1. **Write the paper skeleton** — NO further experiments needed for workshop tier. Mechanism spine: static-topology null → dynamic flow gain (3-seed, p=2e-12) → topology-specific (real≫random, p=3e-20) → deployable (predicted-Q) → graph-density-robust (k2≈full, 3-seed) → mild directional preference (honest). PAPER_TABLE + MECHANISM_MULTISEED + SIGNIFICANCE are the spine.
 2. **Reframe contribution as the transferable principle** (structure-as-dynamic-state vs structure-as-label), instantiated in hydrology, honestly scoped.
 3. **[Optional, top-tier only] National 531-basin scale-up** — deferred; not needed for workshop (decision 2026-07-26). Only if targeting a main track after the workshop version.
+
+---
+## 2026-08-01 — /crs-unleashed: Methodology multi-pass rigor audit (correctness error caught + slop removed)
+
+**Source.** /crs-unleashed. User asked for iterative rigor passes on the drafted Methodology: grounding sanity, AI-slop removal (semicolons/em-dashes/long clauses/jargon), math recheck, redundancy, reviewer-level reread. Handed prose/math to ml-paper-writer + ml-math-rigor.
+
+**Diagnosis (top-3):** (1) correctness — potential one-hot dimension inconsistency [high-imp, test first]; (2) AI-slop density [high-imp]; (3) grounding/"what we build on" [medium].
+
+**Pass A — correctness (caught a real error).** Table 1 said "671-dim basin one-hot". Verified against `basedataset.py:208` (`num_classes=len(id_to_int)`, built from TRAIN basins): the true dimension is |V|=183, not 671. The old `current_implementation.md` "671" was wrong and would have shipped a fabricated number. Fixed to "$|V|$-dim ($|V|=183$)", consistent with §setup. All other equations (NSE/logNSE-eps/KGE/feature/edge) re-verified against source — clean.
+
+**Pass B — AI-slop + redundancy.** Prose semicolons 7→0; clause em-dashes 0; cut the filler roadmap sentence; de-duplicated "byte-identical" (3×→appropriate); tightened trailing editorial clause; "what the signal can buy"→"bounds the achievable gain".
+
+**Pass C — reviewer reread.** Rewrote the leakage sentence, which conflated two arguments and re-introduced τ≥1 after Eq. fixed τ=1 — now two precise claims (upstream ⇒ own discharge never enters; lagged ⇒ no same-day info).
+
+**CRS stance on "what work we build on" (the user flagged this as important).** The grounding is correct and honestly stated: §model cites the foundational LSTM (kratzert2018), the multi-basin paradigm our L baseline IS (kratzert2019), and the stock cudalstm from the NeuralHydrology model zoo we run (kratzert2022joss). We cite both paradigm and software, and frame novelty as the ablation finding + deployable feature, not a new architecture. This is the right grounding; no change needed. My stance: over-claiming a novel model here would be the mistake — the honesty that "the model is theirs, the finding is ours" is a strength, not a weakness.
+
+**Skill update.** Embedded an "AI-slop tells" subsection into ml-paper-writer (semicolon/em-dash overuse, long clauses, filler roadmaps, trailing editorial clauses, synonym drift, over-formal jargon) with a read-aloud test — applies to every future prose pass.
+
+### Reviewer 2
+- *Is the 183 one-hot definitely right?* Verified in code: NH builds the one-hot over the training basin set (183 for Component 0), num_classes=len(id_to_int). Yes.
+- *Does cutting the roadmap hurt navigability?* No — the section is 1.5pp with clear subsection titles; a roadmap sentence was over-signposting.
+- *Is "byte-identical" still emphasized enough?* Yes — stated once in §model, reinforced by the design argument in §ablation and Table 1's caption. Emphasis without repetition.
+
+### Open questions
+1. Figure 1 (static-null vs dynamic-gain contrast) still to be drawn.
+2. Compute/hardware statement (report wants it) — belongs in a Reproducibility para, add with the checklist.
+
+## Next 2–3 sessions (queued)
+1. **Draft Results** — tables grounded (PAPER_TABLE, MECHANISM_MULTISEED); conditions now formally defined (Table 2). Same end-to-end + 4-axis QC treatment.
+2. **Draft Introduction** — the tension→turn→payoff arc, leading with the contrast; align with the QC'd abstract.
+3. **Figure 1** — the core-idea contrast diagram (static topology → ~0 vs dynamic flow → gain).

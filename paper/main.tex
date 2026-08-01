@@ -83,13 +83,9 @@ signal tied to the real network, rather than as a static topological descriptor.
 
 \section{Methodology}
 
-We study whether river-network structure improves streamflow prediction, and in what form it must
-be supplied. Our design makes that question answerable in isolation: every model we compare is the
-same trained LSTM, and the only quantity that varies across conditions is one input channel. This
-section fixes notation (\S\ref{sec:setup}), specifies the base model we build on (\S\ref{sec:model})
-and the study network (\S\ref{sec:network}), defines the structural signal that constitutes the
-ablation (\S\ref{sec:feature}) and its deployable two-stage form (\S\ref{sec:realizable}), and
-states the evaluation protocol (\S\ref{sec:eval}).
+We ask whether river-network structure improves streamflow prediction, and in what form it must be
+supplied. To answer this in isolation, every model we compare is the same trained LSTM, and the only
+quantity that varies across conditions is one input channel.
 
 \subsection{Setup and notation}
 \label{sec:setup}
@@ -104,8 +100,8 @@ Kratzert et al.~\cite{kratzert2019}, each basin also carries a one-hot identity 
 $\mathbf{e}_i\in\{0,1\}^{|V|}$ that lets a single model specialise to individual basins.
 
 The task is next-day discharge: predict $q_i(t)$ from a length-$L$ window of inputs ending at $t$,
-with $L=30$. All models are trained on 1990--1999, validated on 2000--2004, and evaluated on the
-held-out 2005--2008 test period; every number we report is on the test period.
+with $L=30$. Models are trained on 1990--1999, validated on 2000--2004, and evaluated on the
+held-out 2005--2008 test period. All reported numbers are on the test period.
 
 The river network is a directed acyclic graph $G=(V,E)$ whose edges point from upstream to
 downstream. We write $\mathcal{P}(i)=\{\,j : (j\!\to\! i)\in E\,\}$ for the set of \emph{immediate
@@ -137,33 +133,31 @@ the final hidden state $\mathbf{h}_i(t)\in\mathbb{R}^{H}$ is mapped to the predi
 \qquad
 \hat{q}_i(t) = \mathbf{w}^\top \mathbf{h}_i(t) + b .
 \end{equation}
-We treat the LSTM recurrence as standard~\cite{kratzert2018} and do not restate its gates; what
-matters here is the interface, namely that Eq.~\eqref{eq:model} consumes the input vector
-$\mathbf{x}_i$ that our ablation modifies. Parameters are trained by minimising the mean squared
-error between $\hat{q}_i(t)$ and $q_i(t)$ with Adam (learning rate $10^{-3}$, batch size $256$,
-$30$ epochs, gradient-norm clipping at $1$, output dropout $0.4$, initial forget-gate bias $3$).
-These settings, and the train/validation/test split, are held byte-for-byte identical across all
-conditions; the configuration is given in full in Table~\ref{tab:config}.
+We take the LSTM recurrence as standard~\cite{kratzert2018} and do not restate its gates. What
+matters here is the interface: Eq.~\eqref{eq:model} consumes the input vector $\mathbf{x}_i$ that
+our ablation modifies. Parameters are trained by minimising the mean squared error between
+$\hat{q}_i(t)$ and $q_i(t)$ with Adam (learning rate $10^{-3}$, batch size $256$, $30$ epochs,
+gradient-norm clipping at $1$, output dropout $0.4$, initial forget-gate bias $3$). Table~\ref{tab:config}
+gives the full configuration, held identical across every condition.
 
 \subsection{Study network and data}
 \label{sec:network}
 
 We use the CAMELS US catchment-attributes v2.0 dataset~\cite{addor2017}, which provides static
 attributes for 671 contiguous-US catchments, together with the associated daily Maurer-product
-forcings and observed streamflow~\cite{newman2015}; the underlying data product is archived at
-NCAR~\cite{newman2014data}. Ground-truth river-network hydrography is not distributed with the
-attributes, so we infer directed edges from catchment geometry. A directed edge $(j\!\to\!i)$ is
-placed when basin $i$ is plausibly downstream of $j$:
+forcings and observed streamflow~\cite{newman2015,newman2014data}. Ground-truth river-network
+hydrography is not distributed with the attributes, so we infer directed edges from catchment
+geometry. A directed edge $(j\!\to\!i)$ is placed when basin $i$ is plausibly downstream of $j$:
 \begin{equation}
 \label{eq:edge}
 (j\!\to\!i)\in E \iff A_i \ge \rho\,A_j \;\wedge\; \mathrm{elev}(i) < \mathrm{elev}(j) \;\wedge\; d(i,j)\le D_{\max},
 \end{equation}
 with area ratio $\rho=1.5$, decreasing elevation, and a maximum inter-gauge distance
-$D_{\max}=150$\,km. These edges are heuristic, not surveyed hydrography; \S\ref{sec:feature}'s graph
-controls and the results test whether the findings depend on their exact structure. From the national
-graph we take the largest connected component, ``Component~0'': a $183$-basin sub-network in the
-eastern US spanning six HUC regions, with $624$ inferred edges and depth up to $4$. All experiments
-run on this network.
+$D_{\max}=150$\,km. These edges are heuristic rather than surveyed hydrography. The graph controls
+of \S\ref{sec:feature} and the results test whether the findings depend on their exact structure.
+From the national graph we take the largest connected component, ``Component~0'': a $183$-basin
+sub-network in the eastern US spanning six HUC regions, with $624$ inferred edges and depth up to
+$4$. All experiments run on this network.
 
 \subsection{The controlled ablation}
 \label{sec:ablation}
@@ -175,14 +169,12 @@ uses
 \label{eq:input}
 \mathbf{x}_i(t) = \big[\;\mathbf{m}_i(t)\;\|\;\mathbf{s}_i\;\|\;\mathbf{e}_i\;\|\;u_i(t)\;\big],
 \end{equation}
-where $\|$ denotes concatenation. The baseline condition, denoted $\mathrm{L}$, omits the final
-coordinate. Across every other condition the forcings, static attributes, and identity encoding are
-identical; \emph{only the last coordinate $u_i(t)$ changes.} Because Eq.~\eqref{eq:input} is the sole
-point of variation and Eq.~\eqref{eq:model}--\eqref{eq:input} are otherwise shared, any difference in
-test skill between two conditions is attributable to $u_i(t)$ alone. This removes the architecture,
+where $\|$ denotes concatenation. The baseline condition $\mathrm{L}$ omits the final coordinate.
+Across every other condition the forcings, static attributes, and identity encoding are identical,
+and \emph{only the last coordinate $u_i(t)$ changes.} Any difference in test skill between two
+conditions is therefore attributable to $u_i(t)$ alone. This design removes the architecture,
 training-budget, and encoding confounds that make results from bespoke graph models hard to
-interpret, and it is what lets us read a measured difference as an effect of the structural signal
-rather than of the machinery around it.
+interpret: a measured difference reflects the structural signal, not the machinery around it.
 
 \subsection{The structural signal}
 \label{sec:feature}
@@ -199,22 +191,22 @@ u_i(t) =
 0 & \text{if } \mathcal{P}(i)=\varnothing.
 \end{cases}
 \end{equation}
-Two properties of Eq.~\eqref{eq:feature} matter. First, it is dimensionally the target: $A_j q_j$
+Two properties of Eq.~\eqref{eq:feature} matter. First, it carries the units of the target: $A_j q_j$
 has units km$^2\cdot$mm\,d$^{-1}$, and dividing by $\sum_j A_j$ returns mm\,d$^{-1}$, so $u_i$ lives
-on the same scale as $q_i$ and is well-behaved under the model's per-feature standardisation; the
-mean, rather than the sum, prevents a single large parent from dominating. Second, and central to our
-claims, $u_i(t)$ is a \emph{fixed, directed, single-hop precomputation}: its weights are drainage
-areas (not learned), its lag is a fixed hyperparameter, it reads only immediate graph predecessors,
-and it is computed once before training. It is not message passing and involves no learned
-aggregation or iteration over the graph. The empirical question is precisely whether this
-minimal structural input helps where learned graph operators have not.
+on the same scale as $q_i$. Taking the mean rather than the sum keeps a single large parent from
+dominating. Second, and central to our claims, $u_i(t)$ is a \emph{fixed, directed, single-hop
+precomputation}: its weights are drainage areas rather than learned parameters, its lag is fixed, it
+reads only immediate graph predecessors, and it is computed once before training. It is not message
+passing and performs no learned aggregation or iteration over the graph. The empirical question is
+whether this minimal structural input helps where learned graph operators have not.
 
-The lag $\tau\ge 1$, together with the use of \emph{upstream} discharge, means basin $i$'s own
-discharge never enters its input, so Eq.~\eqref{eq:feature} introduces no target leakage.
+Eq.~\eqref{eq:feature} introduces no target leakage. It aggregates the discharge of \emph{upstream}
+basins, so basin $i$'s own discharge never enters its input, and it is lagged, so no same-day
+information is used.
 
 The conditions of the ablation are instantiations of Eq.~\eqref{eq:feature} that differ only in the
 discharge term $q_j$ or the parent set $\mathcal{P}(i)$, summarised in Table~\ref{tab:conditions}.
-The \emph{oracle} uses observed upstream discharge and is an upper bound on what the signal can buy.
+The \emph{oracle} uses observed upstream discharge and bounds the achievable gain.
 The \emph{null} replaces $q_j(t-\tau)$ with the same series permuted in time, holding input scale and
 capacity fixed while destroying temporal information. Two graph controls alter $\mathcal{P}(i)$: a
 \emph{reversed} variant that draws parents from downstream neighbours (edges reversed), and a
@@ -236,9 +228,9 @@ u_i^{\mathrm{real}}(t) =
 \frac{\sum_{j\in\mathcal{P}(i)} A_j\, \hat{q}_j(t-\tau)}
      {\sum_{j\in\mathcal{P}(i)} A_j},
 \end{equation}
-and train a downstream model on inputs carrying $u_i^{\mathrm{real}}$. Because $\hat{q}_j$ is a
-function of forcings alone, the realizable model needs no observed discharge at inference and is
-deployable; it recovers a fraction of the oracle gain that we quantify in the results.
+and train a downstream model on inputs carrying $u_i^{\mathrm{real}}$. Because $\hat{q}_j$ depends
+only on forcings, this model needs no observed discharge at inference. It recovers a fraction of the
+oracle gain that we quantify in \S\ref{sec:results}.
 
 \subsection{Evaluation}
 \label{sec:eval}
@@ -249,8 +241,8 @@ Nash--Sutcliffe efficiency,
 \label{eq:nse}
 \mathrm{NSE}_i = 1 - \frac{\sum_t \big(q_i(t)-\hat{q}_i(t)\big)^2}{\sum_t \big(q_i(t)-\bar{q}_i\big)^2},
 \end{equation}
-where $\bar{q}_i$ is the mean observed discharge; $\mathrm{NSE}\in(-\infty,1]$, with $1$ a perfect fit
-and $0$ the skill of the mean. Because NSE is dominated by high flows, we also report a log-space
+where $\bar{q}_i$ is the mean observed discharge. NSE takes values in $(-\infty,1]$, with $1$ a
+perfect fit and $0$ the skill of predicting the mean. Because NSE is dominated by high flows, we also report a log-space
 variant $\mathrm{logNSE}_i$, computed as Eq.~\eqref{eq:nse} on $\log(q+\epsilon)$ with
 $\epsilon = 10^{-3}\cdot\max(\bar{q}_i,10^{-6})$ scaled to each basin's mean flow, and the
 Kling--Gupta efficiency
@@ -272,7 +264,7 @@ condition $c$ we define
 and report the cross-basin median of $\Delta_i^{(c)}$ together with a one-sided Wilcoxon signed-rank
 test against zero. Because the pairing is per basin, $\Delta_i$ removes basin-level difficulty and
 isolates the effect of $u_i(t)$. Every condition is trained under three random seeds
-($11,13,17$); we report the mean and standard deviation across seeds, and pool basins across seeds
+($11,13,17$). We report the mean and standard deviation across seeds and pool basins across seeds
 for significance tests. All conditions are pre-registered before training, with hypotheses and
 falsification criteria fixed in advance.
 
@@ -291,7 +283,7 @@ Loss / optimiser & MSE; Adam, learning rate $10^{-3}$ \\
 Batch / epochs & $256$ / $30$; gradient-norm clip $1$ \\
 Sequence & length $L=30$; predict last $1$ day \\
 Dynamic inputs & 5 Maurer forcings ($+\,u_i(t)$ in structural conditions) \\
-Static inputs & 5 attributes; 671-dim basin one-hot \\
+Static inputs & 5 attributes; $|V|$-dim basin one-hot ($|V|=183$) \\
 Split & train 1990--1999 / val 2000--2004 / test 2005--2008 \\
 Seeds & $11,13,17$ \\
 \bottomrule
@@ -324,6 +316,7 @@ $\mathrm{L}{+}u_Q^{\mathrm{rand}}$ (random) & $\mathcal{P}(i)$ degree-preserving
 % baseline · E5 depth gradient · E6 topology-specificity (reversed/random) · E7 k=2 robustness.
 
 \section{Results}
+\label{sec:results}
 % Interpret tables, don't paste. Numbers grounded in PAPER_TABLE / MECHANISM_MULTISEED /
 % ROUTING_BASELINE_3SEED. (Table stubs below — fill from those files.)
 

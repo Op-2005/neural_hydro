@@ -121,3 +121,49 @@ from source this session). ml-math-rigor + ml-paper-writer applied.
 ### Verdict
 Methodology is rigorous, reads as narrative, integrity-clean, clears the reproducibility floor.
 Cleared as a foundation for the Results section. No overclaims; every number source-verified.
+
+---
+
+## 2026-08-01 (later) — Methodology multi-pass rigor audit (crs-unleashed)
+
+Re-read the drafted Methodology as a hostile reviewer, 3 gated passes.
+
+### Pass A — CORRECTNESS (caught a real error)
+- **One-hot dimension error found + fixed.** Table 1 said "671-dim basin one-hot"; verified against
+  code (`basedataset.py:208-209`, `num_classes=len(id_to_int)`, id_to_int built from TRAIN basins)
+  that the true dimension is |V|=183 (the study basins), not 671. Fixed Table 1 to "$|V|$-dim
+  ($|V|=183$)", consistent with §setup's $\{0,1\}^{|V|}$. The old current_implementation.md "671"
+  was wrong; a fabricated number would have shipped. This is why the pass exists.
+- All other equations re-verified vs source: NSE/logNSE(eps)/KGE/feature/edge — match code. No
+  further correctness issues.
+
+### Pass B — AI-SLOP + REDUNDANCY
+- Prose semicolons: ~7 → **0** (converted to periods / restructured; math `\;` + table cells excluded).
+- Clause em-dashes: 0 (only correct en-dashes for ranges/names remain).
+- Cut the filler roadmap sentence (over-signposting a 1.5pp section).
+- De-duplicated "byte-identical" (was stated 3×: §model, §ablation, Table caption → now once each,
+  complementary not repeated).
+- Tightened the trailing editorial clause ("...not the machinery around it" kept but as a clean
+  colon-clause, not "and it is what lets us read...").
+- "what the signal can buy" → "bounds the achievable gain".
+
+### Pass C — REVIEWER REREAD (precision)
+- **Leakage sentence rewritten.** Was "The lag τ≥1, together with upstream discharge..." — conflated
+  two arguments and re-introduced τ≥1 after Eq. fixed τ=1. Now two clean claims: (1) uses upstream
+  basins so i's own discharge never enters; (2) lagged so no same-day info. Precise.
+
+### On "what work we build on" (CRS stance)
+The grounding is correct and honestly stated. §model cites all three layers we build on: the
+foundational LSTM-for-rainfall-runoff (kratzert2018), the multi-basin LSTM paradigm our L baseline
+IS (kratzert2019), and the specific stock cudalstm model from the NeuralHydrology model zoo we run
+(kratzert2022joss). This is the right grounding — we cite both the paradigm and the software, and
+frame our novelty as the ablation FINDING + deployable feature, not a new architecture. No change
+needed; the "existing model we build off" is explicit and correctly credited.
+
+### Skill update
+Embedded an "AI-slop tells" subsection into ml-paper-writer (semicolon/em-dash overuse, long
+multi-clause sentences, filler roadmaps, trailing editorial clauses, synonym drift, over-formal
+jargon) with the read-aloud test. Applies to every future prose pass.
+
+**Verdict:** Methodology now correctness-clean (real error fixed), slop-free (0 semicolons/em-dashes/
+hedges), reviewer-precise. Compiles clean (6pp). Stronger foundation than the first draft.
