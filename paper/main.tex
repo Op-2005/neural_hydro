@@ -232,7 +232,7 @@ and train a downstream model on inputs carrying $u_i^{\mathrm{real}}$. Because $
 only on forcings, this model needs no observed discharge at inference. It recovers a fraction of the
 oracle gain that we quantify in \S\ref{sec:results}.
 
-\subsection{Evaluation}
+\subsection{Skill metrics}
 \label{sec:eval}
 
 We evaluate per basin on the test period with three complementary metrics. The primary metric is the
@@ -253,20 +253,8 @@ Kling--Gupta efficiency
 where $r$ is the correlation between $q_i$ and $\hat{q}_i$, $\beta=\bar{\hat q}_i/\bar q_i$ is the
 bias ratio, and $\gamma=(\sigma_{\hat q_i}/\bar{\hat q}_i)/(\sigma_{q_i}/\bar q_i)$ the ratio of
 coefficients of variation. KGE separates timing ($r$), bias ($\beta$), and variability ($\gamma$),
-which we use to locate where a metric change originates.
-
-Our unit of comparison is the paired, per-basin change in skill against the shared baseline. For a
-condition $c$ we define
-\begin{equation}
-\label{eq:delta}
-\Delta_i^{(c)} = \mathrm{NSE}_i(c) - \mathrm{NSE}_i(\mathrm{L}),
-\end{equation}
-and report the cross-basin median of $\Delta_i^{(c)}$ together with a one-sided Wilcoxon signed-rank
-test against zero. Because the pairing is per basin, $\Delta_i$ removes basin-level difficulty and
-isolates the effect of $u_i(t)$. Every condition is trained under three random seeds
-($11,13,17$). We report the mean and standard deviation across seeds and pool basins across seeds
-for significance tests. All conditions are pre-registered before training, with hypotheses and
-falsification criteria fixed in advance.
+which we use to locate where a metric change originates. The comparison protocol built on these
+metrics is described in \S\ref{sec:protocol}.
 
 \begin{table}[t]
 \centering
@@ -310,10 +298,68 @@ $\mathrm{L}{+}u_Q^{\mathrm{rand}}$ (random) & $\mathcal{P}(i)$ degree-preserving
 \end{tabularx}
 \end{table}
 
-\section{Experiments}
-% Each answers a question; pre-registered; multi-seed 11/13/17.
-% E1 static vs dynamic (C1) · E2 shuffled null · E3 deployable predicted-Q · E4 no-ML routing
-% baseline · E5 depth gradient · E6 topology-specificity (reversed/random) · E7 k=2 robustness.
+\section{Experimental Protocol}
+\label{sec:protocol}
+
+The value of a controlled ablation rests on the control actually holding. This section states the
+protocol that makes each measured difference interpretable: an auditable single-variable design, a
+pre-registered analysis plan, a paired multi-seed comparison, and a reproducible artifact trail. The
+effect sizes we report are modest, so this apparatus is what separates a real signal from an
+artifact, and we describe it in the detail a reader would need to reproduce or challenge our claims.
+
+\subsection{A single-variable design, verified}
+\label{sec:protocol-design}
+
+Every condition is the model and training of Table~\ref{tab:config}, and the conditions differ only
+in the input coordinate $u_i(t)$ of Eq.~\eqref{eq:input} (Table~\ref{tab:conditions}). We do not take
+this on trust: the run configurations are stored, and a direct configuration diff confirms that the
+four headline conditions ($\mathrm{L}$, oracle, realizable, null) are identical in model, hidden
+size, dropout, forget bias, optimiser, learning rate, batch size, epoch count, sequence length,
+forcings, static attributes, identity encoding, split, and seed. The only field that differs is the
+additional feature file supplying $u_i(t)$. This turns ``the difference-maker is our input'' from an
+assertion into a checkable property of the configurations, and it is the specific control that a
+bespoke graph model, with its own architecture and training loop, cannot offer.
+
+\subsection{Pre-registration}
+\label{sec:protocol-prereg}
+
+Each experiment was pre-registered before its runs were observed. A registration fixes the
+hypothesis, the success threshold, and the falsification criterion in advance, so that an outcome
+cannot be reinterpreted after the fact. This discipline is load-bearing here, because it commits us
+to reporting results that did not go our way. Two examples recur in the results. A null control was
+registered to pass only if a time-shuffled upstream input produced negligible gain, which would have
+undercut the whole study had it failed. A same-day-lag variant was registered as a stronger form of
+the deployable model and then \emph{falsified}: it underperformed the one-day lag, and we report it
+as such rather than dropping it. Falsified pre-registrations are reported, not redesigned.
+
+\subsection{Comparison protocol}
+\label{sec:protocol-compare}
+
+Our unit of comparison is the paired, per-basin change in skill against the shared baseline. For a
+condition $c$,
+\begin{equation}
+\label{eq:delta}
+\Delta_i^{(c)} = \mathrm{NSE}_i(c) - \mathrm{NSE}_i(\mathrm{L}).
+\end{equation}
+Pairing per basin removes basin-level difficulty and isolates the effect of $u_i(t)$: a basin that is
+hard for $\mathrm{L}$ is equally hard for $c$, and only the change matters. We summarise a condition
+by the cross-basin median of $\Delta_i^{(c)}$ and test it against zero with a one-sided Wilcoxon
+signed-rank test, a paired non-parametric test appropriate for the skewed, non-Gaussian distribution
+of per-basin skill. Every condition is trained under three seeds ($11,13,17$). We report the
+cross-seed mean and standard deviation of the median and pool basins across seeds for the
+significance tests. A structural claim is credited only when it holds across seeds, not in one.
+
+\subsection{Reproducibility and compute}
+\label{sec:protocol-repro}
+
+Because the study runs entirely on a stock model with published configurations, its cost is modest
+and its artifacts are complete. Each run is a single \texttt{cudalstm} trained for $30$ epochs on
+$183$ basins on one GPU, on the order of tens of minutes. The full study is a few dozen such runs
+across conditions and seeds. We retain, for every run, the exact configuration and the per-basin
+test predictions and metrics, so that every number in this paper can be recomputed from stored
+outputs without retraining. The structural inputs are deterministic functions of the released
+discharge and the inferred graph, and the graph follows from Eq.~\eqref{eq:edge}. Both are
+regenerable from the public dataset. Code and configurations are released.
 
 \section{Results}
 \label{sec:results}

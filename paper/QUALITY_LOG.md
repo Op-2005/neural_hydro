@@ -167,3 +167,34 @@ jargon) with the read-aloud test. Applies to every future prose pass.
 
 **Verdict:** Methodology now correctness-clean (real error fixed), slop-free (0 semicolons/em-dashes/
 hedges), reviewer-precise. Compiles clean (6pp). Stronger foundation than the first draft.
+
+---
+
+## 2026-08-01 (later) — Experimental Protocol section (new) + a process finding
+
+**Final Methodology reread:** clean, no material issues. Per instruction, did not manufacture edits.
+One structural fix made: split §Evaluation → metric *definitions* stay in Methodology (§Skill
+metrics), the comparison *protocol* moved to the new section (no duplication).
+
+**New §Experimental Protocol** (carries the rigor apparatus, not re-listed hyperparameters):
+single-variable design verified by config-diff, pre-registration, paired multi-seed comparison,
+reproducibility + compute. Iterative audit (same as Methodology):
+- **Correctness (verified at write time):** config-diff byte-identical claim TRUE (4 headline
+  configs share an identical core-config hash). Pre-reg examples accurate: null control registered
+  ≤+0.01, actual null Δ +0.004; lag0 falsification real (lag0 +0.023 < lag1 +0.027). Compute
+  "tens of minutes" VERIFIED from output.log (epoch1 00:48 → epoch30 01:29 ≈ 41 min/run).
+- **AI-slop:** prose semicolons → 0; em-dashes 0; "intensifier" grep hits were false positives
+  ("eVERY"). Clean.
+- **Honesty:** the "bespoke graph model cannot offer this control" line references our abandoned
+  approach WITHOUT narrating it — failed work stays out. No overclaim.
+
+**PROCESS FINDING (user-raised, important).** The rechecks keep catching errors (671-dim; soft
+compute claim) *after* writing, not before. Root cause: verifying at review time, and trusting
+DERIVED docs (current_implementation.md said 671) instead of primary source (code builds 183).
+Fix baked into both skills: **write-time verification + classify-intent-before-writing** — every
+verifiable fact traces to its primary source opened THIS session before it goes on the page;
+summaries/READMEs/drafts are not verification; unverifiable → `[verify]`, don't write it. The
+review pass is now a backstop that should find nothing.
+
+**Venue-fit flag:** "Code and configurations are released" is true (public repo) but the repo URL
+deanonymizes the author — anonymize for a double-blind submission.
