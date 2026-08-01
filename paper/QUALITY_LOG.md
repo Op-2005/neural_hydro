@@ -68,3 +68,56 @@ non-negotiables (claims↔evidence, limitations section, reproducibility + compu
 significance-via-insight) and then write to the narrative. We do NOT overfit it — its own text
 flags rubric-driven, content-poor prose as a rejection signal. The one line we lean on: insight
 beats SOTA (permission to lead with the mechanism, not the modest +0.025).
+
+---
+
+## 2026-08-01 — Methodology section (drafted end-to-end) — 4-axis evaluation
+
+Drafted §Methodology (setup/notation, base model, study network, controlled ablation, structural
+signal, deployable two-stage, evaluation) with 10 numbered equations + 2 tables. Compiles clean
+(6pp). Grounded against code (feature aggregation, cudalstm, edge rule, metric formulas all read
+from source this session). ml-math-rigor + ml-paper-writer applied.
+
+### Axis 1 — RIGOR (math-rigor audits)
+- **Notation audit: PASS.** Every symbol introduced before use; no collisions. u_i(t) named in
+  §ablation (Eq. input), fully defined in §feature (Eq. feature) — forward-reference signposted
+  ("defined in §feature"), definition follows immediately. Clean.
+- **Correctness audit: PASS, verified vs source.** NSE, log-NSE (eps=1e-3·max(mean,1e-6)), KGE
+  (beta=s̄/ō, gamma=CV ratio) all match analyze_metric_honesty.py exactly. Eq. feature dimensional
+  check stated (km²·mm/d ÷ km² = mm/d). Edge cases named (headwaters ∅→0 in Eq. feature + Eq. edge).
+- **Match-formalism-to-claim: PASS.** LSTM cited not re-derived (no padding). Eq. feature explicitly
+  "fixed, directed, single-hop precomputation... not message passing" — honesty ceiling in the math.
+- **Flow audit: PASS.** Section opens with a roadmap; each subsection's purpose stated; equations
+  surrounded by prose ("Two properties matter...", "central to our claims..."). No formula stands alone.
+
+### Axis 2 — NARRATIVE (story-building)
+- The section has a spine: one-variable-changes design → the model it changes → the graph it uses →
+  the signal (the contribution) → deployable form → how we measure. Each subsection sets up the next.
+- The contribution is front-loaded (§ablation Eq. input = "only the last coordinate changes") and the
+  honesty statement (§feature = "not message passing") plants the Kirschstein-contrast the Results pay off.
+- Reads as argument, not spec-dump. GOOD.
+
+### Axis 3 — INTEGRITY / scientific standards
+- Every constant traces to source (config table byte-identical to disk; metric formulas verified).
+- No leakage claim is precise (upstream + lag≥1; own discharge never enters). Stated at Eq. feature.
+- Heuristic edges flagged honestly IN the methods (§network), not hidden. Pre-registration stated.
+- No overclaim: the feature is described at exactly its true depth. Directionality NOT claimed here
+  (it's a control condition in Table 2, results scope it). Honesty ceiling held.
+
+### Axis 4 — PROTOCOL / acceptance-report floor
+- Reproducibility: full config table (Table 1), split, seeds, metric defs — an expert could
+  reproduce. Clears the report's reproducibility non-negotiable.
+- Soundness: controlled design + significance protocol (paired Wilcoxon, 3 seeds) stated.
+- Clarity: notation fixed once, consistent terms (matches QUALITY_LOG terminology register).
+
+### Minor flags (defer / for later passes)
+- [ ] "predict last 1 day" in Table 1 vs "next-day discharge" in prose — consistent, but confirm
+      predict_last_n=1 phrasing reads cleanly to a hydrologist.
+- [ ] Eq. model uses w,b for the head; ensure no symbol clash if Results introduces weights (none yet).
+- [ ] compute/hardware statement (report wants it) — belongs in a Reproducibility para or appendix,
+      not Methods. TODO when we add the checklist.
+- [ ] Figure 1 (the static-null vs dynamic-gain contrast) is referenced conceptually; not yet drawn.
+
+### Verdict
+Methodology is rigorous, reads as narrative, integrity-clean, clears the reproducibility floor.
+Cleared as a foundation for the Results section. No overclaims; every number source-verified.
