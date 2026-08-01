@@ -46,3 +46,25 @@ abstract); abstract ~250 content-words — fine for arXiv/journal, check page-li
   observed-Q upper bound; "null" = shuffled-in-time control.
 - "topology-specificity" (real edges ≫ random) vs "directionality" (forward vs reversed — weak).
 - L = baseline; L+upQ = oracle; L+upQ\_pred = realizable; L+upQ\_shuf = null.
+
+---
+
+## How the project docs feed the writing (provenance, not content)
+
+**`JOURNAL.md` — the decision-provenance layer (INPUT to writing, not content).** Used to set each
+claim's honesty ceiling and catch temporal gaps between decisions and drafted sections. Concrete
+examples this project:
+- Directionality scoped to "mild aggregate preference, not a headline" — set by the 2026-07-29
+  journal entry (3-seed downgrade). The abstract respects that ceiling.
+- The pre-Methodology QC caught the missing topology-specificity result *because* the journal
+  records the 3-seed mechanism runs landed AFTER the abstract was drafted.
+- **Stays OUT of the paper:** the DirectedGraphLSTM failure, ruled-out confounds, the falsified
+  lag0 pre-registration. They shaped what we may claim; they are not paper content. The ONE
+  negative result that IS reported is the static-topology null — because it is load-bearing (it is
+  half of the "structure-as-flow not structure-as-label" contrast).
+
+**`ml-conference-acceptance-criteria-report.md` — a floor-check, not a target.** We clear its
+non-negotiables (claims↔evidence, limitations section, reproducibility + compute statement,
+significance-via-insight) and then write to the narrative. We do NOT overfit it — its own text
+flags rubric-driven, content-poor prose as a rejection signal. The one line we lean on: insight
+beats SOTA (permission to lead with the mechanism, not the modest +0.025).
