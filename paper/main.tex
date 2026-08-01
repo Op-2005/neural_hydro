@@ -52,12 +52,14 @@ structure-as-label, which explains in one stroke why static graph approaches hav
 The gain is real and deployable---it survives a shuffled-flow null control, holds in
 log-NSE, and a two-stage model that \emph{predicts} upstream flow from forcings (no ground
 truth at inference) recovers $+0.025$ NSE, about 55--72\% of the oracle ceiling and
-positive across all three seeds. It is also mechanistic: the improvement rises
-monotonically with graph depth and is zero at headwaters, the signature of physical
-routing, and it persists when the heuristic graph is pruned to hydrography-realistic
-connectivity. We conclude that river-network structure improves streamflow LSTMs when, and
-only when, it is delivered as a dynamic upstream-flow signal rather than a static
-topological descriptor.
+positive across all three seeds. It is also mechanistic and specific to the real
+network: the gain requires the true upstream connectivity---a degree-preserving random
+rewiring of the graph removes most of it ($+0.034$ NSE for true vs.\ rewired edges,
+$p=2\times10^{-14}$, three seeds)---and it rises with graph depth while vanishing at
+headwaters, the signature of physical routing. The effect persists when the heuristic graph
+is pruned to hydrography-realistic connectivity. We conclude that river-network structure
+improves streamflow LSTMs when, and only when, it is delivered as a dynamic upstream-flow
+signal tied to the real network, rather than as a static topological descriptor.
 \end{abstract}
 
 \keywords{streamflow prediction, LSTM, river-network topology, CAMELS}
