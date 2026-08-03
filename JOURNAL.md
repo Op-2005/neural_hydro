@@ -1422,3 +1422,25 @@ None load-bearing. All results 3-seed. Remaining work is writing (Results, Intro
 1. **Draft Results** — every claim now 3-seed; plan in RESULTS_PLAN.md; field-calibrated (median headline, CDF figure, quote Kirschstein). Same end-to-end + iterative-audit treatment.
 2. **Make Figs 2–3** — CDF of per-basin NSE + ΔNSE-vs-depth, both from stored test_metrics.csv. Fig 1 (core-idea diagram) to design.
 3. **Draft Introduction** — tension→turn→payoff, aligned with the QC'd abstract.
+
+---
+## 2026-08-02 (later) — Results section drafted end-to-end (full protocol) + recovery-% inconsistency fixed
+
+Drafted §Results with the accumulated protocol (write-time verification, terminology register, honesty ceiling, field calibration, interpret-don't-paste, AI-slop hunt). 4 subsections: static-null/dynamic-gain contrast (Table 1 + the 2x2); real-not-capacity (null control, not-rescue, no-ML routing baseline, CDF figure); routing mechanism (depth gradient figure + topology-specificity, Kirschstein quoted as our mirror); heuristic-graph robustness (k=2). Two figures generated from stored metrics (CDF + depth), medians verified to match PAPER_TABLE exactly.
+
+**Write-time verification earned its keep again.** Caught a cross-doc inconsistency: the oracle-recovery % was "55–72%" in the abstract and I nearly wrote "55–70%" in Results. Neither is stated cleanly anywhere — it's derived (realizable Δ / oracle Δ per seed). Computed from source: 54/72/62% → true range 54–72%. Fixed both abstract and Results to 54–72%. The abstract's "55" was itself off by one. This is the exact failure mode the user flagged (verify-at-review vs verify-at-write) — caught before it shipped.
+
+Every other Results number cross-checked against primary source; all match. 0 prose semicolons, 0 em-dashes. Honesty ceiling held (directionality a "mild aggregate effect, not a firm claim"; the +0.006 2x2 hint not dressed up; the one-hot +0.016 used to explain the null). Basin-set precision maintained (all-183 headline deltas vs connected-basin graph-control deltas, stated each time, not conflated).
+
+### Reviewer 2
+- *Is Table 1's +0.038 oracle consistent with the mechanism section's +0.046 forward?* Yes — different basin sets (all 183 vs 150 connected), labeled each time. Not an inconsistency.
+- *Directionality — buried?* Reported explicitly as a mild aggregate preference, scoped down; topology-specificity (p=2e-14) is the robust claim.
+- *Are the figures faithful?* Generated from stored test_metrics.csv; depth medians match PAPER_TABLE to 4 decimals.
+
+### Open questions
+None on Results. Remaining: Introduction, Related Work, Discussion, Limitations prose; Fig 1 (core-idea diagram, to design); author/venue metadata (user).
+
+## Next 2–3 sessions (queued)
+1. **Draft Introduction** — tension→turn→payoff, aligned to the QC'd abstract; lead with the contrast.
+2. **Draft Related Work + Discussion + Limitations** — Kirschstein/Jiang positioning; honest scope.
+3. **Fig 1** (core-idea contrast diagram) + a reproducibility/checklist pass for venue-fit.

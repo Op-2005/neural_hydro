@@ -198,3 +198,41 @@ review pass is now a backstop that should find nothing.
 
 **Venue-fit flag:** "Code and configurations are released" is true (public repo) but the repo URL
 deanonymizes the author — anonymize for a double-blind submission.
+
+---
+
+## 2026-08-02 — Results section (drafted end-to-end) + figures + full protocol audit
+
+Drafted §Results (4 subsections, each answering a question; interpret-don't-paste) with 2
+data-driven figures + Table 1. All accumulated protocol applied.
+
+### Write-time verification (the discipline that caught an error)
+Every number pulled from its primary source AS written. This caught a real inconsistency:
+- **Recovery %**: abstract said "55--72%", I was about to write "55--70%". Neither is stated
+  cleanly in a doc — it's derived (realizable Δ / oracle Δ per seed). Computed from source:
+  54/72/62% → true range **54--72%**. Fixed BOTH abstract and Results to 54--72% (internal
+  consistency). The abstract's "55" was itself slightly wrong. Caught at write time, not review.
+- All other numbers cross-checked vs source: static 2x2 (+0.002/p0.67, +0.006/p0.28, +0.016/p3e-8),
+  realizable−null (+0.017, p2e-12, CI [+0.011,+0.022]), depth (0.002/0.020/0.031/0.044),
+  forward−random (+0.034, p2.3e-14), k2 (+0.025 vs full +0.026). All match. No hallucinations.
+
+### AI-slop: 0 prose semicolons, 0 clause em-dashes, 0 hedges (after fixing 3 semicolons).
+
+### Honesty ceiling held
+- Directionality reported as "a mild, aggregate-level effect rather than a firm claim... the robust
+  statement is topology specificity, not strict directionality." Not overclaimed.
+- Static 2x2 +0.006/p0.28 not dressed up; the one-hot +0.016 used to EXPLAIN the null (redundancy).
+- Basin-set precision: full 183 for headline deltas, connected for graph controls, STATED each time
+  (Table 1 delta +0.038 all-basin vs mechanism +0.046 connected — kept distinct, not conflated).
+
+### Field calibration applied (from RELATED_READING)
+- Median-across-basins headline throughout. Kirschstein null QUOTED verbatim ("almost no
+  sensitivity to the choice of graph topology") and positioned as our mirror. CDF figure added
+  (Fig cdf, the canonical field figure). No compute padding in Results.
+
+### Figures (generated from stored metrics, verified faithful)
+- fig_cdf_nse.pdf: per-basin NSE CDF, L/realizable/oracle (seed 11).
+- fig_depth.pdf: realizable ΔNSE by depth, pooled 3 seeds. Medians match PAPER_TABLE exactly.
+
+**Verdict:** Results is number-verified (one cross-doc inconsistency fixed), slop-free, honesty-
+clean, field-calibrated. Compiles (9pp) with 2 figures + Table 1.

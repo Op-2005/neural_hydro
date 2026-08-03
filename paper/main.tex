@@ -51,7 +51,7 @@ same network, opposite outcomes: the information lives in structure-as-flow, not
 structure-as-label, which explains in one stroke why static graph approaches have failed.
 The gain is real and deployable---it survives a shuffled-flow null control, holds in
 log-NSE, and a two-stage model that \emph{predicts} upstream flow from forcings (no ground
-truth at inference) recovers $+0.025$ NSE, about 55--72\% of the oracle ceiling and
+truth at inference) recovers $+0.025$ NSE, about 54--72\% of the oracle ceiling and
 positive across all three seeds. It is also mechanistic and specific to the real
 network: the gain requires the true upstream connectivity---a degree-preserving random
 rewiring of the graph removes most of it ($+0.034$ NSE for true vs.\ rewired edges,
@@ -363,19 +363,125 @@ configurations are released.
 
 \section{Results}
 \label{sec:results}
-% Interpret tables, don't paste. Numbers grounded in PAPER_TABLE / MECHANISM_MULTISEED /
-% ROUTING_BASELINE_3SEED. (Table stubs below — fill from those files.)
 
-\subsection{Static topology is inert; dynamic upstream flow helps}
-% Table 1: L 0.653 -> realizable 0.678 (Δ+0.025, p=6.0e-19); static-feature 2x2 ~0.
+All numbers are cross-seed medians on the held-out test period (2005--2008), with paired per-basin
+deltas against the shared baseline $\mathrm{L}$ (Eq.~\eqref{eq:delta}). We report deltas over the
+full $183$ basins for the headline conditions, and over the connected basins (those with upstream
+parents) for the graph controls, where the manipulation is defined. We state the basin set each time.
 
-\subsection{The gain is topology-specific}
-% MECHANISM §1: forward +0.046 / reversed +0.031 / random +0.012; forward-random +0.034, p=2.3e-14.
-% THE headline mechanism result. Directionality: one honest paragraph (mild, seed-fragile, not a claim).
+\subsection{Static topology is inert, but dynamic upstream flow helps}
+\label{sec:res-contrast}
 
-\subsection{Deployable and robust}
-% Table 2 routing baselines (3-seed: R1 +0.324, R2 +0.664±0.008, realizable +0.683±0.008).
-% Table 4 depth gradient. k=2 robustness (MECHANISM §2: k=2 realizable +0.025 ≈ full +0.026, 3-seed).
+We first ask whether a basin's fixed position in the network improves prediction. Adding the five
+static topology features (graph depth, upstream count, upstream area, in-degree, and upstream-area
+fraction) leaves skill unchanged: the paired median $\Delta$NSE is $+0.002$ with the basin one-hot
+present ($p=0.67$, three seeds) and $+0.006$ without it ($p=0.28$). Both are indistinguishable from
+zero. The one-hot itself is worth a real $+0.016$ NSE ($p=3\times10^{-8}$), which explains the null:
+a constant per-basin descriptor is redundant with an encoding that already memorises per-basin
+identity. Static structure, supplied as a label, carries no usable signal here.
+
+The same network supplied as \emph{flow} behaves in the opposite way. Feeding each basin the
+area-weighted discharge of its upstream neighbours raises median test NSE from $0.653$ to $0.691$, a
+paired gain of $+0.038$ ($p=3\times10^{-17}$) under the observed-flow oracle
+(Table~\ref{tab:main}). The deployable model that predicts upstream flow from forcings recovers
+$+0.025$ ($p=6\times10^{-19}$), which is $54$--$72\%$ of the oracle ceiling across seeds. Same network,
+opposite outcomes: the information is in the structure as time-varying flow, not as a fixed
+descriptor. This contrast is the core result, and it explains directly why methods that inject the
+network as a static graph label have not helped.
+
+\begin{table}[t]
+\centering
+\caption{Median test skill by condition (mean $\pm$ std across three seeds), and the paired
+per-basin $\Delta$NSE against $\mathrm{L}$ over all $183$ basins with a one-sided Wilcoxon $p$.}
+\label{tab:main}
+\begin{tabular}{lcccc}
+\toprule
+Condition & NSE & KGE & log-NSE & $\Delta$NSE vs.\ L ($p$) \\
+\midrule
+$\mathrm{L}$ (baseline) & $0.653\pm0.002$ & $0.716\pm0.016$ & $0.634\pm0.035$ & --- \\
+$\mathrm{L}{+}u_Q$ (oracle) & $0.691\pm0.009$ & $0.746\pm0.014$ & $0.715\pm0.012$ & $+0.038$ ($2.6\!\times\!10^{-17}$) \\
+$\mathrm{L}{+}u_Q^{\mathrm{pred}}$ (realizable) & $0.678\pm0.008$ & $0.723\pm0.005$ & $0.672\pm0.020$ & $+0.025$ ($6.0\!\times\!10^{-19}$) \\
+$\mathrm{L}{+}u_Q^{\mathrm{shuf}}$ (null) & $0.666\pm0.008$ & $0.718\pm0.015$ & $0.628\pm0.023$ & $+0.012$ ($4.7\!\times\!10^{-2}$) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The gain is real, not added capacity}
+\label{sec:res-real}
+
+A skeptic could attribute the gain to the extra input rather than its content. The null condition
+tests this: replacing upstream discharge with its time-shuffled copy preserves input scale and
+distribution but destroys temporal alignment. The realizable model beats this null by a paired
+$+0.017$ NSE ($p=2\times10^{-12}$, bootstrap $95\%$ CI $[+0.011,+0.022]$), so the gain is the flow
+signal, not capacity. It also survives the choice of metric: the realizable log-NSE gain is $+0.027$
+and positive at every seed, so the improvement is not confined to high flows.
+
+The gain is not merely patching a weak baseline. On basins the baseline already predicts well
+($\mathrm{NSE}>0.6$), the realizable model still adds $+0.012$, and Figure~\ref{fig:cdf} shows the
+improvement as a rightward shift of the entire distribution of per-basin NSE rather than a lift of a
+poor tail. Finally, the learned model earns its complexity against a non-learned alternative: a
+linear routing predictor fit on upstream flow alone reaches median NSE $0.324$, and one that also
+uses the baseline's own prediction reaches $0.664\pm0.008$, both below the realizable LSTM at
+$0.683\pm0.008$ (connected basins, three seeds). The LSTM's advantage is that it integrates upstream
+flow with local rainfall--runoff, which linear routing cannot.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.62\linewidth]{figures/fig_cdf_nse.pdf}
+\caption{Empirical distribution of per-basin test NSE (seed 11). Adding upstream flow shifts the
+whole distribution rightward. The observed-flow oracle bounds the gain and the deployable model
+captures most of it.}
+\label{fig:cdf}
+\end{figure}
+
+\subsection{The mechanism is routing on the real network}
+\label{sec:res-mechanism}
+
+If the gain reflects physical routing, it should grow with how much upstream flow a basin receives
+and vanish where it receives none. It does. The median realizable $\Delta$NSE rises monotonically
+with graph depth, from $+0.002$ at headwaters (not significant, $p=0.24$) to $+0.020$, $+0.031$, and
+$+0.044$ at depths one through three (each $p<10^{-3}$), and is statistically absent exactly at the
+headwaters that have no upstream input (Figure~\ref{fig:depth}). This depth gradient is not a proxy
+for basin size or feature magnitude: it survives partial correlation against drainage area and
+against the magnitude of the upstream-flow input itself.
+
+The gain is specific to the \emph{real} river network, not to spatial aggregation in general. We
+test this by rebuilding the upstream-flow input on altered graphs. Reversing every edge, so a basin
+reads its downstream rather than upstream neighbours, weakens the gain from $+0.046$ to $+0.031$
+(connected basins). Rewiring the graph at random while preserving each basin's number of parents
+weakens it further, to $+0.012$. The true-versus-random gap is $+0.034$ ($p=2\times10^{-14}$, three
+seeds): a degree-preserving random graph retains only about a quarter of the gain. The signal lives
+in the actual upstream connectivity. This mirrors, in reverse, the finding of
+Kirschstein and Sun~\cite{kirschstein2024} that graph neural networks are insensitive to the river
+topology, showing ``almost no sensitivity to the choice of graph topology''; a fixed upstream-flow
+input is sharply sensitive to it.
+
+The reversal result also bounds how far we push directionality. Downstream flow is correlated with a
+basin's own discharge through shared weather and routed water, so reversing edges does not erase the
+signal, and the forward-over-reversed advantage is small and inconsistent across seeds. We therefore
+report a preference for the physically-correct upstream direction as a mild, aggregate-level effect
+rather than a firm claim. The robust and significant statement is topology specificity, not strict
+directionality.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.62\linewidth]{figures/fig_depth.pdf}
+\caption{Median realizable $\Delta$NSE by graph depth, pooled over three seeds. The gain is absent
+at headwaters (depth $0$, no upstream input) and rises with depth, the signature of physical
+routing. Depth $4$ contains only six basins.}
+\label{fig:depth}
+\end{figure}
+
+\subsection{The result does not depend on the heuristic graph}
+\label{sec:res-robust}
+
+Because our edges are inferred rather than surveyed, we check whether the gain is an artifact of
+their density. The inferred graph over-connects relative to real hydrography, with a mean in-degree
+of $4.2$ against the two or three tributaries of a typical confluence. Pruning it to a
+hydrography-realistic in-degree of at most two removes more than half the edges, yet the realizable
+gain is unchanged: $+0.025$ on the pruned graph versus $+0.026$ on the full graph, positive at all
+three seeds ($p=1\times10^{-14}$). The routing benefit rests on the physically meaningful
+nearest-upstream structure, not on the excess edges the heuristic adds.
 
 \section{Discussion}
 % Resolves kirschstein2024 null (label inert / flow specific). Operationalizes jiang2025 direction
