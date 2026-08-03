@@ -65,13 +65,61 @@ signal tied to the real network, rather than as a static topological descriptor.
 \keywords{streamflow prediction, LSTM, river-network topology, CAMELS}
 
 \section{Introduction}
-% Skeleton (6 moves — see paper/SKELETON.md):
-% 1. Multi-basin LSTMs match physics models yet treat basins independently [kratzert2019].
-% 2. Adding the river network via GNNs has not helped [kirschstein2024] — unexplained null.
-% 3. Our idea: the network may be informative AS DYNAMIC FLOW even if inert AS A STATIC LABEL.
-% 4. Contributions (C1 static-null/dynamic-gain; C2 topology-specific; C3 deployable+robust).
-% 5. Evidence one-liners (oracle +0.038 p=2.6e-17; topology-specificity p=2.3e-14).
-% 6. Scope: regional (183 eastern-US basins), no SOTA claim, heuristic edges.
+
+Deep learning has reshaped streamflow prediction. A single Long Short-Term Memory (LSTM) network
+trained across hundreds of river basins predicts daily discharge as well as, or better than,
+calibrated process-based models, and it does so while sharing one set of parameters across
+hydrologically diverse catchments~\cite{kratzert2018,kratzert2019}. These multi-basin models,
+however, treat each basin independently: they map a basin's own meteorological forcings to its own
+discharge and never use the fact that basins are physically connected. Water flows downstream, so a
+basin's discharge depends on what arrives from upstream, yet the standard model is blind to that
+structure.
+
+The obvious way to add the structure is to give the model the river network as a graph and let a
+graph neural network (GNN) exploit it. This has not worked. Across adjacency definitions, edge
+weightings, and network architectures, GNNs on river topology fail to beat an edge-free baseline;
+Kirschstein and Sun~\cite{kirschstein2024} report that ``no adjacency definition produced measurable
+improvement'' and that performance shows ``almost no sensitivity to the choice of graph topology.''
+The result is an unexplained null: either the river network is genuinely uninformative for this
+task, or it is being supplied to the model in a form the model cannot use.
+
+We argue for the second reading, and the distinction is the point of the paper. Network structure
+can enter a model in two forms. As a \emph{static descriptor}, a basin's fixed position in the graph
+(its depth, its number of upstream neighbours, its contributing area) is a constant attached to the
+basin. As a \emph{dynamic signal}, the discharge actually arriving from upstream is a time-varying
+quantity that changes every day. A model that already memorises per-basin identity gains nothing
+from a further constant, but it can gain from a signal that moves. Our hypothesis is that the network
+helps only in the second form: structure-as-flow, not structure-as-label.
+
+We test this with a controlled ablation that isolates the one variable in question. Every condition
+is the same stock multi-basin LSTM with a byte-identical training configuration, and the only thing
+that changes between conditions is a single input channel carrying network information. This removes
+the architecture, training, and encoding differences that confound comparisons between bespoke graph
+models, so any change in skill is attributable to that input alone. On a 183-basin sub-network of
+CAMELS-US in the eastern United States, three findings follow, each established across three seeds.
+
+\begin{itemize}[leftmargin=1.4em,itemsep=2pt,topsep=2pt]
+\item \textbf{Static topology is inert; dynamic upstream flow helps.} Adding a basin's fixed
+topological position changes median test NSE by at most $+0.006$ (not significant), whereas feeding
+it the dynamic upstream discharge raises NSE by $+0.038$ under an observed-flow oracle
+($p=2.6\times10^{-17}$). The same network produces opposite outcomes depending on its form, which
+explains directly why static graph approaches have not helped.
+\item \textbf{The gain is specific to the real network.} A degree-preserving random rewiring of the
+graph retains only about a quarter of the gain (true-versus-random $+0.034$ NSE,
+$p=2.3\times10^{-14}$), and the improvement rises with graph depth and vanishes at headwaters, the
+signature of physical routing. A fixed upstream-flow input is sharply sensitive to the topology that
+GNNs were insensitive to.
+\item \textbf{The gain is deployable.} A two-stage model that \emph{predicts} upstream flow from
+forcings, and so needs no observed discharge at inference, recovers $+0.025$ NSE, roughly $54$--$72\%$
+of the oracle ceiling, and it does so with a fixed one-hop input rather than any learned graph
+operator.
+\end{itemize}
+
+The contribution is an explanation, not a leaderboard result. The effect sizes are modest and the
+study is regional rather than a national benchmark, so we make no state-of-the-art claim. What the
+controlled ablation buys is a clean account of \emph{when} river-network structure helps a streamflow
+LSTM and why prior graph methods missed it: the information lives in the structure as dynamic flow,
+tied to the real upstream connectivity, and it is recoverable without message passing.
 
 \section{Related Work}
 % Context + difference, not a dump:

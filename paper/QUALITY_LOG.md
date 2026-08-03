@@ -236,3 +236,33 @@ Every number pulled from its primary source AS written. This caught a real incon
 
 **Verdict:** Results is number-verified (one cross-doc inconsistency fixed), slop-free, honesty-
 clean, field-calibrated. Compiles (9pp) with 2 figures + Table 1.
+
+---
+
+## 2026-08-03 — Introduction (drafted end-to-end) + audit
+
+Drafted §Introduction (6-move structure: LSTM context → GNN-null tension → the static/dynamic
+distinction → the controlled ablation → 3 contributions bulleted → honest scope). Full protocol.
+
+### Write-time number verification (all 4 load-bearing numbers vs primary source)
+- static topology "at most +0.006, not significant" -> RESULTS_2X2 without-one-hot +0.0057 ✓
+- oracle "+0.038, p=2.6e-17" -> PAPER_TABLE +0.0378, p=2.6e-17 ✓
+- topology-specificity "+0.034, p=2.3e-14" -> MECHANISM_MULTISEED ✓
+- realizable "+0.025, 54-72%" -> PAPER_TABLE +0.0253; recovery 54/72/62% ✓
+All identical to abstract/Results (internal consistency held).
+
+### Honesty ceiling
+- Directionality: 0 mentions in the intro (correctly scoped OUT of the headline — it's a mild
+  aggregate effect, reported only in Results).
+- Scope stated explicitly: "effect sizes are modest and the study is regional rather than a national
+  benchmark, so we make no state-of-the-art claim." Leads with the insight, not the number.
+- Kirschstein null QUOTED verbatim ("no adjacency definition produced measurable improvement",
+  "almost no sensitivity to the choice of graph topology") — grounded, not paraphrased.
+
+### AI-slop: 0 prose semicolons, 0 clause em-dashes, 0 hedges.
+
+### Citations verified: kratzert2018/2019 (LSTM paradigm), kirschstein2024 (the null) — claims match
+research_papers.md. No fabricated cites.
+
+**Verdict:** Introduction number-verified, honesty-clean (directionality out, scope stated), slop-
+free, leads with the contrast-as-explanation. Aligned with abstract + Results. Compiles (10pp).
