@@ -1390,3 +1390,35 @@ k2-realizable ≈ full-realizable (indistinguishable), all seeds positive. The o
 1. **Draft Results** — tables grounded (PAPER_TABLE, MECHANISM_MULTISEED); conditions now formally defined (Table 2). Same end-to-end + 4-axis QC treatment.
 2. **Draft Introduction** — the tension→turn→payoff arc, leading with the contrast; align with the QC'd abstract.
 3. **Figure 1** — the core-idea contrast diagram (static topology → ~0 vs dynamic flow → gain).
+
+---
+## 2026-08-02 — /crs-unleashed: static-topology 2×2 now 3-seed — the LAST results gap is closed
+
+**Source.** /crs-unleashed. The gap analysis (2026-08-02 RESULTS_PLAN) identified the static-topology 2×2 as the only single-seed load-bearing result — it is half the paper's headline contrast (static topology ≈0 vs dynamic flow gain). User ran the staged notebook; 6 runs (L_T/L_noID/L_noID_T × seeds 13,17) landed. This session ingests and files them. → analysis/RESULTS_2X2_MULTISEED.md.
+
+**Result — the null holds, 3-seed.**
+
+| contrast | per-seed Δ (11/13/17) | pooled median | two-sided p |
+|---|---|---|---|
+| L+T − L (topo, with one-hot) | −0.001/+0.006/−0.002 | +0.0016 | 0.67 |
+| L_noID+T − L_noID (topo, without one-hot) | +0.003/+0.009/+0.006 | +0.0057 | 0.28 |
+| L − L_noID (one-hot value) | +0.012/+0.012/+0.025 | +0.0161 | 2.5e-8 |
+
+Both topology contrasts are small and non-significant across 3 seeds. Static network position is inert, confirming the pre-registered prediction. The basin one-hot itself is worth a real +0.016 (p=2.5e-8), which is *why* a constant topology descriptor cannot compete: the one-hot already captures fixed per-basin identity.
+
+**Honest nuance (CRS scope call).** The without-one-hot contrast is faintly, consistently positive (+0.006, positive at every seed) — the direction the pre-registration entertained (Kipf-Welling: structure helps most where the model cannot memorize identity). It is far too small and non-significant (p=0.28) to claim. We report it as a faint hint, not a result. Over-reading a +0.006/p=0.28 signal would be exactly the overclaim the honesty discipline forbids.
+
+**Impact.** Every load-bearing claim in the paper is now 3-seed: static null (this), dynamic gain, topology-specificity, deployability, routing mechanism, graph-robustness, metric-robustness, no-ML baseline. No results gaps remain. The one single-seed asymmetry a reviewer could have flagged is gone.
+
+### Reviewer 2
+- *Is a null result meaningful at 3 seeds?* Yes — the point is both contrasts stay ~0 and non-significant across seeds, and the direction is consistent. A null that held at one seed and now holds at three is stronger, not weaker.
+- *The +0.006 without-one-hot — are you burying a real effect?* No — reported explicitly as a faint, non-significant hint in the direction the pre-reg entertained; p=0.28, not a claim.
+- *Why does static topology fail while the one-hot (+0.016) helps?* Because the one-hot already encodes fixed per-basin identity; a constant topology scalar is redundant with it. Stated in the analysis.
+
+### Open questions
+None load-bearing. All results 3-seed. Remaining work is writing (Results, Intro, figures).
+
+## Next 2–3 sessions (queued)
+1. **Draft Results** — every claim now 3-seed; plan in RESULTS_PLAN.md; field-calibrated (median headline, CDF figure, quote Kirschstein). Same end-to-end + iterative-audit treatment.
+2. **Make Figs 2–3** — CDF of per-basin NSE + ΔNSE-vs-depth, both from stored test_metrics.csv. Fig 1 (core-idea diagram) to design.
+3. **Draft Introduction** — tension→turn→payoff, aligned with the QC'd abstract.

@@ -536,3 +536,13 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **Decision — cite the NH model zoo we build on:** YES. §4.3 describes stock cudalstm precisely and cites kratzert2022joss (software) + kratzert2019 (the multi-basin LSTM this instantiates) + kratzert2018 (LSTM-for-rainfall-runoff). Frame novelty as the ablation FINDING + deployable feature, not a new architecture (honest).
 - **All 4 [verify] items resolved:** InputLayer concatenates (no embedding keys); loss=MSE; log-NSE eps=frac×mean-flow @1e-3; 5 static attrs confirmed. Zero unknowns remain for drafting.
 - **Next:** draft the Methodology prose + equations via ml-math-rigor (notation/correctness/flow audits).
+
+### CRS-Unleashed Session — 2026-08-02: static-topology 2×2 now 3-seed — LAST results gap CLOSED
+
+- **Ran:** 6 new 2×2 runs (L_T/L_noID/L_noID_T × seeds 13,17) landed from Colab in a drive-download folder. Relocated to canonical runs/; cleaned up the download folder; wrote analysis/RESULTS_2X2_MULTISEED.md.
+- **Result — static-topology null CONFIRMED 3-seed.** Both headline contrasts small + non-significant: topo WITH one-hot (L+T−L) +0.0016, p=0.67; topo WITHOUT one-hot (L_noID+T−L_noID) +0.0057, p=0.28. Pre-registered prediction (both ≈0) holds. Static network position adds nothing, with or without the one-hot.
+- **Honest nuance (scoped, not overclaimed):** the without-one-hot contrast is faintly, consistently positive (+0.006, positive all 3 seeds) — the direction the pre-reg entertained ("structure helps where identity can't be memorized"), but far too small + non-significant (p=0.28) to claim. Report as a faint hint, not a result.
+- **Bonus, now 3-seed:** the basin one-hot is worth +0.016 NSE (p=2.5e-8) — real, significant; frames why a constant topology descriptor can't compete with the identity encoding.
+- **Impact:** EVERY load-bearing claim in the paper is now 3-seed. The static-null half of the headline contrast (static topology ≈0 vs dynamic flow gain) is uniformly multi-seed. No results gaps remain.
+- **Files:** analysis/RESULTS_2X2_MULTISEED.md; 6 runs relocated to runs/.
+- **Next:** draft the Results section (all evidence 3-seed, plan in RESULTS_PLAN.md) + the CDF/depth figures from stored metrics.
