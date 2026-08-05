@@ -75,6 +75,17 @@ discharge and never use the fact that basins are physically connected. Water flo
 basin's discharge depends on what arrives from upstream, yet the standard model is blind to that
 structure.
 
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.92\linewidth]{figures/fig1_concept.pdf}
+\caption{The same river network helps or does not, depending on the form in which it enters the
+model. Supplied as a \emph{static descriptor} of a basin's fixed position, it changes skill by at
+most $+0.006$ NSE (not significant). Supplied as the \emph{dynamic upstream flow} arriving each day,
+it improves skill by $+0.038$ NSE under an observed-flow oracle. The information is in
+structure-as-flow, not structure-as-label.}
+\label{fig:concept}
+\end{figure}
+
 The obvious way to add the structure is to give the model the river network as a graph and let a
 graph neural network (GNN) exploit it. This has not worked. Across adjacency definitions, edge
 weightings, and network architectures, GNNs on river topology fail to beat an edge-free baseline;
@@ -89,7 +100,7 @@ can enter a model in two forms. As a \emph{static descriptor}, a basin's fixed p
 basin. As a \emph{dynamic signal}, the discharge actually arriving from upstream is a time-varying
 quantity that changes every day. A model that already memorises per-basin identity gains nothing
 from a further constant, but it can gain from a signal that moves. Our hypothesis is that the network
-helps only in the second form: structure-as-flow, not structure-as-label.
+helps only in the second form: structure-as-flow, not structure-as-label (Figure~\ref{fig:concept}).
 
 We test this with a controlled ablation that isolates the one variable in question. Every condition
 is the same stock multi-basin LSTM with a byte-identical training configuration, and the only thing
