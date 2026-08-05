@@ -1444,3 +1444,23 @@ None on Results. Remaining: Introduction, Related Work, Discussion, Limitations 
 1. **Draft Introduction** — tension→turn→payoff, aligned to the QC'd abstract; lead with the contrast.
 2. **Draft Related Work + Discussion + Limitations** — Kirschstein/Jiang positioning; honest scope.
 3. **Fig 1** (core-idea contrast diagram) + a reproducibility/checklist pass for venue-fit.
+
+---
+## 2026-08-04 — full audit (reviewer+CRS) + paper prose COMPLETE (Related Work/Discussion/Limitations/Conclusion drafted)
+
+Ran a full top-to-bottom dual-hat audit, then finished the queued sections. Audit found one real formatting issue (4 abstract em-dashes, written before the standard tightened — now 0 paper-wide) and confirmed everything else clean: refs/citations resolve, 0 overfull hboxes, math appropriately definitional+theorem-free (correct for an empirical ablation, validated vs Jiang), experimental methodology the strongest axis, integrity/narrative/language clean. The one remaining figure gap is Fig 1 (core-idea diagram), flagged.
+
+Drafted Related Work (DL-for-streamflow / GNN-null / why-message-passing-fails, with over-squashing + low-pass GNN-theory refs), Discussion (resolves the null, connects Kirschstein↔Jiang, transferable principle stated as a hypothesis not a claim), Limitations (all 5 caveats: regional/no-SOTA, inferred edges, modest effect, weak directionality, 3-seed), Conclusion (contribution + national-scale/NHDPlus pointer). All audited: 0 semicolons/em-dashes/hedges, citations resolve, honesty ceiling held. 12pp, compiles clean.
+
+### Reviewer 2
+- *Math too thin?* No — an empirical ablation does not need theorems; Jiang 2025 (ICML) is equation-heavy but theorem-free. Over-formalizing a stock LSTM would read as padding. The math is exactly at its true depth.
+- *Related Work a citation dump?* No — 3 paragraphs, each cite earns its place by clarifying difference (we mirror Kirschstein's sweep on a fixed feature; reach Jiang's endpoint without an operator).
+- *Limitations complete?* All 5 real caveats present and honest.
+
+### Open questions
+None on prose. Remaining: Fig 1 (a diagram, not data); author/venue metadata; final pre-submission read.
+
+## Next 2–3 sessions (queued)
+1. **Fig 1** — the core-idea contrast diagram (static topology → 0 vs dynamic flow → gain). Design task.
+2. **Venue-fit pass** — set author/affiliation; anonymize if double-blind; NeurIPS-style checklist if targeting ML main track.
+3. **Final full read-through** — one clean pass end-to-end pre-submission.

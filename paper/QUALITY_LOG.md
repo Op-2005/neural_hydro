@@ -266,3 +266,38 @@ research_papers.md. No fabricated cites.
 
 **Verdict:** Introduction number-verified, honesty-clean (directionality out, scope stated), slop-
 free, leads with the contrast-as-explanation. Aligned with abstract + Results. Compiles (10pp).
+
+---
+
+## 2026-08-04 — Full top-to-bottom audit (reviewer + CRS) + completed Related Work/Discussion/Limitations/Conclusion
+
+### Full-paper audit (both hats)
+- **Formatting:** 0 undefined refs/citations, 0 overfull hboxes, all cross-refs resolve, both
+  figures exist+referenced. Fixed the one real issue: 4 clause-em-dashes in the ABSTRACT (written
+  before the em-dash standard was tightened) → now 0 paper-wide. The 3 "unreferenced" equations
+  (depth/KGE/realizable) are definitional, referenced by concept 6/4/14× — correct, not a flag.
+- **Math strength:** definitional (weighted-mean feature + standard metrics), theorem-free — CORRECT
+  for an empirical ablation; Jiang 2025 confirms theorem-free lands at ICML. Over-formalizing would
+  be padding. No proofs needed or claimed.
+- **Experimental methodology:** strongest axis — byte-identical config verified by diff, pre-reg with
+  reported falsification, paired multi-seed + non-parametric significance, every claim 3-seed.
+- **Figures:** CDF + depth solid (field-standard). Fig 1 (core-idea diagram) STILL MISSING — the one
+  real figure gap; queued.
+- **Integrity/narrative/language:** clean paper-wide. 0 semicolons, 0 em-dashes, 0 hedges.
+
+### New sections drafted (completeness pass)
+- **Related Work:** 3 paragraphs (DL-for-streamflow / GNN-on-topology / why-message-passing-struggles).
+  Kirschstein positioned as our mirror; Jiang as the direction we reach differently; GNN-theory refs
+  (topping/rusch/bodnar over-squashing + low-pass) ground the "why GNNs fail" point. Context+difference,
+  not a dump.
+- **Discussion:** resolves the null (label inert / flow specific), connects Kirschstein↔Jiang, states
+  the transferable principle as a HYPOTHESIS this instantiates (not overclaimed to other domains).
+- **Limitations:** all 5 real caveats verified present — regional/no-SOTA, inferred edges, modest
+  effect, weak directionality, 3-seed. Honest, not apologetic.
+- **Conclusion:** contribution restated + national-scale/NHDPlus forward pointer.
+
+All 3 audited: 0 slop, all citations in bib, honesty ceiling held (directionality scoped down,
+transferable principle hedged). Compiles clean (12pp).
+
+**Verdict:** paper is now COMPLETE in prose (all sections drafted). Remaining: Fig 1 (diagram),
+author/venue metadata (user), a final full read-through pre-submission.

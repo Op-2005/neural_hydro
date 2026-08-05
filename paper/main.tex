@@ -40,22 +40,22 @@ added as graph structure it typically fails to help. We ask whether the network 
 genuinely uninformative or is simply being supplied in the wrong form. To separate these,
 we run a controlled ablation on stock NeuralHydrology \texttt{cudalstm}, byte-identical
 across conditions, in which the only thing that changes is a single input carrying
-network information---removing the architecture, training, and encoding confounds that
+network information. This removes the architecture, training, and encoding confounds that
 muddied prior attempts. On a 183-basin eastern-US sub-network of CAMELS-US, we find that
 the network helps only as a \emph{dynamic} signal: adding a basin's fixed topological
 position (graph depth, upstream count, upstream area) yields essentially no change in
 skill, whether or not the model also has a basin-identity encoding, whereas feeding the
 \emph{dynamic upstream discharge} arriving from upstream neighbors improves median test
 NSE by $+0.038$ under an observed-flow oracle ($p=2.6\times10^{-17}$, three seeds). The
-same network, opposite outcomes: the information lives in structure-as-flow, not
+same network gives opposite outcomes: the information lives in structure-as-flow, not
 structure-as-label, which explains in one stroke why static graph approaches have failed.
-The gain is real and deployable---it survives a shuffled-flow null control, holds in
+The gain is real and deployable. It survives a shuffled-flow null control, holds in
 log-NSE, and a two-stage model that \emph{predicts} upstream flow from forcings (no ground
 truth at inference) recovers $+0.025$ NSE, about 54--72\% of the oracle ceiling and
 positive across all three seeds. It is also mechanistic and specific to the real
-network: the gain requires the true upstream connectivity---a degree-preserving random
+network. The gain requires the true upstream connectivity, since a degree-preserving random
 rewiring of the graph removes most of it ($+0.034$ NSE for true vs.\ rewired edges,
-$p=2\times10^{-14}$, three seeds)---and it rises with graph depth while vanishing at
+$p=2\times10^{-14}$, three seeds), and it rises with graph depth while vanishing at
 headwaters, the signature of physical routing. The effect persists when the heuristic graph
 is pruned to hydrography-realistic connectivity. We conclude that river-network structure
 improves streamflow LSTMs when, and only when, it is delivered as a dynamic upstream-flow
@@ -122,12 +122,32 @@ LSTM and why prior graph methods missed it: the information lives in the structu
 tied to the real upstream connectivity, and it is recoverable without message passing.
 
 \section{Related Work}
-% Context + difference, not a dump:
-% - kratzert2019 (HESS): the strong per-basin LSTM baseline our L condition is.
-% - kirschstein2024 (ICML): GNNs on river adjacency give no benefit; "does not explain why."
-%   We explain it — topology-as-label is inert; topology-as-flow is specific.
-% - jiang2025 (ICML): physics-aware directional operator recovers gains; we operationalize the
-%   direction as a plain input feature, no message passing.
+
+\paragraph{Deep learning for streamflow.} LSTMs trained across many basins set the current standard
+for daily rainfall--runoff modelling~\cite{kratzert2018,kratzert2019}. Their strength comes from
+sharing parameters across catchments while conditioning on static attributes and a basin-identity
+encoding, which together let one model reproduce diverse hydrologic behaviour. Mass-conserving and
+other physically-structured LSTMs refine this line~\cite{hoedt2021}. All of these models are
+per-basin maps from local forcings to local discharge; none uses inter-basin connectivity. Our
+baseline is exactly this standard multi-basin LSTM, and our question is what a single input carrying
+network information adds to it.
+
+\paragraph{Graph neural networks on river topology.} The natural way to add connectivity is a GNN
+over the river graph. Kirschstein and Sun~\cite{kirschstein2024} test this thoroughly, sweeping
+adjacency definitions, learned edge weights, and edge orientations across several GNN architectures,
+and find no improvement over an edge-free baseline. Our controls mirror their sweep, but on a fixed
+upstream-flow input rather than a learned operator, and reach the opposite conclusion: the real
+topology matters sharply. The difference is not the graph but the form in which it enters the model.
+
+\paragraph{Why message passing struggles here.} The GNN null has a mechanistic reading. Standard
+message passing acts as a low-pass filter on the graph
+signal~\cite{topping2022,rusch2022,bodnar2022}, and on the deep, low-branching trees of river
+networks this both over-squashes long upstream-to-outlet paths and blunts the directional asymmetry
+that flow requires. Jiang et al.~\cite{jiang2025} address this directly with a physics-guided,
+direction-aware operator that restores gains where plain GNNs fail. We reach a related endpoint from
+the opposite direction: rather than build a directional operator, we supply the routed flow itself as
+a static one-hop input, which sidesteps message passing entirely while remaining sensitive to the
+upstream structure.
 
 \section{Methodology}
 
@@ -532,17 +552,56 @@ three seeds ($p=1\times10^{-14}$). The routing benefit rests on the physically m
 nearest-upstream structure, not on the excess edges the heuristic adds.
 
 \section{Discussion}
-% Resolves kirschstein2024 null (label inert / flow specific). Operationalizes jiang2025 direction
-% without message passing. Transferable principle (structure-as-dynamic-state vs static-label) —
-% stated as a hypothesis this instantiates, NOT overclaimed to other domains.
+
+Our results give the unexplained GNN null a concrete cause. River-network structure is not
+uninformative for streamflow; it was being supplied in the wrong form. Encoded as a static
+descriptor, network position is redundant with the basin-identity encoding a multi-basin LSTM
+already carries, and it adds nothing. Encoded as the dynamic flow arriving from upstream, the same
+structure carries real, time-varying information and improves prediction. This resolves the tension
+between the network's evident physical relevance and its apparent uselessness in prior graph models:
+the models were reading structure-as-label, and the signal is in structure-as-flow.
+
+The finding connects the two prior results it sits between. It explains Kirschstein and Sun's
+null~\cite{kirschstein2024} by locating the missing signal in a channel their adjacency-based GNNs
+did not use, and it realises the direction Jiang et al.~\cite{jiang2025} pointed to, that flow
+dynamics demand a topology-aware and direction-sensitive treatment, using a fixed one-hop input
+rather than a learned operator. That a non-learned feature recovers the benefit is itself
+informative: for this task, the value of the network is in the routed flow it summarises, not in any
+capacity to learn how to combine neighbours.
+
+We state the broader reading as a hypothesis this study instantiates rather than establishes. When a
+sequence model already conditions on node identity, spatial graph structure may help it only as
+time-varying state, not as a fixed descriptor. Whether this holds beyond streamflow, in other
+physical networks where an identity-aware predictor meets a routing process, is an open question our
+single domain cannot answer.
 
 \section{Limitations}
-% Regional (183 eastern-US basins), not national SOTA (baseline 0.653, not ~0.74 EA-LSTM).
-% Heuristic edges (robust to density, not NHDPlus ground-truth). Modest effect size.
-% Directionality only a weak aggregate preference. 3 seeds, 1 run each.
+
+The study is regional. It covers 183 basins in the eastern United States, which is adequate for a
+controlled study but is not a national benchmark, and our baseline is a stock \texttt{cudalstm}
+rather than a tuned state-of-the-art model. We therefore make no claim about absolute
+state-of-the-art skill, only about the paired effect of the structural input. Whether the effect
+holds at national scale is untested.
+
+The edges are inferred from catchment geometry, not surveyed hydrography. We show the result is
+robust to their density by pruning to a hydrography-realistic graph, but a validation against
+ground-truth flowlines remains future work. The effect sizes are modest in absolute NSE, which we
+report plainly; the contribution is the explanation of when structure helps, not a large performance
+gain. The directional component of the mechanism is weak: reversing edges does not erase the signal,
+so we report a preference for the upstream direction as a mild aggregate effect rather than a firm
+claim, and rest the mechanistic argument on topology specificity, which is strong and significant.
+Finally, each condition is trained under three seeds with a single run per seed, sufficient for the
+paired medians and cross-seed agreement we report but not a large-sample sweep.
 
 \section{Conclusion}
-% One paragraph: contribution sentence restated + forward pointer (national scale-up / NHDPlus edges).
+
+River-network structure improves streamflow LSTMs when, and only when, it is supplied as a dynamic
+upstream-flow signal tied to the real network, rather than as a static topological descriptor. A
+controlled ablation on a stock multi-basin LSTM shows static topology to be inert while dynamic
+upstream flow gives a real, deployable, and routing-specific gain, which explains why static graph
+approaches have not helped and does so without any message-passing machinery. The natural next steps
+are a national-scale test and a validation against ground-truth hydrography, both of which the
+released code and configurations are set up to support.
 
 % ---- references (manual thebibliography — no bibtex, per toolchain) ----
 % All entries verified this session; see paper/references.md for roles + sources.
