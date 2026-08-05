@@ -171,10 +171,11 @@ The task is next-day discharge: predict $q_i(t)$ from a length-$L$ window of inp
 with $L=30$. Models are trained on 1990--1999, validated on 2000--2004, and evaluated on the
 held-out 2005--2008 test period. All reported numbers are on the test period.
 
-The river network is a directed acyclic graph $G=(V,E)$ whose edges point from upstream to
-downstream. We write $\mathcal{P}(i)=\{\,j : (j\!\to\! i)\in E\,\}$ for the set of \emph{immediate
-upstream parents} of basin $i$, and $A_i$ for its drainage area. Headwater basins have
-$\mathcal{P}(i)=\varnothing$. Graph depth is defined recursively as
+The river network is a directed graph $G=(V,E)$ whose edges point from upstream to downstream. We
+write $\mathcal{P}(i)=\{\,j : (j\!\to\! i)\in E\,\}$ for the \emph{upstream set} of basin $i$, the
+basins the graph places upstream of it, and $A_i$ for its drainage area. Basins with
+$\mathcal{P}(i)=\varnothing$ are headwaters. Because every edge decreases elevation
+(\S\ref{sec:network}), $G$ is acyclic, so graph depth is well-defined as the longest upstream path,
 \begin{equation}
 \label{eq:depth}
 \mathrm{depth}(i) =
@@ -221,11 +222,17 @@ geometry. A directed edge $(j\!\to\!i)$ is placed when basin $i$ is plausibly do
 (j\!\to\!i)\in E \iff A_i \ge \rho\,A_j \;\wedge\; \mathrm{elev}(i) < \mathrm{elev}(j) \;\wedge\; d(i,j)\le D_{\max},
 \end{equation}
 with area ratio $\rho=1.5$, decreasing elevation, and a maximum inter-gauge distance
-$D_{\max}=150$\,km. These edges are heuristic rather than surveyed hydrography. The graph controls
-of \S\ref{sec:feature} and the results test whether the findings depend on their exact structure.
-From the national graph we take the largest connected component, ``Component~0'': a $183$-basin
-sub-network in the eastern US spanning six HUC regions, with $624$ inferred edges and depth up to
-$4$. All experiments run on this network.
+$D_{\max}=150$\,km. Because the geometric rule connects a basin to every qualifying upstream basin
+within range, the upstream set of a basin includes indirect ancestors as well as direct neighbours:
+about a third of the inferred edges are transitive, and the mean in-degree of $4.2$ exceeds the two
+or three tributaries of a typical confluence. These edges are heuristic rather than surveyed
+hydrography, and they over-connect. We therefore do not rely on their exact structure. The graph
+controls of \S\ref{sec:feature} test whether the signal is specific to the inferred topology at all,
+and \S\ref{sec:res-robust} shows the result is unchanged when the graph is pruned to a
+hydrography-realistic in-degree. From the national graph we take the largest weakly-connected
+component, ``Component~0'', the connected sub-network on which the routing question is well-posed: a
+$183$-basin network in the eastern US spanning six HUC regions, with $624$ inferred edges and depth
+up to $4$.
 
 \subsection{The controlled ablation}
 \label{sec:ablation}
@@ -247,8 +254,8 @@ interpret: a measured difference reflects the structural signal, not the machine
 \subsection{The structural signal}
 \label{sec:feature}
 
-The structural coordinate $u_i(t)$ aggregates the discharge of basin $i$'s immediate upstream
-parents. We use the area-weighted mean of their discharge, lagged by $\tau=1$ day:
+The structural coordinate $u_i(t)$ aggregates the discharge of the basins upstream of $i$. We use the
+area-weighted mean of their discharge, lagged by $\tau=1$ day:
 \begin{equation}
 \label{eq:feature}
 u_i(t) =
@@ -262,11 +269,11 @@ u_i(t) =
 Two properties of Eq.~\eqref{eq:feature} matter. First, it carries the units of the target: $A_j q_j$
 has units km$^2\cdot$mm\,d$^{-1}$, and dividing by $\sum_j A_j$ returns mm\,d$^{-1}$, so $u_i$ lives
 on the same scale as $q_i$. Taking the mean rather than the sum keeps a single large parent from
-dominating. Second, and central to our claims, $u_i(t)$ is a \emph{fixed, directed, single-hop
-precomputation}: its weights are drainage areas rather than learned parameters, its lag is fixed, it
-reads only immediate graph predecessors, and it is computed once before training. It is not message
-passing and performs no learned aggregation or iteration over the graph. The empirical question is
-whether this minimal structural input helps where learned graph operators have not.
+dominating. Second, and central to our claims, $u_i(t)$ is a \emph{fixed, directed precomputation}: its weights
+are drainage areas rather than learned parameters, its lag is fixed, and it is computed once before
+training from the graph predecessors of each basin. It is not message passing and performs no learned
+aggregation or iteration over the graph. The empirical question is whether this minimal structural
+input helps where learned graph operators have not.
 
 Eq.~\eqref{eq:feature} introduces no target leakage. It aggregates the discharge of \emph{upstream}
 basins, so basin $i$'s own discharge never enters its input, and it is lagged, so no same-day
@@ -543,10 +550,9 @@ routing. Depth $4$ contains only six basins.}
 \subsection{The result does not depend on the heuristic graph}
 \label{sec:res-robust}
 
-Because our edges are inferred rather than surveyed, we check whether the gain is an artifact of
-their density. The inferred graph over-connects relative to real hydrography, with a mean in-degree
-of $4.2$ against the two or three tributaries of a typical confluence. Pruning it to a
-hydrography-realistic in-degree of at most two removes more than half the edges, yet the realizable
+Because our edges are inferred and over-connect (\S\ref{sec:network}), we check whether the gain is
+an artifact of their density. Pruning the graph to a hydrography-realistic in-degree of at most two,
+keeping each basin's nearest upstream neighbours, removes more than half the edges. The realizable
 gain is unchanged: $+0.025$ on the pruned graph versus $+0.026$ on the full graph, positive at all
 three seeds ($p=1\times10^{-14}$). The routing benefit rests on the physically meaningful
 nearest-upstream structure, not on the excess edges the heuristic adds.

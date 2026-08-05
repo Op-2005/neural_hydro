@@ -1464,3 +1464,31 @@ None on prose. Remaining: Fig 1 (a diagram, not data); author/venue metadata; fi
 1. **Fig 1** — the core-idea contrast diagram (static topology → 0 vs dynamic flow → gain). Design task.
 2. **Venue-fit pass** — set author/affiliation; anonymize if double-blind; NeurIPS-style checklist if targeting ML main track.
 3. **Final full read-through** — one clean pass end-to-end pre-submission.
+
+---
+## 2026-08-04 (later) — pipeline-description correction ("upstream set", not "immediate parents") + pre-Colab-expiry gap audit
+
+**Trigger.** User asked whether the graph-construction / pipeline / ablation are described correctly (specialist perspective). Checking the paper's DESCRIPTION against the CODE (not just the numbers) surfaced a naming error.
+
+**The finding.** The paper called P(i) the set of "immediate upstream parents". The code computes P(i) = G.predecessors(i) on a graph that is never transitively reduced. The edge rule (A_i >= 1.5 A_j, elev decreasing, dist <= 150km) connects a basin to EVERY qualifying upstream basin, so P(i) includes indirect ancestors, not just direct neighbours. Quantified: 217 of 624 edges (35%) are transitive; the graph is a DAG (elevation-decreasing guarantees acyclicity). So "immediate parents" was factually wrong — a hydrology reviewer would catch it.
+
+**Impact — none on the science.** This is a NAMING error, not a methodology error. Every experiment used the same G.predecessors set, identically, across every condition (oracle/realizable/null/reversed/random/k2). No number moves, no claim changes, no rerun needed. Fixed to "upstream set" in all 3 places (setup, feature, honesty statement) and added an honest characterization to §network (the graph over-connects; ~1/3 of edges transitive; mean in-degree 4.2). The fix STRENGTHENS the argument: topology-specificity (random rewire kills the gain) and the k=2 pruning result now read as robustness to an admittedly over-connected, imperfect graph — a credibility gain, not a loss. Hypothesis and structure untouched.
+
+**Why it surfaced only now (honest).** The write-time-verification discipline checked NUMBERS against primary sources but had no check for DESCRIPTIONS of what a computation does. And the code comment itself said `# immediate parents (direct upstream)` — wrong — so trusting the comment repeated the error. Same class as the "671-dim" miss: trusting a derived artifact (a comment) over ground truth (what G.predecessors returns on a non-reduced graph). Fix baked into ml-paper-writer: "Verify DESCRIPTIONS, not just numbers. Don't trust code comments/variable names; read what the operation actually computes; run the check (e.g. graph vs transitive reduction) before writing the sentence."
+
+**Comprehensive sweep.** Checked every other pipeline description against code: depth=longest path, area-weighted mean, reversed=parent/child swap, random=degree-preserving rewire, k=2=nearest in-degree<=2, two-stage=full-span 1990-2008 eval. ALL match. "immediate parents" was the only mismatch.
+
+**EXPERIMENTAL GAP AUDIT (user's Colab Pro expires 2026-08-05).** NO experimental gaps requiring training. All 11 conditions are 3/3 seeds; every paper claim is backed by a 3-seed run. The only single-seed touchpoints are the CDF figure (a visualization, not a claim) and the oracle log-NSE cell (already restored + verified on Drive; cosmetic sync, non-load-bearing). No notebook needs to run; Colab is not required. The paper is experimentally complete.
+
+### Reviewer 2
+- *Does the mislabel change results?* No — relative contrasts with a fixed construction; the set was always the same. Naming only.
+- *Does it weaken the hypothesis?* No — it strengthens it (specificity/pruning become robustness to an imperfect graph).
+- *Any missing experiment?* No — full 3-seed coverage on every condition; verified before Colab expiry.
+
+### Open questions
+None experimental. Remaining: Fig 1 (diagram); author/venue; optional local sync of one results.p.
+
+## Next 2-3 sessions (queued)
+1. **Fig 1** — core-idea contrast diagram (design, no data/GPU).
+2. **Venue-fit** — author/affiliation, anonymize if double-blind, checklist.
+3. **Final read-through** — one clean end-to-end pass pre-submission.
