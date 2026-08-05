@@ -174,8 +174,8 @@ held-out 2005--2008 test period. All reported numbers are on the test period.
 The river network is a directed graph $G=(V,E)$ whose edges point from upstream to downstream. We
 write $\mathcal{P}(i)=\{\,j : (j\!\to\! i)\in E\,\}$ for the \emph{upstream set} of basin $i$, the
 basins the graph places upstream of it, and $A_i$ for its drainage area. Basins with
-$\mathcal{P}(i)=\varnothing$ are headwaters. Because every edge decreases elevation
-(\S\ref{sec:network}), $G$ is acyclic, so graph depth is well-defined as the longest upstream path,
+$\mathcal{P}(i)=\varnothing$ are headwaters. The graph is acyclic by construction (\S\ref{sec:network}),
+so graph depth is well-defined as the longest upstream path,
 \begin{equation}
 \label{eq:depth}
 \mathrm{depth}(i) =
@@ -224,8 +224,8 @@ geometry. A directed edge $(j\!\to\!i)$ is placed when basin $i$ is plausibly do
 with area ratio $\rho=1.5$, decreasing elevation, and a maximum inter-gauge distance
 $D_{\max}=150$\,km. Because the geometric rule connects a basin to every qualifying upstream basin
 within range, the upstream set of a basin includes indirect ancestors as well as direct neighbours:
-about a third of the inferred edges are transitive, and the mean in-degree of $4.2$ exceeds the two
-or three tributaries of a typical confluence. These edges are heuristic rather than surveyed
+about a third of the inferred edges are transitive, and a connected basin has $4.2$ upstream
+neighbours on average, more than the two or three tributaries of a typical confluence. These edges are heuristic rather than surveyed
 hydrography, and they over-connect. We therefore do not rely on their exact structure. The graph
 controls of \S\ref{sec:feature} test whether the signal is specific to the inferred topology at all,
 and \S\ref{sec:res-robust} shows the result is unchanged when the graph is pruned to a
