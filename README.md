@@ -4,26 +4,24 @@ Extensions to the [NeuralHydrology](https://github.com/neuralhydrology/neuralhyd
 
 ## What this is
 
-A research codebase, not a finished product. The work is ongoing; current results, open questions, and the next experiments are tracked elsewhere (see "Where to go next" below).
+A research codebase, not a finished product. It holds the experiment code, configurations, and
+per-experiment result tables for an ongoing study. The manuscript and the internal research log are
+kept as private working documents and are not published here, so some files reference planning docs
+that are not part of this repository.
 
 ## Where to go next
 
 | If you want… | Go to |
 |---|---|
-| The full study reference (question → method → every result → paper narrative) | `current_implementation.md` |
 | The current study (controlled ablation, upstream-signal) | `experiments/topology_ablation/` (has its own README) |
-| The consolidated Results tables | `experiments/topology_ablation/analysis/PAPER_TABLE.md` |
-| The running log of decisions, results, and pivots | `JOURNAL.md` |
-| A quick plain-language status brief | `updates.md` |
-| The original research direction + protocol | `idea1.md` |
-| Earlier confounded work (kept for provenance) | `experiments/5cond_factorial/`, `experiments/local_subgraphs/` |
+| The consolidated results tables | `experiments/topology_ablation/analysis/PAPER_TABLE.md` |
+| Pre-registrations for each experiment | `experiments/topology_ablation/preregistration_*.md` |
 | Training scripts, configs, analysis tools | `experiments/` (each subfolder has its own README) |
-| Per-experiment run outputs | `runs/` |
+| Per-experiment run outputs and notes | `runs/` |
 | River-network inference (Phase 1) | `topology_analysis/` |
-| Literature review and positioning | `research_papers.md` |
-| Chronological session history | `CURRENT_STATE.md` |
+| Earlier confounded work (kept for provenance) | `experiments/5cond_factorial/`, `experiments/local_subgraphs/` |
+| Alternative direction set aside in April 2026 | `archive/idea2/` |
 | The upstream NH framework (unmodified) | `neuralhydrology/` |
-| Alternative direction set aside in April 2026 | `idea2/` |
 
 ## Credits
 
