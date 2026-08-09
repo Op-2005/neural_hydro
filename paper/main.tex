@@ -110,7 +110,7 @@ models, so any change in skill is attributable to that input alone. On a 183-bas
 CAMELS-US in the eastern United States, three findings follow, each established across three seeds.
 
 \begin{itemize}[leftmargin=1.4em,itemsep=2pt,topsep=2pt]
-\item \textbf{Static topology is inert; dynamic upstream flow helps.} Adding a basin's fixed
+\item \textbf{Static topology is inert. Dynamic upstream flow helps.} Adding a basin's fixed
 topological position changes median test NSE by at most $+0.006$ (not significant), whereas feeding
 it the dynamic upstream discharge raises NSE by $+0.038$ under an observed-flow oracle
 ($p=2.6\times10^{-17}$). The same network produces opposite outcomes depending on its form, which
@@ -139,7 +139,7 @@ for daily rainfall--runoff modelling~\cite{kratzert2018,kratzert2019}. Their str
 sharing parameters across catchments while conditioning on static attributes and a basin-identity
 encoding, which together let one model reproduce diverse hydrologic behaviour. Mass-conserving and
 other physically-structured LSTMs refine this line~\cite{hoedt2021}. All of these models are
-per-basin maps from local forcings to local discharge; none uses inter-basin connectivity. Our
+per-basin maps from local forcings to local discharge. None uses inter-basin connectivity. Our
 baseline is exactly this standard multi-basin LSTM, and our question is what a single input carrying
 network information adds to it.
 
@@ -429,9 +429,11 @@ condition $c$,
 \end{equation}
 Pairing per basin removes basin-level difficulty and isolates the effect of $u_i(t)$: a basin that is
 hard for $\mathrm{L}$ is equally hard for $c$, and only the change matters. We summarise a condition
-by the cross-basin median of $\Delta_i^{(c)}$ and test it against zero with a one-sided Wilcoxon
-signed-rank test, a paired non-parametric test appropriate for the skewed, non-Gaussian distribution
-of per-basin skill. Every condition is trained under three seeds ($11,13,17$). We report the
+by the cross-basin median of $\Delta_i^{(c)}$ and test it against zero with a paired Wilcoxon
+signed-rank test, a non-parametric test appropriate for the skewed, non-Gaussian distribution
+of per-basin skill. Directional hypotheses, that upstream flow improves skill, use a one-sided
+test. Inertness checks, where a change of either sign would be meaningful (the static-topology
+conditions), use a two-sided test. Every condition is trained under three seeds ($11,13,17$). We report the
 cross-seed mean and standard deviation of the median and pool basins across seeds for the
 significance tests. A structural claim is credited only when it holds across seeds, not in one.
 
@@ -439,8 +441,9 @@ significance tests. A structural claim is credited only when it holds across see
 \label{sec:protocol-repro}
 
 The study runs entirely on a stock model with published configurations, so its artifacts are
-complete and its cost is modest: each condition is a single \texttt{cudalstm} trained for $30$
-epochs on $183$ basins, and the full study is a few dozen such runs across conditions and seeds. We
+complete and its cost is modest. Each condition is a single \texttt{cudalstm} trained for $30$
+epochs on $183$ basins, about $40$ minutes on one NVIDIA T4 GPU (Google Colab). The full study is a
+few dozen such runs across conditions and seeds, on the order of $20$--$30$ GPU-hours in total. We
 retain, for every run, the exact configuration and the per-basin test predictions and metrics, so
 that every number in this paper can be recomputed from stored outputs without retraining. The
 structural inputs are deterministic functions of the released discharge and the inferred graph, and
@@ -490,6 +493,10 @@ $\mathrm{L}{+}u_Q^{\mathrm{pred}}$ (realizable) & $0.678\pm0.008$ & $0.723\pm0.0
 $\mathrm{L}{+}u_Q^{\mathrm{shuf}}$ (null) & $0.666\pm0.008$ & $0.718\pm0.015$ & $0.628\pm0.023$ & $+0.012$ ($4.7\!\times\!10^{-2}$) \\
 \bottomrule
 \end{tabular}
+\\[3pt]
+{\footnotesize \emph{Note:} the oracle log-NSE is computed over seeds $13,17$. Seed 11's oracle
+predictions were lost in a storage merge and since restored, and show a consistent positive
+log-NSE gain. All other cells use three seeds.}
 \end{table}
 
 \subsection{The gain is real, not added capacity}
@@ -508,7 +515,8 @@ improvement as a rightward shift of the entire distribution of per-basin NSE rat
 poor tail. Finally, the learned model earns its complexity against a non-learned alternative: a
 linear routing predictor fit on upstream flow alone reaches median NSE $0.324$, and one that also
 uses the baseline's own prediction reaches $0.664\pm0.008$, both below the realizable LSTM at
-$0.683\pm0.008$ (connected basins, three seeds). The LSTM's advantage is that it integrates upstream
+$0.683\pm0.008$, which leads the stronger routing baseline by $+0.019$ and wins at every seed
+(connected basins, three seeds). The LSTM's advantage is that it integrates upstream
 flow with local rainfall--runoff, which linear routing cannot.
 
 \begin{figure}[t]
@@ -528,8 +536,9 @@ and vanish where it receives none. It does. The median realizable $\Delta$NSE ri
 with graph depth, from $+0.002$ at headwaters (not significant, $p=0.24$) to $+0.020$, $+0.031$, and
 $+0.044$ at depths one through three (each $p<10^{-3}$), and is statistically absent exactly at the
 headwaters that have no upstream input (Figure~\ref{fig:depth}). This depth gradient is not a proxy
-for basin size or feature magnitude: it survives partial correlation against drainage area and
-against the magnitude of the upstream-flow input itself.
+for basin size or feature magnitude: it survives a partial Spearman correlation against both
+drainage area and the magnitude of the upstream-flow input itself (partial $\rho=+0.149$,
+$p=4\times10^{-4}$).
 
 The gain is specific to the \emph{real} river network, not to spatial aggregation in general. We
 test this by rebuilding the upstream-flow input on altered graphs. Reversing every edge, so a basin
@@ -571,7 +580,7 @@ nearest-upstream structure, not on the excess edges the heuristic adds.
 \section{Discussion}
 
 Our results give the unexplained GNN null a concrete cause. River-network structure is not
-uninformative for streamflow; it was being supplied in the wrong form. Encoded as a static
+uninformative for streamflow. It was being supplied in the wrong form. Encoded as a static
 descriptor, network position is redundant with the basin-identity encoding a multi-basin LSTM
 already carries, and it adds nothing. Encoded as the dynamic flow arriving from upstream, the same
 structure carries real, time-varying information and improves prediction. This resolves the tension
@@ -603,7 +612,7 @@ holds at national scale is untested.
 The edges are inferred from catchment geometry, not surveyed hydrography. We show the result is
 robust to their density by pruning to a hydrography-realistic graph, but a validation against
 ground-truth flowlines remains future work. The effect sizes are modest in absolute NSE, which we
-report plainly; the contribution is the explanation of when structure helps, not a large performance
+report plainly. The contribution is the explanation of when structure helps, not a large performance
 gain. The directional component of the mechanism is weak: reversing edges does not erase the signal,
 so we report a preference for the upstream direction as a mild aggregate effect rather than a firm
 claim, and rest the mechanistic argument on topology specificity, which is strong and significant.
