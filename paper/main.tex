@@ -48,14 +48,14 @@ skill, whether or not the model also has a basin-identity encoding, whereas feed
 \emph{dynamic upstream discharge} arriving from upstream neighbors improves median test
 NSE by $+0.038$ under an observed-flow oracle ($p=2.6\times10^{-17}$, three seeds). The
 same network gives opposite outcomes: the information lives in structure-as-flow, not
-structure-as-label, which explains in one stroke why static graph approaches have failed.
-The gain is real and deployable. It survives a shuffled-flow null control, holds in
+structure-as-label, which explains why static graph approaches have failed.
+This gain is not extra capacity: it survives a shuffled-flow null control, holds in
 log-NSE, and a two-stage model that \emph{predicts} upstream flow from forcings (no ground
 truth at inference) recovers $+0.025$ NSE, about 54--72\% of the oracle ceiling and
-positive across all three seeds. It is also mechanistic and specific to the real
-network. The gain requires the true upstream connectivity, since a degree-preserving random
+positive across all three seeds. It is specific to the real network: the gain requires the
+true upstream connectivity, since a degree-preserving random
 rewiring of the graph removes most of it ($+0.034$ NSE for true vs.\ rewired edges,
-$p=2\times10^{-14}$, three seeds), and it rises with graph depth while vanishing at
+$p=2.3\times10^{-14}$, three seeds), and it rises with graph depth while vanishing at
 headwaters, the signature of physical routing. The effect persists when the heuristic graph
 is pruned to hydrography-realistic connectivity. We conclude that river-network structure
 improves streamflow LSTMs when, and only when, it is delivered as a dynamic upstream-flow
@@ -94,7 +94,7 @@ improvement'' and that performance shows ``almost no sensitivity to the choice o
 The result is an unexplained null: either the river network is genuinely uninformative for this
 task, or it is being supplied to the model in a form the model cannot use.
 
-We argue for the second reading, and the distinction is the point of the paper. Network structure
+We argue for the second reading. Network structure
 can enter a model in two forms. As a \emph{static descriptor}, a basin's fixed position in the graph
 (its depth, its number of upstream neighbours, its contributing area) is a constant attached to the
 basin. As a \emph{dynamic signal}, the discharge actually arriving from upstream is a time-varying
@@ -120,8 +120,8 @@ graph retains only about a quarter of the gain (true-versus-random $+0.034$ NSE,
 $p=2.3\times10^{-14}$), and the improvement rises with graph depth and vanishes at headwaters, the
 signature of physical routing. A fixed upstream-flow input is sharply sensitive to the topology that
 GNNs were insensitive to.
-\item \textbf{The gain is deployable.} A two-stage model that \emph{predicts} upstream flow from
-forcings, and so needs no observed discharge at inference, recovers $+0.025$ NSE, roughly $54$--$72\%$
+\item \textbf{A deployable two-stage model captures most of it.} Predicting upstream flow from
+forcings, with no observed discharge at inference, recovers $+0.025$ NSE, roughly $54$--$72\%$
 of the oracle ceiling, and it does so with a fixed one-hop input rather than any learned graph
 operator.
 \end{itemize}
@@ -367,7 +367,7 @@ Seeds & $11,13,17$ \\
 \begin{table}[t]
 \centering
 \caption{The ablation conditions as instantiations of Eq.~\eqref{eq:feature}. All share the model
-and training of Table~\ref{tab:config}; each differs only in the discharge term $q_j$ or the parent
+and training of Table~\ref{tab:config}. Each differs only in the discharge term $q_j$ or the parent
 set $\mathcal{P}(i)$.}
 \label{tab:conditions}
 \begin{tabularx}{\linewidth}{llX}
@@ -387,11 +387,9 @@ $\mathrm{L}{+}u_Q^{\mathrm{rand}}$ (random) & $\mathcal{P}(i)$ degree-preserving
 \section{Experimental Protocol}
 \label{sec:protocol}
 
-The value of a controlled ablation rests on the control actually holding. This section states the
-protocol that makes each measured difference interpretable: an auditable single-variable design, a
-pre-registered analysis plan, a paired multi-seed comparison, and a reproducible artifact trail. The
-effect sizes we report are modest, so this apparatus is what separates a real signal from an
-artifact, and we describe it in the detail a reader would need to reproduce or challenge our claims.
+The value of a controlled ablation rests on the control actually holding. The effect sizes we report
+are modest, so the apparatus below is what separates a real signal from an artifact, and we describe
+it in the detail a reader would need to reproduce or challenge our claims.
 
 \subsection{A single-variable design, verified}
 \label{sec:protocol-design}
@@ -403,8 +401,7 @@ four headline conditions ($\mathrm{L}$, oracle, realizable, null) are identical 
 size, dropout, forget bias, optimiser, learning rate, batch size, epoch count, sequence length,
 forcings, static attributes, identity encoding, split, and seed. The only field that differs is the
 additional feature file supplying $u_i(t)$. This turns ``the difference-maker is our input'' from an
-assertion into a checkable property of the configurations, and it is the specific control that a
-bespoke graph model, with its own architecture and training loop, cannot offer.
+assertion into a checkable property of the configurations.
 
 \subsection{Pre-registration}
 \label{sec:protocol-prereg}
@@ -471,7 +468,7 @@ identity. Static structure, supplied as a label, carries no usable signal here.
 
 The same network supplied as \emph{flow} behaves in the opposite way. Feeding each basin the
 area-weighted discharge of its upstream neighbours raises median test NSE from $0.653$ to $0.691$, a
-paired gain of $+0.038$ ($p=3\times10^{-17}$) under the observed-flow oracle
+gain of $+0.038$ ($p=2.6\times10^{-17}$) under the observed-flow oracle
 (Table~\ref{tab:main}). The deployable model that predicts upstream flow from forcings recovers
 $+0.025$ ($p=6\times10^{-19}$), which is $54$--$72\%$ of the oracle ceiling across seeds. Same network,
 opposite outcomes: the information is in the structure as time-varying flow, not as a fixed
@@ -480,8 +477,10 @@ network as a static graph label have not helped.
 
 \begin{table}[t]
 \centering
-\caption{Median test skill by condition (mean $\pm$ std across three seeds), and the paired
-per-basin $\Delta$NSE against $\mathrm{L}$ over all $183$ basins with a one-sided Wilcoxon $p$.}
+\caption{Median test skill by condition (mean $\pm$ std across three seeds) and the change in median
+NSE relative to $\mathrm{L}$ over all $183$ basins. Significance is a paired per-basin Wilcoxon test,
+one-sided for the directional oracle and realizable conditions and two-sided for the shuffled-flow
+null.}
 \label{tab:main}
 \begin{tabular}{lcccc}
 \toprule
@@ -490,7 +489,7 @@ Condition & NSE & KGE & log-NSE & $\Delta$NSE vs.\ L ($p$) \\
 $\mathrm{L}$ (baseline) & $0.653\pm0.002$ & $0.716\pm0.016$ & $0.634\pm0.035$ & --- \\
 $\mathrm{L}{+}u_Q$ (oracle) & $0.691\pm0.009$ & $0.746\pm0.014$ & $0.715\pm0.012$ & $+0.038$ ($2.6\!\times\!10^{-17}$) \\
 $\mathrm{L}{+}u_Q^{\mathrm{pred}}$ (realizable) & $0.678\pm0.008$ & $0.723\pm0.005$ & $0.672\pm0.020$ & $+0.025$ ($6.0\!\times\!10^{-19}$) \\
-$\mathrm{L}{+}u_Q^{\mathrm{shuf}}$ (null) & $0.666\pm0.008$ & $0.718\pm0.015$ & $0.628\pm0.023$ & $+0.012$ ($4.7\!\times\!10^{-2}$) \\
+$\mathrm{L}{+}u_Q^{\mathrm{shuf}}$ (null) & $0.666\pm0.008$ & $0.718\pm0.015$ & $0.628\pm0.023$ & $+0.012$ ($9.4\!\times\!10^{-2}$) \\
 \bottomrule
 \end{tabular}
 \\[3pt]
@@ -533,11 +532,12 @@ captures most of it.}
 \label{sec:res-mechanism}
 
 If the gain reflects physical routing, it should grow with how much upstream flow a basin receives
-and vanish where it receives none. It does. The median realizable $\Delta$NSE rises monotonically
-with graph depth, from $+0.002$ at headwaters (not significant, $p=0.24$) to $+0.020$, $+0.031$, and
-$+0.044$ at depths one through three (each $p<10^{-3}$), and is statistically absent exactly at the
-headwaters that have no upstream input (Figure~\ref{fig:depth}; per-stratum tests in
-Appendix~\ref{app:depth}). This depth gradient is not a proxy
+and vanish where it receives none. It does. The median realizable $\Delta$NSE rises with graph depth
+through depth three, from $+0.002$ at headwaters (not significant, $p=0.24$) to $+0.020$, $+0.031$,
+and $+0.044$ at depths one, two, and three (each $p<10^{-3}$). It is not detectable at the headwaters
+that receive no upstream input, exactly where the mechanism predicts no gain (Figure~\ref{fig:depth};
+per-stratum tests in Appendix~\ref{app:depth}). The deepest stratum, depth four, has only six basins
+and is not interpretable. This depth gradient is not a proxy
 for basin size or feature magnitude: it survives a partial Spearman correlation against both
 drainage area and the magnitude of the upstream-flow input itself (partial $\rho=+0.149$,
 $p=4\times10^{-4}$; Appendix~\ref{app:confound}).
@@ -546,16 +546,19 @@ The gain is specific to the \emph{real} river network, not to spatial aggregatio
 test this by rebuilding the upstream-flow input on altered graphs. Reversing every edge, so a basin
 reads its downstream rather than upstream neighbours, weakens the gain from $+0.046$ to $+0.031$
 (connected basins). Rewiring the graph at random while preserving each basin's number of parents
-weakens it further, to $+0.012$. The true-versus-random gap is $+0.034$ ($p=2\times10^{-14}$, three
+weakens it further, to $+0.012$. The true-versus-random gap is $+0.034$ ($p=2.3\times10^{-14}$, three
 seeds): a degree-preserving random graph retains only about a quarter of the gain. The signal lives
 in the actual upstream connectivity. This mirrors, in reverse, the finding of
 Kirschstein and Sun~\cite{kirschstein2024} that graph neural networks are insensitive to the river
-topology, showing ``almost no sensitivity to the choice of graph topology''; a fixed upstream-flow
+topology, showing ``almost no sensitivity to the choice of graph topology''. A fixed upstream-flow
 input is sharply sensitive to it.
 
 The reversal result also bounds how far we push directionality. Downstream flow is correlated with a
 basin's own discharge through shared weather and routed water, so reversing edges does not erase the
-signal, and the forward-over-reversed advantage is small and inconsistent across seeds. We therefore
+signal, and the forward-over-reversed advantage is small and inconsistent across seeds. Reversed
+edges also keep the true adjacency and only flip its orientation, so they retain the spatial-proximity
+structure that a random rewire destroys. The reversed condition is therefore not a clean isolation of
+direction alone, which is a further reason we treat directionality cautiously. We therefore
 report a preference for the physically-correct upstream direction as a mild, aggregate-level effect
 rather than a firm claim. The robust and significant statement is topology specificity, not strict
 directionality.
@@ -630,6 +633,15 @@ upstream flow gives a real, deployable, and routing-specific gain, which explain
 approaches have not helped and does so without any message-passing machinery. The natural next steps
 are a national-scale test and a validation against ground-truth hydrography, both of which the
 released code and configurations are set up to support.
+
+\section*{Broader impact}
+
+Streamflow prediction supports flood forecasting and water-resource management, and using river-network
+structure well could improve operational forecasts at the downstream, higher-order rivers where flood
+risk concentrates. This work is a controlled methodological study on a regional research dataset, not
+an operational model. Its predictions should not drive real decisions without validation on the target
+region and its hydrography, and the gains we report are relative to a research baseline rather than a
+deployed forecasting system.
 
 \appendix
 \section{Supporting results}
@@ -745,8 +757,9 @@ Oracle & $+0.046$ & $+0.059$ & $2.8\times10^{-43}$ \\
 The gain is not an artifact of the high-flow-weighted NSE or of the log-NSE offset. Across three
 choices of the offset the realizable log-NSE gain stays positive and stable, the shuffled null stays
 near zero, and the oracle bound is larger in log-space as expected (Table~\ref{tab:metric}).
-Decomposing KGE, the realizable improvement comes mainly through correlation: median $r$ rises at all
-three seeds, while the bias and variability terms are small and mixed in sign.
+Decomposing KGE, the realizable improvement is carried by correlation: median $r$ rises at all
+three seeds, while the bias and variability terms are comparable in magnitude but inconsistent in
+sign across seeds, so they contribute no systematic gain.
 
 \begin{table}[h]
 \centering
@@ -772,8 +785,6 @@ $10^{-4}$ & $+0.033$ & $-0.010$ & $+0.063$ \\
 \bibitem{kratzert2018} Kratzert, F., Klotz, D., Brenner, C., Schulz, K., \& Herrnegger, M. (2018). Rainfall--runoff modelling using Long Short-Term Memory (LSTM) networks. \emph{Hydrology and Earth System Sciences}, 22, 6005--6022.
 \bibitem{kratzert2019} Kratzert, F., Klotz, D., Shalev, G., Klambauer, G., Hochreiter, S., \& Nearing, G. (2019). Towards learning universal, regional, and local hydrological behaviors via machine learning applied to large-sample datasets. \emph{Hydrology and Earth System Sciences}, 23, 5089--5110.
 \bibitem{hoedt2021} Hoedt, P.-J., Kratzert, F., Klotz, D., Halmich, C., Holzleitner, M., Nearing, G., Hochreiter, S., \& Klambauer, G. (2021). MC-LSTM: Mass-Conserving LSTM. \emph{Proceedings of the 38th International Conference on Machine Learning (ICML)}. arXiv:2101.05186. % [verify ICML 2021 vs arXiv-only]
-\bibitem{nearing2021} Nearing, G.S., Kratzert, F., Sampson, A.K., Pelissier, C.S., Klotz, D., Frame, J.M., Prieto, C., \& Gupta, H.V. (2021). What role does hydrological science play in the age of machine learning? \emph{Water Resources Research}, 57(3), e2020WR028091.
-
 % --- datasets: CAMELS (data product + the two describing papers) ---
 \bibitem{newman2014data} Newman, A., Sampson, K., Clark, M.P., Bock, A., Viger, R.J., \& Blodgett, D. (2014). \emph{A large-sample watershed-scale hydrometeorological dataset for the contiguous USA} [data set]. Boulder, CO: UCAR/NCAR. DOI:10.5065/D6MW2F4D.
 \bibitem{newman2015} Newman, A.J., Clark, M.P., Sampson, K., Wood, A., Hay, L.E., Bock, A., et al. (2015). Development of a large-sample watershed-scale hydrometeorological data set for the contiguous USA. \emph{Hydrology and Earth System Sciences}, 19, 209--223.
@@ -787,8 +798,6 @@ $10^{-4}$ & $+0.033$ & $-0.010$ & $+0.063$ \\
 \bibitem{jiang2025} Jiang, H., Wang, J., Zhu, X., \& He, Y. (2025). Topology-aware neural flux prediction guided by physics. \emph{Proceedings of the 42nd International Conference on Machine Learning (ICML)}, PMLR 267, pp.\ 27670--27684. arXiv:2506.05676.
 
 % --- GNN foundations + limitations ---
-\bibitem{kipf2017} Kipf, T.N., \& Welling, M. (2017). Semi-supervised classification with graph convolutional networks. \emph{International Conference on Learning Representations (ICLR)}. arXiv:1609.02907.
-\bibitem{zhang2021magnet} Zhang, X., He, Y., Brugnone, N., Perlmutter, M., \& Hirn, M. (2021). MagNet: A Neural Network for Directed Graphs. \emph{Advances in Neural Information Processing Systems 34 (NeurIPS)}. arXiv:2102.11391.
 \bibitem{topping2022} Topping, J., Di Giovanni, F., Chamberlain, B.P., Dong, X., \& Bronstein, M.M. (2022). Understanding over-squashing and bottlenecks on graphs via curvature. \emph{International Conference on Learning Representations (ICLR)}. arXiv:2111.14522.
 \bibitem{rusch2022} Rusch, T.K., Chamberlain, B.P., Rowbottom, J., Mishra, S., \& Bronstein, M.M. (2022). Graph-coupled oscillator networks. \emph{Proceedings of the 39th International Conference on Machine Learning (ICML)}, PMLR 162. arXiv:2202.02296.
 \bibitem{bodnar2022} Bodnar, C., Di Giovanni, F., Chamberlain, B.P., Li\`o, P., \& Bronstein, M.M. (2022). Neural sheaf diffusion: A topological perspective on heterophily and oversmoothing in GNNs. \emph{Advances in Neural Information Processing Systems 35 (NeurIPS)}. arXiv:2202.04579.
