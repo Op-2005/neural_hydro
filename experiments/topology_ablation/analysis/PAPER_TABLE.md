@@ -52,5 +52,5 @@ The heuristic edges over-connect (in-degree mean 4.16 / max 15 vs real confluenc
 | LSTM realizable (seed 11) | Δ log-NSE | — | +0.034 | holds |
 | LSTM oracle (seed 11) | Δ NSE (connected) | +0.046 | +0.049 (p=2e-12) | strengthens |
 
-*The routing gain lives in the physically-meaningful nearest-parent structure, not the heuristic's excess edges — confirmed at both the signal-content and trained-model level (GRAPH_ROBUSTNESS.md, K2_GRAPH_CHECK.md). k=2 model check is single-seed.*
+*The routing gain lives in the physically-meaningful nearest-parent structure, not the heuristic's excess edges — confirmed at both the signal-content and trained-model level (GRAPH_ROBUSTNESS.md, K2_GRAPH_CHECK.md). k=2 model check is now 3-seed: pooled realizable Δ +0.025 (p=1.3e-14), positive at all three seeds; the seed-11 rows above are illustrative.*
 
