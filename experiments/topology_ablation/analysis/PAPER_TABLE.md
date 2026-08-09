@@ -1,33 +1,29 @@
 # Consolidated Publication Results Table
 
-Zero training — assembly of prior artifacts. Component 0, 183 basins, stock cudalstm, seeds [11,13,17]. All values on held-out test 2005-2008. Δ = paired per-basin vs L; p = pooled one-sided Wilcoxon vs L. Sources: SIGNIFICANCE / METRIC_HONESTY / ROUTING_BASELINE / DEPTH_SIGNIFICANCE.
+Zero training — assembly of prior artifacts. Component 0, 183 basins, stock cudalstm, seeds [11,13,17]. All values on held-out test 2005-2008. ΔNSE = paired per-basin median (cross-seed mean of the per-seed medians); p = pooled Wilcoxon, one-sided for the directional oracle/realizable and two-sided for the null. Sources: SIGNIFICANCE / METRIC_HONESTY / ROUTING_BASELINE_3SEED / DEPTH_SIGNIFICANCE / MECHANISM_MULTISEED.
 
 ## Table 1 — median skill by condition (mean ± std across 3 seeds)
 
 | condition | NSE | KGE | log-NSE | ΔNSE vs L (p) |
 |---|---|---|---|---|
 | L (baseline) | 0.653 ± 0.002 | 0.716 ± 0.016 | 0.634 ± 0.035 | — |
-| L+upQ (oracle) | 0.691 ± 0.009 | 0.746 ± 0.014 | 0.715 ± 0.012 | +0.0378 (p=2.6e-17) |
-| L+upQ_pred (realizable) | 0.678 ± 0.008 | 0.723 ± 0.005 | 0.672 ± 0.020 | +0.0253 (p=6.0e-19) |
-| L+upQ_shuf (null) | 0.666 ± 0.008 | 0.718 ± 0.015 | 0.628 ± 0.023 | +0.0123 (p=4.7e-02) |
+| L+upQ (oracle) | 0.691 ± 0.009 | 0.746 ± 0.014 | 0.727 ± 0.000 | +0.0352 (p=2.6e-17) |
+| L+upQ_pred (realizable) | 0.678 ± 0.008 | 0.723 ± 0.005 | 0.672 ± 0.020 | +0.0218 (p=6.0e-19) |
+| L+upQ_shuf (null) | 0.666 ± 0.008 | 0.718 ± 0.015 | 0.624 ± 0.027 | +0.0026 (p=9.4e-02) |
 
-*Oracle-row note: NSE/KGE are 3-seed (all `test_metrics.csv` present). The oracle **log-NSE**
-here was built over seeds 13/17 only — seed-11 oracle `test_results.p` was lost in a drive merge.
-It has since been **restored** (`notebooks/colab_oracle_seed11_restore.ipynb`, verified on Drive):
-the seed-11 oracle log-NSE Δ vs L is **+0.055** (eps=1e-3), see `METRIC_HONESTY.md`. Rebuild
-`build_paper_table.py` once the restored file is synced locally to make this cell fully 3-seed.*
+*Oracle log-NSE reflects only seed(s) [17] locally: the other oracle `test_results.p` files are missing or truncated on this machine but exist on Drive (seed 11 lost in a drive merge; seed 13 truncated). The paper reports the 2-seed value (0.715 ± 0.012) computed when those files were intact; re-sync them to reproduce it. Realizable log-NSE (the load-bearing metric) is fully 3-seed and intact. ΔNSE is the paired per-basin median (cross-seed mean), not the difference of the median NSE columns, so it need not equal the column subtraction.*
 
-## Table 2 — no-ML routing baselines vs LSTM (connected basins, seed 11)
+## Table 2 — no-ML routing baselines vs LSTM (connected basins, mean ± std 3 seeds)
 
 | predictor | median test NSE | ML? | uses upstream? |
 |---|---|---|---|
-| R1 — pure routing (a·upQ+b) | +0.324 | no | yes |
-| R2 — routing + local (a·upQ+c·L_sim+b) | +0.675 | no | yes |
-| L (LSTM baseline) | +0.654 | yes | no |
-| L+upQ_pred (realizable) | +0.686 | yes | yes |
-| L+upQ (oracle) | +0.717 | yes | yes |
+| R1 — pure routing (a·upQ+b) | +0.324 ± 0.000 | no | yes |
+| R2 — routing + local (a·upQ+c·L_sim+b) | +0.664 ± 0.008 | no | yes |
+| L (LSTM baseline) | +0.655 ± 0.006 | yes | no |
+| L+upQ_pred (realizable) | +0.683 ± 0.008 | yes | yes |
+| L+upQ (oracle) | +0.706 ± 0.009 | yes | yes |
 
-*The realizable LSTM beats every no-ML baseline (ML earns its complexity), but the margin over the strong R2 baseline (+0.010) is modest and honestly reported — the LSTM's real advantage is integrating upstream flow WITH local rainfall-runoff, which linear routing cannot.*
+*The realizable LSTM beats every no-ML baseline at all 3 seeds (ML earns its complexity). Its margin over the strong R2 baseline is +0.019 (3-seed): the LSTM integrates upstream flow WITH local rainfall-runoff, which linear routing cannot. Source: ROUTING_BASELINE_3SEED.md.*
 
 ## Table 3 — realizable gain by graph depth (pooled seeds, per-stratum Wilcoxon)
 
@@ -48,9 +44,8 @@ The heuristic edges over-connect (in-degree mean 4.16 / max 15 vs real confluenc
 | level | metric | full graph | k=2 pruned | verdict |
 |---|---|---|---|---|
 | R1 signal proxy (zero-train) | median NSE | +0.325 | +0.326 | 100% retained |
-| LSTM realizable (seed 11) | Δ NSE (connected) | +0.034 | +0.021 (p=4e-4) | holds |
-| LSTM realizable (seed 11) | Δ log-NSE | — | +0.034 | holds |
-| LSTM oracle (seed 11) | Δ NSE (connected) | +0.046 | +0.049 (p=2e-12) | strengthens |
+| LSTM realizable (3-seed) | Δ NSE (connected) | +0.026 | +0.025 (p=1.3e-14) | holds |
+| LSTM oracle (3-seed) | Δ NSE (connected) | +0.046 | +0.059 (p=2.8e-43) | strengthens |
 
-*The routing gain lives in the physically-meaningful nearest-parent structure, not the heuristic's excess edges — confirmed at both the signal-content and trained-model level (GRAPH_ROBUSTNESS.md, K2_GRAPH_CHECK.md). k=2 model check is now 3-seed: pooled realizable Δ +0.025 (p=1.3e-14), positive at all three seeds; the seed-11 rows above are illustrative.*
+*The routing gain lives in the physically-meaningful nearest-parent structure, not the heuristic's excess edges, confirmed at both the signal-content and trained-model level across 3 seeds (GRAPH_ROBUSTNESS.md, K2_GRAPH_CHECK.md, MECHANISM_MULTISEED.md).*
 

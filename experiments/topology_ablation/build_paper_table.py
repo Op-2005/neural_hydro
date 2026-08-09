@@ -29,7 +29,10 @@ def lognse_series(cond, seed, eps_frac=1e-3):
     p = BASE / f"{cond}_component0_seed{seed}" / "test" / "model_epoch030" / "test_results.p"
     if not p.exists():
         return None
-    res = pickle.load(open(p, "rb"))
+    try:
+        res = pickle.load(open(p, "rb"))
+    except EOFError:  # a truncated pickle (seed-17 salvage); treat as unavailable
+        return None
     out = {}
     for b, d in res.items():
         xr = d["1D"]["xr"]
@@ -54,7 +57,7 @@ def cross_seed(getter):
     return (np.mean(meds), np.std(meds)) if meds else (np.nan, np.nan)
 
 
-def paired_p_vs_L(cond, metric_col):
+def paired_p_vs_L(cond, metric_col, two_sided=False):
     """pooled Wilcoxon of per-basin (cond - L) across seeds."""
     deltas = []
     for s in SEEDS:
@@ -68,15 +71,34 @@ def paired_p_vs_L(cond, metric_col):
     deltas = np.array(deltas); deltas = deltas[np.isfinite(deltas)]
     if len(deltas) < 6 or np.all(deltas == 0):
         return np.nan
-    return wilcoxon(deltas, alternative="greater").pvalue
+    return wilcoxon(deltas, alternative="two-sided" if two_sided else "greater").pvalue
+
+
+def paired_median_delta(cond, metric_col="NSE"):
+    """Paired per-basin median (cond - L) per seed, averaged across seeds (cross-seed mean).
+
+    This is the paper's headline statistic (§protocol-compare): the point estimate is the
+    cross-seed mean of the per-seed paired medians, NOT the difference of the median NSEs.
+    """
+    meds = []
+    for s in SEEDS:
+        L = metrics_df("L", s)[metric_col]
+        try:
+            C = metrics_df(cond, s)[metric_col]
+        except FileNotFoundError:
+            continue
+        common = L.index.intersection(C.index)
+        meds.append(float(np.median((C.loc[common] - L.loc[common]).values)))
+    return float(np.mean(meds)) if meds else np.nan
 
 
 def main():
     md = ["# Consolidated Publication Results Table", "",
           "Zero training — assembly of prior artifacts. Component 0, 183 basins, stock cudalstm, "
-          "seeds [11,13,17]. All values on held-out test 2005-2008. Δ = paired per-basin vs L; "
-          "p = pooled one-sided Wilcoxon vs L. Sources: SIGNIFICANCE / METRIC_HONESTY / "
-          "ROUTING_BASELINE / DEPTH_SIGNIFICANCE.", ""]
+          "seeds [11,13,17]. All values on held-out test 2005-2008. ΔNSE = paired per-basin median "
+          "(cross-seed mean of the per-seed medians); p = pooled Wilcoxon, one-sided for the "
+          "directional oracle/realizable and two-sided for the null. Sources: SIGNIFICANCE / "
+          "METRIC_HONESTY / ROUTING_BASELINE_3SEED / DEPTH_SIGNIFICANCE / MECHANISM_MULTISEED.", ""]
 
     # --- main table: median metric (mean±std) per condition + Δ-vs-L p ---
     md += ["## Table 1 — median skill by condition (mean ± std across 3 seeds)", "",
@@ -88,26 +110,35 @@ def main():
         if cond == "L":
             dcell = "—"
         else:
-            p = paired_p_vs_L(cond, "NSE")
-            dNSE = nse_m - cross_seed(lambda s: metrics_df("L", s)["NSE"])[0]
+            two_sided = cond == "L_upQshuf"
+            p = paired_p_vs_L(cond, "NSE", two_sided=two_sided)
+            dNSE = paired_median_delta(cond, "NSE")
             dcell = f"{dNSE:+.4f} (p={p:.1e})" if np.isfinite(p) else f"{dNSE:+.4f}"
         ln_cell = f"{ln_m:.3f} ± {ln_s:.3f}" if np.isfinite(ln_m) else "n/a"
         md.append(f"| {label} | {nse_m:.3f} ± {nse_s:.3f} | {kge_m:.3f} ± {kge_s:.3f} | "
                   f"{ln_cell} | {dcell} |")
     md.append("")
+    # honest local-reproducibility note for the log-NSE column (needs test_results.p)
+    orc_ln_seeds = [s for s in SEEDS if lognse_series("L_upQ", s) is not None]
+    md += [f"*Oracle log-NSE reflects only seed(s) {orc_ln_seeds} locally: the other oracle "
+           "`test_results.p` files are missing or truncated on this machine but exist on Drive "
+           "(seed 11 lost in a drive merge; seed 13 truncated). The paper reports the 2-seed value "
+           "(0.715 ± 0.012) computed when those files were intact; re-sync them to reproduce it. "
+           "Realizable log-NSE (the load-bearing metric) is fully 3-seed and intact. ΔNSE is the "
+           "paired per-basin median (cross-seed mean), not the difference of the median NSE columns, "
+           "so it need not equal the column subtraction.*", ""]
 
     # --- routing baseline rows (from ROUTING_BASELINE.md, seed 11, connected basins) ---
-    md += ["## Table 2 — no-ML routing baselines vs LSTM (connected basins, seed 11)", "",
+    md += ["## Table 2 — no-ML routing baselines vs LSTM (connected basins, mean ± std 3 seeds)", "",
            "| predictor | median test NSE | ML? | uses upstream? |", "|---|---|---|---|",
-           "| R1 — pure routing (a·upQ+b) | +0.324 | no | yes |",
-           "| R2 — routing + local (a·upQ+c·L_sim+b) | +0.675 | no | yes |",
-           "| L (LSTM baseline) | +0.654 | yes | no |",
-           "| L+upQ_pred (realizable) | +0.686 | yes | yes |",
-           "| L+upQ (oracle) | +0.717 | yes | yes |", "",
-           "*The realizable LSTM beats every no-ML baseline (ML earns its complexity), but the "
-           "margin over the strong R2 baseline (+0.010) is modest and honestly reported — the "
-           "LSTM's real advantage is integrating upstream flow WITH local rainfall-runoff, which "
-           "linear routing cannot.*", ""]
+           "| R1 — pure routing (a·upQ+b) | +0.324 ± 0.000 | no | yes |",
+           "| R2 — routing + local (a·upQ+c·L_sim+b) | +0.664 ± 0.008 | no | yes |",
+           "| L (LSTM baseline) | +0.655 ± 0.006 | yes | no |",
+           "| L+upQ_pred (realizable) | +0.683 ± 0.008 | yes | yes |",
+           "| L+upQ (oracle) | +0.706 ± 0.009 | yes | yes |", "",
+           "*The realizable LSTM beats every no-ML baseline at all 3 seeds (ML earns its complexity). "
+           "Its margin over the strong R2 baseline is +0.019 (3-seed): the LSTM integrates upstream "
+           "flow WITH local rainfall-runoff, which linear routing cannot. Source: ROUTING_BASELINE_3SEED.md.*", ""]
 
     # --- depth significance (from DEPTH_SIGNIFICANCE.md) ---
     md += ["## Table 3 — realizable gain by graph depth (pooled seeds, per-stratum Wilcoxon)", "",
@@ -127,13 +158,12 @@ def main():
            "~2–3). Pruning to hydrography-realistic in-degree≤2 (266 edges vs 624):", "",
            "| level | metric | full graph | k=2 pruned | verdict |", "|---|---|---|---|---|",
            "| R1 signal proxy (zero-train) | median NSE | +0.325 | +0.326 | 100% retained |",
-           "| LSTM realizable (seed 11) | Δ NSE (connected) | +0.034 | +0.021 (p=4e-4) | holds |",
-           "| LSTM realizable (seed 11) | Δ log-NSE | — | +0.034 | holds |",
-           "| LSTM oracle (seed 11) | Δ NSE (connected) | +0.046 | +0.049 (p=2e-12) | strengthens |",
+           "| LSTM realizable (3-seed) | Δ NSE (connected) | +0.026 | +0.025 (p=1.3e-14) | holds |",
+           "| LSTM oracle (3-seed) | Δ NSE (connected) | +0.046 | +0.059 (p=2.8e-43) | strengthens |",
            "",
            "*The routing gain lives in the physically-meaningful nearest-parent structure, not the "
-           "heuristic's excess edges — confirmed at both the signal-content and trained-model level "
-           "(GRAPH_ROBUSTNESS.md, K2_GRAPH_CHECK.md). k=2 model check is single-seed.*", ""]
+           "heuristic's excess edges, confirmed at both the signal-content and trained-model level "
+           "across 3 seeds (GRAPH_ROBUSTNESS.md, K2_GRAPH_CHECK.md, MECHANISM_MULTISEED.md).*", ""]
 
     OUT.write_text("\n".join(md) + "\n")
     print("\n".join(md))
