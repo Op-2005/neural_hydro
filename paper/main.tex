@@ -507,7 +507,8 @@ tests this: replacing upstream discharge with its time-shuffled copy preserves i
 distribution but destroys temporal alignment. The realizable model beats this null by a paired
 $+0.017$ NSE ($p=2\times10^{-12}$, bootstrap $95\%$ CI $[+0.011,+0.022]$), so the gain is the flow
 signal, not capacity. It also survives the choice of metric: the realizable log-NSE gain is $+0.027$
-and positive at every seed, so the improvement is not confined to high flows.
+and positive at every seed, so the improvement is not confined to high flows
+(Appendix~\ref{app:metric}).
 
 The gain is not merely patching a weak baseline. On basins the baseline already predicts well
 ($\mathrm{NSE}>0.6$), the realizable model still adds $+0.012$, and Figure~\ref{fig:cdf} shows the
@@ -516,7 +517,7 @@ poor tail. Finally, the learned model earns its complexity against a non-learned
 linear routing predictor fit on upstream flow alone reaches median NSE $0.324$, and one that also
 uses the baseline's own prediction reaches $0.664\pm0.008$, both below the realizable LSTM at
 $0.683\pm0.008$, which leads the stronger routing baseline by $+0.019$ and wins at every seed
-(connected basins, three seeds). The LSTM's advantage is that it integrates upstream
+(connected basins, three seeds; Appendix~\ref{app:routing}). The LSTM's advantage is that it integrates upstream
 flow with local rainfall--runoff, which linear routing cannot.
 
 \begin{figure}[t]
@@ -535,10 +536,11 @@ If the gain reflects physical routing, it should grow with how much upstream flo
 and vanish where it receives none. It does. The median realizable $\Delta$NSE rises monotonically
 with graph depth, from $+0.002$ at headwaters (not significant, $p=0.24$) to $+0.020$, $+0.031$, and
 $+0.044$ at depths one through three (each $p<10^{-3}$), and is statistically absent exactly at the
-headwaters that have no upstream input (Figure~\ref{fig:depth}). This depth gradient is not a proxy
+headwaters that have no upstream input (Figure~\ref{fig:depth}; per-stratum tests in
+Appendix~\ref{app:depth}). This depth gradient is not a proxy
 for basin size or feature magnitude: it survives a partial Spearman correlation against both
 drainage area and the magnitude of the upstream-flow input itself (partial $\rho=+0.149$,
-$p=4\times10^{-4}$).
+$p=4\times10^{-4}$; Appendix~\ref{app:confound}).
 
 The gain is specific to the \emph{real} river network, not to spatial aggregation in general. We
 test this by rebuilding the upstream-flow input on altered graphs. Reversing every edge, so a basin
@@ -574,7 +576,7 @@ Because our edges are inferred and over-connect (\S\ref{sec:network}), we check 
 an artifact of their density. Pruning the graph to a hydrography-realistic in-degree of at most two,
 keeping each basin's nearest upstream neighbours, removes more than half the edges. The realizable
 gain is unchanged: $+0.025$ on the pruned graph versus $+0.026$ on the full graph, positive at all
-three seeds ($p=1\times10^{-14}$). The routing benefit rests on the physically meaningful
+three seeds ($p=1\times10^{-14}$; Appendix~\ref{app:k2}). The routing benefit rests on the physically meaningful
 nearest-upstream structure, not on the excess edges the heuristic adds.
 
 \section{Discussion}
@@ -628,6 +630,138 @@ upstream flow gives a real, deployable, and routing-specific gain, which explain
 approaches have not helped and does so without any message-passing machinery. The natural next steps
 are a national-scale test and a validation against ground-truth hydrography, both of which the
 released code and configurations are set up to support.
+
+\appendix
+\section{Supporting results}
+\label{app:support}
+
+All numbers below are computed from the same stored per-basin test predictions as the main text,
+pooled over seeds $11,13,17$ and over the connected basins where the manipulation is defined. Each
+subsection expands a claim stated compactly in \S\ref{sec:results}.
+
+\subsection{No-ML routing baselines}
+\label{app:routing}
+
+We compare the learned model against two non-learned predictors fit by least squares on the training
+period and scored on test. R1 uses upstream flow alone ($a\,u_i(t)+b$). R2 also uses the baseline's
+own simulated discharge ($a\,u_i(t)+c\,\hat q^{\mathrm{L}}_i(t)+b$). The realizable LSTM exceeds both
+at every seed (Table~\ref{tab:routing}). Its median-NSE margin over the strong R2 baseline is
+$+0.019$, and it integrates upstream flow with local rainfall--runoff in a way linear routing cannot.
+
+\begin{table}[h]
+\centering
+\caption{Median test NSE (mean $\pm$ std across three seeds) on connected basins.}
+\label{tab:routing}
+\begin{tabular}{lcc}
+\toprule
+Predictor & Median NSE & Uses upstream? \\
+\midrule
+R1: routing only ($a\,u_i+b$) & $0.324\pm0.000$ & yes \\
+R2: routing $+$ local ($a\,u_i+c\,\hat q^{\mathrm{L}}_i+b$) & $0.664\pm0.008$ & yes \\
+$\mathrm{L}$ (LSTM baseline) & $0.655\pm0.006$ & no \\
+$\mathrm{L}{+}u_Q^{\mathrm{pred}}$ (realizable) & $0.683\pm0.008$ & yes \\
+$\mathrm{L}{+}u_Q$ (oracle) & $0.706\pm0.009$ & yes \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Per-depth significance of the realizable gain}
+\label{app:depth}
+
+The depth gradient in \S\ref{sec:res-mechanism} has per-stratum statistical support, not merely a
+median trend (Table~\ref{tab:depth}). The gain is significant at depths one through three and absent
+at the headwaters (depth 0) that receive no upstream input, and at depth 4, where $n=6$.
+
+\begin{table}[h]
+\centering
+\caption{Realizable $\Delta$NSE by graph depth, pooled over seeds, with a one-sided Wilcoxon $p$.}
+\label{tab:depth}
+\begin{tabular}{cccc}
+\toprule
+Depth & $n$ & Median $\Delta$NSE & $p$ \\
+\midrule
+0 (headwater) & 99 & $+0.002$ & $0.24$ \\
+1 & 243 & $+0.020$ & $2.6\times10^{-9}$ \\
+2 & 153 & $+0.031$ & $4.7\times10^{-12}$ \\
+3 & 48 & $+0.044$ & $8.4\times10^{-4}$ \\
+4 & 6 & $+0.015$ & $0.34$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{The depth gradient is not a size or magnitude proxy}
+\label{app:confound}
+
+Two variables could mimic a depth effect: drainage area and the magnitude of the upstream-flow input.
+Neither explains the gradient. Feature magnitude decreases with depth (Spearman $-0.369$), so the
+rising gain runs against it. In a partial Spearman correlation, depth still predicts the gain after
+removing both area and feature magnitude, whereas feature magnitude does not survive the reverse
+control (Table~\ref{tab:confound}). Within each feature-magnitude tercile, deeper basins gain more in
+all three terciles.
+
+\begin{table}[h]
+\centering
+\caption{Spearman correlations with the realizable per-basin $\Delta$NSE.}
+\label{tab:confound}
+\begin{tabular}{lcc}
+\toprule
+Correlation & $\rho$ & $p$ \\
+\midrule
+raw $(\Delta,\ \text{depth})$ & $+0.158$ & $2.0\times10^{-4}$ \\
+raw $(\Delta,\ \text{feature magnitude})$ & $+0.115$ & $6.9\times10^{-3}$ \\
+raw $(\Delta,\ \text{area})$ & $+0.015$ & $0.73$ \\
+partial $(\Delta,\ \text{depth}\mid\text{area, magnitude})$ & $+0.149$ & $4.4\times10^{-4}$ \\
+partial $(\Delta,\ \text{magnitude}\mid\text{area, depth})$ & $+0.080$ & $0.06$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Robustness to the inferred graph}
+\label{app:k2}
+
+Pruning to in-degree at most two keeps each basin's nearest upstream neighbours and removes more than
+half the edges. The realizable gain is unchanged and the oracle gain strengthens
+(Table~\ref{tab:k2}), consistent with nearest parents carrying the most time-aligned flow. Both are
+three-seed on the pruned graph.
+
+\begin{table}[h]
+\centering
+\caption{Paired $\Delta$NSE vs.\ $\mathrm{L}$ on connected basins, full graph vs.\ the in-degree
+$\leq 2$ pruned graph, pooled over three seeds.}
+\label{tab:k2}
+\begin{tabular}{lccc}
+\toprule
+Condition & Full graph & $k{=}2$ pruned & $p$ (pruned) \\
+\midrule
+Realizable & $+0.026$ & $+0.025$ & $1.3\times10^{-14}$ \\
+Oracle & $+0.046$ & $+0.059$ & $2.8\times10^{-43}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Metric robustness}
+\label{app:metric}
+
+The gain is not an artifact of the high-flow-weighted NSE or of the log-NSE offset. Across three
+choices of the offset the realizable log-NSE gain stays positive and stable, the shuffled null stays
+near zero, and the oracle bound is larger in log-space as expected (Table~\ref{tab:metric}).
+Decomposing KGE, the realizable improvement comes mainly through correlation: median $r$ rises at all
+three seeds, while the bias and variability terms are small and mixed in sign.
+
+\begin{table}[h]
+\centering
+\caption{Median $\Delta$log-NSE by the offset fraction of mean observed flow, pooled over seeds.}
+\label{tab:metric}
+\begin{tabular}{cccc}
+\toprule
+Offset fraction & Realizable & Null & Oracle \\
+\midrule
+$10^{-2}$ & $+0.029$ & $-0.003$ & $+0.045$ \\
+$10^{-3}$ & $+0.032$ & $-0.007$ & $+0.055$ \\
+$10^{-4}$ & $+0.033$ & $-0.010$ & $+0.063$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 % ---- references (manual thebibliography — no bibtex, per toolchain) ----
 % All entries verified this session; see paper/references.md for roles + sources.
