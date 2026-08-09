@@ -1492,3 +1492,24 @@ None experimental. Remaining: Fig 1 (diagram); author/venue; optional local sync
 1. **Fig 1** — core-idea contrast diagram (design, no data/GPU).
 2. **Venue-fit** — author/affiliation, anonymize if double-blind, checklist.
 3. **Final read-through** — one clean end-to-end pass pre-submission.
+
+---
+## 2026-08-08 — paper prose-COMPLETE: Introduction + back sections drafted, two audit passes, Fig 1 built
+
+**Source.** Continued paper drafting across several passes (commits 99f5dd7 → 8842133).
+
+**What landed.** (1) Introduction drafted end-to-end (6-move) and audited. (2) The four back sections — Related Work, Discussion, Limitations, Conclusion — drafted and audited (this is the bfb0d43 milestone the prior entry queued). (3) A fresh full pass fixed two real issues: an in-degree ambiguity ("4.2" was the connected-basin mean; 3.41 over all 183 nodes — disambiguated to "a connected basin has 4.2 upstream neighbours on average") and a forward-reference in §setup (acyclicity cited the elevation rule before §network states it — softened to "acyclic by construction (§network)"). (4) **Fig 1 built** — the core-idea contrast diagram as standalone TikZ (`paper/figures/fig1_concept.tex` → `fig1_concept.pdf`): shared river network → *static descriptor* → ΔNSE ≈ 0 (+0.006, n.s.) vs *dynamic signal* → ΔNSE = +0.038 (p=2.6e-17), "same network, opposite outcomes". Placed at the top of the Introduction; its two numbers verified against the paper body.
+
+**State.** The paper is prose-complete: all sections drafted + audited, 3 figures in, every load-bearing claim 3-seed, 12pp, compiles clean via pdflatex. Whole-paper scan: 0 prose semicolons, 0 clause em-dashes, all refs resolve.
+
+### Reviewer 2
+- *Is Fig 1 honest?* Yes — it shows the exact scoped contrast (static ≈ 0 vs dynamic gain), numbers matched to the body; no upgrade of the effect.
+- *Do the two fixes change any claim?* No — both are presentation (an ambiguous mean, a forward-reference); zero effect on results or numbers.
+
+### Open questions
+None on prose or evidence. Remaining are non-technical: author/affiliation/funding metadata (user supplies), the venue decision (double-blind vs preprint — governs whether the "code released" line anonymizes), and a final human read-through.
+
+## Next 2–3 sessions (queued)
+1. **Venue-fit pass** — set author/affiliation/funding; anonymize the deanonymizing "code released" line if double-blind; NeurIPS-style reproducibility checklist if targeting an ML main track. *Needs the user's venue + author details.*
+2. **Final full read-through** — one clean end-to-end pass pre-submission (a co-author's eyes; automated passes are done).
+3. *(optional, no compute)* copy the restored oracle seed-11 `test_results.p` from Drive into the repo so the oracle log-NSE cell is locally regenerable (currently transcribed).

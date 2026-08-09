@@ -555,3 +555,13 @@ reasoning and pre-registrations live in `JOURNAL.md`.
 - **EXPERIMENTAL GAP AUDIT (before Colab Pro expires 2026-08-05):** NO gaps requiring training. All 11 conditions (4 headline + 4 mechanism + 3 static-2x2) are 3/3 seeds. Every paper claim backed by a 3-seed run. The only single-seed touchpoints are (a) the CDF figure — a visualization choice, not a claim; (b) oracle log-NSE cell — already restored (verified on Drive), a cosmetic sync not a missing run, and non-load-bearing. **No notebook needs to run. Colab not required.**
 - **Files:** paper/main.tex (corrections), ml-paper-writer skill (description-verification rule). Compiles clean (12pp).
 - **Next:** Fig 1 (core-idea diagram); author/venue metadata (user); optional local sync of the oracle seed-11 results.p.
+
+### Session — 2026-08-08: paper PROSE-COMPLETE — Introduction + back sections + Fig 1 (commits 99f5dd7→8842133)
+
+- **Drafted + audited:** Introduction (6-move); Related Work, Discussion, Limitations, Conclusion (bfb0d43). All under the honesty ceiling — transferable principle stated as hypothesis not claim; all 5 limitations present.
+- **Full-pass fixes (presentation, zero claim change):** in-degree ambiguity ("4.2" = connected-basin mean; 3.41 over all 183 nodes → "a connected basin has 4.2 upstream neighbours on average"); a §setup forward-reference (acyclicity cited elevation rule pre-§network → "acyclic by construction (§network)").
+- **Fig 1 built:** standalone TikZ (`paper/figures/fig1_concept.tex` → `fig1_concept.pdf`) — shared river network → static descriptor → ΔNSE ≈ 0 (+0.006, n.s.) vs dynamic signal → ΔNSE = +0.038 (p=2.6e-17), "same network, opposite outcomes". Placed top of Introduction; numbers verified vs body.
+- **State:** ALL sections drafted + audited, 3 figures in, every load-bearing claim 3-seed, 12pp, compiles clean. Whole-paper scan: 0 prose semicolons, 0 clause em-dashes, all refs resolve. Paper is prose-complete and experimentally complete.
+- **Files:** paper/main.tex; paper/figures/fig1_concept.{tex,pdf}.
+- **Caveats:** none technical. Remaining items are non-technical/user-side.
+- **Next:** venue-fit pass (author/affiliation/funding + anonymize "code released" line if double-blind + optional NeurIPS checklist) — needs user's venue/author details; then a final human read-through. Optional GPU-free: sync oracle seed-11 results.p from Drive.
