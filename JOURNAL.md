@@ -1513,3 +1513,22 @@ None on prose or evidence. Remaining are non-technical: author/affiliation/fundi
 1. **Venue-fit pass** — set author/affiliation/funding; anonymize the deanonymizing "code released" line if double-blind; NeurIPS-style reproducibility checklist if targeting an ML main track. *Needs the user's venue + author details.*
 2. **Final full read-through** — one clean end-to-end pass pre-submission (a co-author's eyes; automated passes are done).
 3. *(optional, no compute)* copy the restored oracle seed-11 `test_results.p` from Drive into the repo so the oracle log-NSE cell is locally regenerable (currently transcribed).
+
+---
+## 2026-08-09 — two external audit rounds addressed; headline redefined to the pre-registered paired median
+
+**Source.** Two independent agent audits (round 1: B1-B7; round 2: C1-C16), each addressed with the round-1 protocol — verify every claim against its primary artifact before fixing or rejecting.
+
+**Round 1.** Fixed B2 (test sidedness now split directional/inertness), B3 (oracle log-NSE 2-seed table note), B4 (compute statement: T4, ~40 min/run measured, ~20-30 GPU-h), B5 (added a 5-table supporting appendix surfacing routing/depth/confound/k2/metric rigor). Rejected B1a/B1b/B6-premise after verification (CI rounding correct; the NSE>0.6 subset number IS sourced in COMPLIANCE.md; routing prose already 3-seed). Also 3-seeded the k=2 check (zero training — the seeds 13/17 runs were already on disk; confirms the paper's +0.025/p=1.3e-14 exactly), syncing the stale provenance docs.
+
+**Round 2.** All C1-C13 valid, none rejected. Consistency: null two-sided p=9.4e-2 (its per-seed deltas flip sign); oracle p 3e-17→2.6e-17; true-vs-random 2e-14→2.3e-14; cut 3 uncited bib entries. Interpretation: KGE β/γ "comparable not small"; "not detectable at headwaters (mechanism predicts zero)" not "statistically absent"; "rises through depth three" + depth-4 (n=6) non-interpretable, not "monotonic"; added the reversed-retains-adjacency caveat. Prose: removed "in one stroke", roadmap padding, a defensive trailing clause, assertion-stacking; added a Broader Impact statement.
+
+**Decision — the headline ΔNSE is now the paired per-basin median, not the difference of medians.** Chasing C1, I re-derived Table 1 from the runs: the ΔNSE column had been the difference of median NSEs (oracle 0.691−0.653 = +0.038), while §protocol-compare and the depth/CDF/mechanism sections all use the paired per-basin median. Per §protocol-compare's own prescription (cross-seed mean of the per-seed median for the estimate, pooled Wilcoxon for significance), the headline is now **oracle +0.035, realizable +0.022, null +0.003** (was +0.038/+0.025/+0.012). Propagated to abstract, Fig 1, contribution bullets, §res-contrast, Table 1. The median-NSE values (0.653→0.691) are unchanged — only the summary statistic. This removes the "rounds toward the hypothesis" pattern and makes the whole paper consistently paired-median. Unchanged because they are already paired or a different basin set: realizable−null (+0.017), the 54-72% ceiling, the NSE>0.6 subset (+0.012), and the k=2 connected-basin numbers (+0.025/+0.026).
+
+### Open questions
+None on evidence or prose. Remaining are user-side: author/title/funding metadata (C14), and the venue decision (C16) which governs anonymization and the checklist.
+
+## Next 2–3 sessions (queued)
+1. **Venue-fit pass** — once the workshop is named: swap to its NeurIPS style file, fit the page limit (body is ~9pp + appendix; workshops run 4-9pp), set author metadata, anonymize if double-blind.
+2. **Final full read-through** — one clean end-to-end pass pre-submission.
+3. *(optional, no compute)* sync the oracle seed-11 `test_results.p` from Drive to make the oracle log-NSE cell fully 3-seed and locally regenerable.

@@ -45,13 +45,13 @@ muddied prior attempts. On a 183-basin eastern-US sub-network of CAMELS-US, we f
 the network helps only as a \emph{dynamic} signal: adding a basin's fixed topological
 position (graph depth, upstream count, upstream area) yields essentially no change in
 skill, whether or not the model also has a basin-identity encoding, whereas feeding the
-\emph{dynamic upstream discharge} arriving from upstream neighbors improves median test
-NSE by $+0.038$ under an observed-flow oracle ($p=2.6\times10^{-17}$, three seeds). The
+\emph{dynamic upstream discharge} arriving from upstream neighbors improves per-basin
+test NSE by a median $+0.035$ under an observed-flow oracle ($p=2.6\times10^{-17}$, three seeds). The
 same network gives opposite outcomes: the information lives in structure-as-flow, not
 structure-as-label, which explains why static graph approaches have failed.
 This gain is not extra capacity: it survives a shuffled-flow null control, holds in
 log-NSE, and a two-stage model that \emph{predicts} upstream flow from forcings (no ground
-truth at inference) recovers $+0.025$ NSE, about 54--72\% of the oracle ceiling and
+truth at inference) recovers $+0.022$ NSE, about 54--72\% of the oracle ceiling and
 positive across all three seeds. It is specific to the real network: the gain requires the
 true upstream connectivity, since a degree-preserving random
 rewiring of the graph removes most of it ($+0.034$ NSE for true vs.\ rewired edges,
@@ -81,7 +81,7 @@ structure.
 \caption{The same river network helps or does not, depending on the form in which it enters the
 model. Supplied as a \emph{static descriptor} of a basin's fixed position, it changes skill by at
 most $+0.006$ NSE (not significant). Supplied as the \emph{dynamic upstream flow} arriving each day,
-it improves skill by $+0.038$ NSE under an observed-flow oracle. The information is in
+it improves skill by a paired per-basin median $+0.035$ NSE under an observed-flow oracle. The information is in
 structure-as-flow, not structure-as-label.}
 \label{fig:concept}
 \end{figure}
@@ -112,8 +112,8 @@ CAMELS-US in the eastern United States, three findings follow, each established 
 \begin{itemize}[leftmargin=1.4em,itemsep=2pt,topsep=2pt]
 \item \textbf{Static topology is inert. Dynamic upstream flow helps.} Adding a basin's fixed
 topological position changes median test NSE by at most $+0.006$ (not significant), whereas feeding
-it the dynamic upstream discharge raises NSE by $+0.038$ under an observed-flow oracle
-($p=2.6\times10^{-17}$). The same network produces opposite outcomes depending on its form, which
+it the dynamic upstream discharge raises test NSE by a paired median $+0.035$ under an observed-flow
+oracle ($p=2.6\times10^{-17}$). The same network produces opposite outcomes depending on its form, which
 explains directly why static graph approaches have not helped.
 \item \textbf{The gain is specific to the real network.} A degree-preserving random rewiring of the
 graph retains only about a quarter of the gain (true-versus-random $+0.034$ NSE,
@@ -121,7 +121,7 @@ $p=2.3\times10^{-14}$), and the improvement rises with graph depth and vanishes 
 signature of physical routing. A fixed upstream-flow input is sharply sensitive to the topology that
 GNNs were insensitive to.
 \item \textbf{A deployable two-stage model captures most of it.} Predicting upstream flow from
-forcings, with no observed discharge at inference, recovers $+0.025$ NSE, roughly $54$--$72\%$
+forcings, with no observed discharge at inference, recovers $+0.022$ NSE, roughly $54$--$72\%$
 of the oracle ceiling, and it does so with a fixed one-hop input rather than any learned graph
 operator.
 \end{itemize}
@@ -467,29 +467,29 @@ a constant per-basin descriptor is redundant with an encoding that already memor
 identity. Static structure, supplied as a label, carries no usable signal here.
 
 The same network supplied as \emph{flow} behaves in the opposite way. Feeding each basin the
-area-weighted discharge of its upstream neighbours raises median test NSE from $0.653$ to $0.691$, a
-gain of $+0.038$ ($p=2.6\times10^{-17}$) under the observed-flow oracle
-(Table~\ref{tab:main}). The deployable model that predicts upstream flow from forcings recovers
-$+0.025$ ($p=6\times10^{-19}$), which is $54$--$72\%$ of the oracle ceiling across seeds. Same network,
+area-weighted discharge of its upstream neighbours raises median test NSE from $0.653$ to $0.691$
+under the observed-flow oracle, a paired per-basin median gain of $+0.035$ ($p=2.6\times10^{-17}$,
+Table~\ref{tab:main}). The deployable model that predicts upstream flow from forcings recovers a
+paired $+0.022$ ($p=6\times10^{-19}$), which is $54$--$72\%$ of the oracle ceiling across seeds. Same network,
 opposite outcomes: the information is in the structure as time-varying flow, not as a fixed
 descriptor. This contrast is the core result, and it explains directly why methods that inject the
 network as a static graph label have not helped.
 
 \begin{table}[t]
 \centering
-\caption{Median test skill by condition (mean $\pm$ std across three seeds) and the change in median
-NSE relative to $\mathrm{L}$ over all $183$ basins. Significance is a paired per-basin Wilcoxon test,
-one-sided for the directional oracle and realizable conditions and two-sided for the shuffled-flow
-null.}
+\caption{Median test skill by condition (mean $\pm$ std across three seeds) and the paired per-basin
+median $\Delta$NSE against $\mathrm{L}$ over all $183$ basins (cross-seed mean of the per-seed
+median). Significance is a pooled Wilcoxon test, one-sided for the directional oracle and realizable
+conditions and two-sided for the shuffled-flow null.}
 \label{tab:main}
 \begin{tabular}{lcccc}
 \toprule
 Condition & NSE & KGE & log-NSE & $\Delta$NSE vs.\ L ($p$) \\
 \midrule
 $\mathrm{L}$ (baseline) & $0.653\pm0.002$ & $0.716\pm0.016$ & $0.634\pm0.035$ & --- \\
-$\mathrm{L}{+}u_Q$ (oracle) & $0.691\pm0.009$ & $0.746\pm0.014$ & $0.715\pm0.012$ & $+0.038$ ($2.6\!\times\!10^{-17}$) \\
-$\mathrm{L}{+}u_Q^{\mathrm{pred}}$ (realizable) & $0.678\pm0.008$ & $0.723\pm0.005$ & $0.672\pm0.020$ & $+0.025$ ($6.0\!\times\!10^{-19}$) \\
-$\mathrm{L}{+}u_Q^{\mathrm{shuf}}$ (null) & $0.666\pm0.008$ & $0.718\pm0.015$ & $0.628\pm0.023$ & $+0.012$ ($9.4\!\times\!10^{-2}$) \\
+$\mathrm{L}{+}u_Q$ (oracle) & $0.691\pm0.009$ & $0.746\pm0.014$ & $0.715\pm0.012$ & $+0.035$ ($2.6\!\times\!10^{-17}$) \\
+$\mathrm{L}{+}u_Q^{\mathrm{pred}}$ (realizable) & $0.678\pm0.008$ & $0.723\pm0.005$ & $0.672\pm0.020$ & $+0.022$ ($6.0\!\times\!10^{-19}$) \\
+$\mathrm{L}{+}u_Q^{\mathrm{shuf}}$ (null) & $0.666\pm0.008$ & $0.718\pm0.015$ & $0.628\pm0.023$ & $+0.003$ ($9.4\!\times\!10^{-2}$) \\
 \bottomrule
 \end{tabular}
 \\[3pt]
@@ -578,8 +578,8 @@ routing. Depth $4$ contains only six basins.}
 Because our edges are inferred and over-connect (\S\ref{sec:network}), we check whether the gain is
 an artifact of their density. Pruning the graph to a hydrography-realistic in-degree of at most two,
 keeping each basin's nearest upstream neighbours, removes more than half the edges. The realizable
-gain is unchanged: $+0.025$ on the pruned graph versus $+0.026$ on the full graph, positive at all
-three seeds ($p=1\times10^{-14}$; Appendix~\ref{app:k2}). The routing benefit rests on the physically meaningful
+gain is unchanged: $+0.025$ on the pruned graph versus $+0.026$ on the full graph over the connected
+basins, positive at all three seeds ($p=1\times10^{-14}$; Appendix~\ref{app:k2}). The routing benefit rests on the physically meaningful
 nearest-upstream structure, not on the excess edges the heuristic adds.
 
 \section{Discussion}
