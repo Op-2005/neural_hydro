@@ -90,3 +90,17 @@ concern — is now closed multi-seed at both the R1-proxy and the LSTM level.
 The static-null (2×2), the gain-is-real (null control), the deployable two-stage, and depth-vanishes-
 at-headwaters results are UNAFFECTED. What changes is the mechanism interpretation: spatial proximity,
 not the true river topology. Paper reframe required — see JOURNAL 2026-08-10.
+
+## Mechanism-hardening (2026-08-10) — claim ceiling for the reframe
+Tested whether the proximity gain has an interpretable structure beyond "nearby flow helps":
+- **gain vs baseline error:** raw ρ=−0.45, but partial corr(gain, base | headroom) = +0.12 (p=0.15, n.s.).
+  The "helps where the model fails" pattern is MOSTLY regression-to-mean (bad basins have room).
+- **gain vs baseflow index:** raw ρ=+0.27, but partial corr(gain, bfi | base) = +0.03 (p=0.77). Mediated, not a mechanism.
+- **Survives:** headroom-normalized gain still decreases with baseline skill (ρ=−0.23, p=0.005; worst/mid/best
+  terciles 0.115/0.087/0.043) — worse basins benefit modestly more per unit of room. Report as a small
+  observation, NOT a mechanism.
+
+**Claim ceiling.** Do NOT claim a "regional corrective signal" or forcing-error mechanism — it does not
+survive the headroom control. The honest mechanism statement is: the dynamic discharge of spatially nearby
+basins carries usable regional signal (shared forcing); it is proximity, not the true topology, and we do
+not over-specify the physical channel.
