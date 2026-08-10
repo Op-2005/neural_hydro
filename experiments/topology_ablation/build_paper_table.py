@@ -141,16 +141,18 @@ def main():
            "flow WITH local rainfall-runoff, which linear routing cannot. Source: ROUTING_BASELINE_3SEED.md.*", ""]
 
     # --- depth significance (from DEPTH_SIGNIFICANCE.md) ---
-    md += ["## Table 3 — realizable gain by graph depth (pooled seeds, per-stratum Wilcoxon)", "",
+    md += ["## Table 3 — realizable gain by graph depth (LONGEST-PATH graph_depth, pooled seeds, per-stratum Wilcoxon)", "",
            "| depth | n | median Δ | p | sig |", "|---|---|---|---|---|",
            "| 0 (headwater) | 99 | +0.002 | 0.24 | no |",
-           "| 1 | 243 | +0.020 | 2.6e-9 | yes |",
-           "| 2 | 153 | +0.031 | 4.7e-12 | yes |",
-           "| 3 | 48 | +0.044 | 8.4e-4 | yes |",
-           "| 4 | 6 | +0.015 | 0.34 | no (n=6) |", "",
-           "*Routing signature with per-stratum significance: the gain is statistically present "
-           "exactly where upstream flow arrives (depth≥1) and absent at headwaters. Confound-"
-           "checked vs area and feature-magnitude (FEATURE_MAGNITUDE_CONFOUND.md).*", ""]
+           "| 1 | 126 | +0.027 | 1.9e-6 | yes |",
+           "| 2 | 141 | +0.019 | 3.9e-5 | yes |",
+           "| 3 | 102 | +0.036 | 2.5e-9 | yes |",
+           "| 4 | 63 | +0.032 | 1.7e-6 | yes |",
+           "| 5 | 18 | +0.012 | 0.29 | no (n=18) |", "",
+           "*Longest-path graph_depth (matches paper Eq.1 and Table tab:depth; the earlier shortest-path "
+           "stratification is superseded, see DEPTH_SIGNIFICANCE.md). The gain is significant exactly "
+           "where upstream flow arrives (depth 1-4) and not at headwaters or the sparse depth-5 stratum. "
+           "Confound-checked vs area and feature-magnitude (FEATURE_MAGNITUDE_CONFOUND.md).*", ""]
 
     # --- graph robustness (from GRAPH_ROBUSTNESS.md + K2_GRAPH_CHECK.md) ---
     md += ["## Table 4 — graph robustness: the gain is not a heuristic-edge artifact", "",
