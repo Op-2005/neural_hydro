@@ -18,13 +18,16 @@ import matplotlib.pyplot as plt
 ROOT = Path(__file__).resolve().parents[2]
 OUT = ROOT / "paper" / "figures" / "fig_depth.pdf"
 
-# depth, n, median dNSE, p  -- transcribed from analysis/PAPER_TABLE.md Table 3
+# depth, n, median dNSE, p  -- LONGEST-PATH graph_depth (matches Eq. 1 and paper Table tab:depth).
+# Recomputed 2026-08-10 from graph_depth (camels_topology.txt) + stored per-basin realizable deltas,
+# pooled over seeds 11/13/17. Supersedes the earlier shortest-path stratification.
 STRATA = [
-    (0, 99, 0.002, 0.24),
-    (1, 243, 0.020, 2.6e-9),
-    (2, 153, 0.031, 4.7e-12),
-    (3, 48, 0.044, 8.4e-4),
-    (4, 6, 0.015, 0.34),
+    (0, 99, 0.0018, 0.240),
+    (1, 126, 0.0265, 1.94e-6),
+    (2, 141, 0.0194, 3.87e-5),
+    (3, 102, 0.0363, 2.51e-9),
+    (4, 63, 0.0319, 1.73e-6),
+    (5, 18, 0.0121, 0.290),
 ]
 ALPHA = 0.05
 
