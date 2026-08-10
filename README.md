@@ -1,4 +1,4 @@
-# Neural Hydrology — Graph-LSTM Experiments (Baker Lab @ UCLA)
+# Neural Hydrology — Graph-LSTM Experiments
 
 Extensions to the [NeuralHydrology](https://github.com/neuralhydrology/neuralhydrology) framework (Kratzert et al., JKU Linz) that ask **when and how river-network structure improves LSTM streamflow prediction** over a strong multi-basin LSTM baseline on CAMELS-US. The study is a controlled ablation on stock NeuralHydrology: every condition shares an identical model and training setup, and the only thing that varies is the structural signal added as an input — first static topology features, then dynamic upstream flow. This directly resolves the "does graph structure help streamflow LSTMs?" question left open by prior work (Kirschstein 2024's null; Jiang 2025's physics-aware direction).
 
@@ -39,5 +39,3 @@ Built on NeuralHydrology:
 ```
 
 CAMELS-US dataset: Newman et al. (2015), Addor et al. (2017).
-
-Research conducted at the Baker Lab, UCLA.

@@ -47,3 +47,18 @@ produce predicted Q for every basin. Stage 1 of the realizability test; its
 `test/model_epoch030/test_results.p` feeds `build_predicted_upstream_q.py`. Generated on
 Colab (needs full CAMELS dataset); kept here as the cached input so Stage 2 reruns locally.
 Gitignored (large pickle), regenerable via the realizability Colab notebook.
+
+## Distance-preserving control (3 seeds) — the topology-specificity FALSIFICATION
+| Run | What | median Δ vs L (connected) |
+|---|---|---|
+| `L_upQdistctrl_component0_seed{11,13,17}` | oracle Q aggregated over a distance-matched, NON-upstream rewire | **+0.049** (per-seed +0.046/+0.060/+0.041) |
+
+Each true edge is replaced by the nearest-distance non-parent basin (in-degree preserved,
+0% edge overlap, 101 km vs true 92 km, vs 511 km for the random rewire). Pre-registered
+prediction was that destroying the true topology while holding proximity fixed would drop the
+gain to the random level. It did NOT: distance-control +0.049 ≈ forward +0.046 ≫ random +0.012.
+**This falsifies topology-specificity — the gain is proximity/regional, not the true upstream
+topology.** Builder `../../../experiments/topology_ablation/build_distance_control.py`; pre-reg
+`preregistration_distance_control.md`; notebook `notebooks/colab_distance_control.ipynb`;
+consequences in `analysis/MECHANISM_MULTISEED.md` and JOURNAL 2026-08-10. Relocated here from
+the repo root (Colab/Drive download landing spot) on 2026-08-10.
