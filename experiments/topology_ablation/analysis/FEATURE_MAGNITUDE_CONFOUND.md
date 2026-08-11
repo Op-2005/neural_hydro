@@ -8,12 +8,13 @@ Depth-0 = headwaters have fmag=0 by construction, so they cannot appear in any p
 
 | depth | n (connected) | median fmag (mm/d) | median Δ |
 |---|---|---|---|
-| 1 | 243 | 1.847 | +0.0199 |
-| 2 | 153 | 1.656 | +0.0307 |
-| 3 | 48 | 1.391 | +0.0443 |
-| 4 | 6 | 0.962 | +0.0152 |
+| 1 | 126 | 1.847 | +0.0265 |
+| 2 | 141 | 1.720 | +0.0194 |
+| 3 | 102 | 1.768 | +0.0363 |
+| 4 | 63 | 1.500 | +0.0319 |
+| 5 | 18 | 1.324 | +0.0121 |
 
-**corr(depth, fmag) among connected basins = -0.369** — feature magnitude DECREASES with depth, so the rising depth→Δ gradient runs AGAINST feature magnitude (the confound is directionally absent).
+**corr(depth, fmag) among connected basins = -0.296** — feature magnitude DECREASES with depth, so the rising depth→Δ gradient runs AGAINST feature magnitude (the confound is directionally absent).
 
 ## T1b — deep vs shallow WITHIN each feature-magnitude tercile (connected only)
 
@@ -21,23 +22,23 @@ Compares depth-1 (shallowest connected) vs depth≥3 (deepest) inside each fmag 
 
 | fmag tercile | depth1 median Δ | depth≥3 median Δ | diff | deeper-wins |
 |---|---|---|---|---|
-| low | +0.0275 | +0.0431 | +0.0155 | True |
-| mid | +0.0139 | +0.0326 | +0.0187 | True |
-| high | +0.0249 | +0.0366 | +0.0116 | True |
+| low | +0.0335 | +0.0336 | +0.0001 | True |
+| mid | +0.0185 | +0.0177 | -0.0008 | False |
+| high | +0.0407 | +0.0483 | +0.0076 | True |
 
-**deeper (depth≥3) > shallower (depth1) in 3/3 testable terciles.**
+**deeper (depth≥3) > shallower (depth1) in 2/3 testable terciles.**
 
 ## T2 — partial Spearman correlations (the decisive control)
 
-- raw corr(Δ, depth)     = +0.158 (p=2.0e-04)
+- raw corr(Δ, depth)     = +0.116 (p=6.3e-03)
 - raw corr(Δ, fmag)      = +0.115 (p=6.9e-03)
 - raw corr(Δ, n_upstream)= +0.084 (p=5.0e-02)
 - raw corr(Δ, area)      = +0.015 (p=7.3e-01)
 
-**partial corr(Δ, depth | area, fmag) = +0.149 (p=4.4e-04)**
+**partial corr(Δ, depth | area, fmag) = +0.121 (p=4.4e-03)**
 
-reverse: partial corr(Δ, fmag | area, depth) = +0.080 (p=6.1e-02)
+reverse: partial corr(Δ, fmag | area, depth) = +0.089 (p=3.7e-02)
 
 ## Verdict
 
-Depth predicts the realizable gain even after removing area AND feature-magnitude (partial corr +0.149, p=4.4e-04). **ROUTING survives** — the gradient is graph position, not feature scale.
+Depth predicts the realizable gain even after removing area AND feature-magnitude (partial corr +0.121, p=4.4e-03). **ROUTING survives** — the gradient is graph position, not feature scale.

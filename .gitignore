@@ -44,3 +44,6 @@ experiments/topology_ablation/features/*.p
 
 # The paper: manuscript, figures, planning docs, and build output
 paper/
+
+# Local-only Claude skills (paper audit + review panel). .claude/commands/ stays tracked.
+.claude/skills/

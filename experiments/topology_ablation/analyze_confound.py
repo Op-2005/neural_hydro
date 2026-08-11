@@ -33,6 +33,12 @@ def nse(cond, seed):
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     topo = pd.read_csv(DEPTH, dtype={"basin": str}).set_index("basin")
+    # Eq.1 (longest-path) depth is authoritative; overlay it onto the attribute table,
+    # which supplies the other columns (n_upstream, area_km2, ...).
+    _eq1 = DEPTH.parent / "component0_depth_eq1.csv"
+    if _eq1.is_file():
+        _d = pd.read_csv(_eq1, dtype={"basin": str}).set_index("basin")["depth_eq1"]
+        topo["depth"] = _d.reindex(topo.index)
 
     # pooled per-basin realizable Δ across seeds 13/17
     rows = []

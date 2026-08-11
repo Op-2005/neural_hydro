@@ -27,16 +27,16 @@ Area-tercile spread +0.0043.
 
 | area tercile | depth0 median Δ | depth≥2 median Δ | diff |
 |---|---|---|---|
-| small | +0.0072 | +0.0399 | +0.0328 |
-| mid | -0.0068 | +0.0339 | +0.0407 |
-| large | -0.0038 | +0.0315 | +0.0353 |
+| small | +0.0072 | +0.0222 | +0.0151 |
+| mid | -0.0068 | +0.0295 | +0.0363 |
+| large | -0.0038 | +0.0260 | +0.0297 |
 
 **depth≥2 > depth0 by ≥+0.01 in 3/3 area terciles.** PASS — routing survives area control
 
 ## T4 — Spearman corr of Δ with each variable
 
 - corr(Δ, n_upstream) = **+0.084**
-- corr(Δ, depth)      = +0.158
+- corr(Δ, depth)      = +0.116
 - corr(Δ, area)       = +0.015
 
 **n_upstream is the stronger predictor** (|0.084| vs |0.015|).

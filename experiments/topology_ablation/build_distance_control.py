@@ -53,8 +53,14 @@ def haversine(lat1, lon1, lat2, lon2):
     return 2 * r * np.arcsin(np.sqrt(a))
 
 
-def build_distance_graph(basins, fwd, coords, seed=RNG_SEED):
-    """Return a degree- and distance-preserving rewired DiGraph (parents != true, distances matched)."""
+def build_distance_graph(basins, fwd, coords, seed=RNG_SEED, target_km=None):
+    """Return a degree-preserving rewired DiGraph whose parents are NOT true parents.
+
+    target_km is None  -> match each substitute to its own true edge's length (the canonical
+                          distance-preserving control).
+    target_km = X      -> match every substitute to X km instead, which sweeps the proximity
+                          axis while holding in-degree fixed.
+    """
     lat = {b: coords[b][0] for b in basins}
     lon = {b: coords[b][1] for b in basins}
 
@@ -76,7 +82,7 @@ def build_distance_graph(basins, fwd, coords, seed=RNG_SEED):
         forbidden = set(tps) | {c}
         chosen = []
         for p in tps:
-            dt = dist(c, p)
+            dt = dist(c, p) if target_km is None else float(target_km)
             avail = [q for q in basins if q not in forbidden and q not in chosen]
             avail.sort(key=lambda q: abs(dist(c, q) - dt))  # nearest edge-length first
             pick = str(rng.choice(avail[:M_NEAREST]))       # random among the M nearest
@@ -129,12 +135,18 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--network", default="component0")
     ap.add_argument("--lag-days", type=int, default=1)
+    ap.add_argument("--target-km", type=float, default=None,
+                    help="match every substitute edge to this length (km) instead of the "
+                         "true edge length; used for the proximity sweep")
     ap.add_argument("--dry-run", action="store_true",
                     help="build + validate the graph only (no discharge, no feature file)")
     args = ap.parse_args()
 
     basins, fwd, coords, edges = load_inputs(args.network)
-    G, edges_out, dist = build_distance_graph(basins, fwd, coords)
+    G, edges_out, dist = build_distance_graph(basins, fwd, coords,
+                                              target_km=args.target_km)
+    # tag distinguishes the canonical control from a swept-distance variant
+    tag = 'distctrl' if args.target_km is None else f'dist{int(args.target_km)}km'
 
     # ---- validation: degree preserved, distances matched, topology destroyed ----
     true_indeg, new_indeg = {b: 0 for b in basins}, {b: 0 for b in basins}
@@ -157,8 +169,8 @@ def main():
 
     if args.dry_run:
         pd.DataFrame(edges_out, columns=["parent_id", "child_id"]).to_csv(
-            P1 / f"{args.network}_edges_distctrl.csv", index=False)
-        print(f"  -> wrote edge list {P1}/{args.network}_edges_distctrl.csv (dry-run, no feature)")
+            P1 / f"{args.network}_edges_{tag}.csv", index=False)
+        print(f"  -> wrote edge list {P1}/{args.network}_edges_{tag}.csv (dry-run, no feature)")
         return
 
     from neuralhydrology.datasetzoo.camelsus import (load_camels_us_discharge,
@@ -175,7 +187,7 @@ def main():
             qobs[b] = None
     feats = build_feature(G, basins, qobs, area, args.lag_days)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    out = OUT_DIR / f"upstream_q_distctrl_{args.network}_lag{args.lag_days}.p"
+    out = OUT_DIR / f"upstream_q_{tag}_{args.network}_lag{args.lag_days}.p"
     pickle.dump(feats, open(out, "wb"))
     nz = sum(1 for v in feats.values() if np.abs(v["upstream_q"].values).mean() > 0)
     print(f"  feature: {len(feats)} basins, {nz} connected, "
