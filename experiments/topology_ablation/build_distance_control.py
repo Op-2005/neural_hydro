@@ -92,6 +92,59 @@ def build_distance_graph(basins, fwd, coords, seed=RNG_SEED, target_km=None):
     return G, edges_out, dist
 
 
+def build_randomclean_graph(basins, fwd, seed=RNG_SEED):
+    """In-degree-preserving random rewire that EXCLUDES each basin's true parents.
+
+    The original random control forbade only the basin itself, so 27/624 true edges
+    recurred by chance. Under the proximity framing that control anchors the far end of
+    the distance axis, and recurring true parents are nearby, so the contamination
+    flattens the measured decay.
+    """
+    true_parents, indeg = {b: set() for b in basins}, {b: 0 for b in basins}
+    for p, c in fwd:
+        true_parents[c].add(p)
+        indeg[c] += 1
+    rng = np.random.default_rng(seed)
+    G = nx.DiGraph()
+    G.add_nodes_from(basins)
+    edges_out = []
+    for c in basins:
+        k = indeg[c]
+        if k == 0:
+            continue
+        forbidden = {c} | true_parents[c]
+        avail = [b for b in basins if b not in forbidden]
+        for p in rng.choice(avail, size=min(k, len(avail)), replace=False):
+            G.add_edge(str(p), c)
+            edges_out.append((str(p), c))
+    return G, edges_out
+
+
+def build_knn_graph(basins, fwd, coords, k):
+    """Parents = the k geographically nearest basins, EXCLUDING true parents.
+
+    Pure geography with zero topology overlap, defined for every basin including
+    headwaters -- which makes it a probe of whether the headwater null is definitional
+    (u_i == 0 by construction) rather than physical.
+    """
+    true_parents = {b: set() for b in basins}
+    for p, c in fwd:
+        true_parents[c].add(p)
+    lat = {b: coords[b][0] for b in basins}
+    lon = {b: coords[b][1] for b in basins}
+    G = nx.DiGraph()
+    G.add_nodes_from(basins)
+    edges_out = []
+    for c in basins:
+        forbidden = {c} | true_parents[c]
+        others = sorted((b for b in basins if b not in forbidden),
+                        key=lambda b: haversine(lat[c], lon[c], lat[b], lon[b]))[:k]
+        for p in others:
+            G.add_edge(p, c)
+            edges_out.append((p, c))
+    return G, edges_out
+
+
 def load_inputs(network):
     basins = [l.strip() for l in open(P1 / f"{network}_basins.txt") if l.strip()]
     edges = pd.read_csv(P1 / f"{network}_edges.csv", dtype={"parent_id": str, "child_id": str})
@@ -135,6 +188,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--network", default="component0")
     ap.add_argument("--lag-days", type=int, default=1)
+    ap.add_argument("--mode", default="distance",
+                    choices=["distance", "randomclean", "knn"],
+                    help="distance = distance-preserving control (default); "
+                         "randomclean = random rewire excluding true parents; "
+                         "knn = k nearest basins excluding true parents")
+    ap.add_argument("--knn-k", type=int, default=4, help="k for --mode knn")
     ap.add_argument("--target-km", type=float, default=None,
                     help="match every substitute edge to this length (km) instead of the "
                          "true edge length; used for the proximity sweep")
@@ -143,10 +202,20 @@ def main():
     args = ap.parse_args()
 
     basins, fwd, coords, edges = load_inputs(args.network)
-    G, edges_out, dist = build_distance_graph(basins, fwd, coords,
-                                              target_km=args.target_km)
-    # tag distinguishes the canonical control from a swept-distance variant
-    tag = 'distctrl' if args.target_km is None else f'dist{int(args.target_km)}km'
+    lat = {b: coords[b][0] for b in basins}
+    lon = {b: coords[b][1] for b in basins}
+    def dist(a, b):
+        return haversine(lat[a], lon[a], lat[b], lon[b])
+    if args.mode == 'randomclean':
+        G, edges_out = build_randomclean_graph(basins, fwd)
+        tag = 'randomclean'
+    elif args.mode == 'knn':
+        G, edges_out = build_knn_graph(basins, fwd, coords, args.knn_k)
+        tag = f'knn{args.knn_k}'
+    else:
+        G, edges_out, dist = build_distance_graph(basins, fwd, coords,
+                                                  target_km=args.target_km)
+        tag = 'distctrl' if args.target_km is None else f'dist{int(args.target_km)}km'
 
     # ---- validation: degree preserved, distances matched, topology destroyed ----
     true_indeg, new_indeg = {b: 0 for b in basins}, {b: 0 for b in basins}
@@ -160,12 +229,18 @@ def main():
     true_d = np.array([dist(c, p) for p, c in fwd])
     new_d = np.array([dist(p, c) for p, c in edges_out])
     print(f"[{args.network}] true edges {len(fwd)} | rewired edges {len(edges_out)}")
-    print(f"  in-degree preserved exactly: {deg_ok}")
+    print(f"  in-degree preserved exactly: {deg_ok}"
+          + ("" if args.mode != "knn" else f"  (knn: every basin gets k={args.knn_k} by design)"))
     print(f"  rewired edges identical to a true edge: {overlap} ({100*overlap/len(edges_out):.1f}%)")
     print(f"  edge-distance km  true : mean {true_d.mean():.1f}  median {np.median(true_d):.1f}")
     print(f"  edge-distance km  dist : mean {new_d.mean():.1f}  median {np.median(new_d):.1f}")
-    print(f"  per-edge |Δdistance| : mean {np.abs(new_d - true_d).mean():.2f} km "
-          f"(median {np.median(np.abs(new_d - true_d)):.2f})")
+    if len(new_d) == len(true_d):
+        print(f"  per-edge |Δdistance| : mean {np.abs(new_d - true_d).mean():.2f} km "
+              f"(median {np.median(np.abs(new_d - true_d)):.2f})")
+    else:
+        # knn mode gives every basin k parents, so the edge count differs from the true graph
+        print(f"  (edge counts differ: {len(new_d)} vs {len(true_d)} true; "
+              f"per-edge delta not defined for this mode)")
 
     if args.dry_run:
         pd.DataFrame(edges_out, columns=["parent_id", "child_id"]).to_csv(
