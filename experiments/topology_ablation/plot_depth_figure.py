@@ -21,14 +21,41 @@ OUT = ROOT / "paper" / "figures" / "fig_depth.pdf"
 # depth, n, median dNSE, p  -- LONGEST-PATH graph_depth (matches Eq. 1 and paper Table tab:depth).
 # Recomputed 2026-08-10 from graph_depth (camels_topology.txt) + stored per-basin realizable deltas,
 # pooled over seeds 11/13/17. Supersedes the earlier shortest-path stratification.
-STRATA = [
-    (0, 99, 0.0018, 0.240),
-    (1, 126, 0.0265, 1.94e-6),
-    (2, 141, 0.0194, 3.87e-5),
-    (3, 102, 0.0363, 2.51e-9),
-    (4, 63, 0.0319, 1.73e-6),
-    (5, 18, 0.0121, 0.290),
-]
+def _compute_strata():
+    """Recompute the depth strata from stored per-basin metrics + the Eq.1 depth file.
+
+    Previously these were transcribed constants, which is how the depth definition came to be
+    migrated in the figure but not in the analysis scripts. Computing them here keeps the figure
+    tied to the data.
+    """
+    import numpy as np, pandas as pd
+    from pathlib import Path
+    from scipy.stats import wilcoxon
+    root = Path(__file__).parent.parent.parent
+    dep = pd.read_csv(root / "topology_analysis/phase1_network_discovery/outputs/component0_depth_eq1.csv",
+                      dtype={"basin": str}).set_index("basin")["depth_eq1"]
+    runs = root / "runs/topology_ablation/component0"
+    rows = {}
+    for seed in (11, 13, 17):
+        def m(cond):
+            f = runs / f"{cond}_component0_seed{seed}/test/model_epoch030/test_metrics.csv"
+            return (pd.read_csv(f, dtype={"basin": str}).set_index("basin")["NSE"]
+                    if f.is_file() else None)
+        L, R = m("L"), m("L_upQpred")
+        if L is None or R is None:
+            continue
+        for b in L.index.intersection(R.index):
+            rows.setdefault(int(dep.get(b, 0)), []).append(R[b] - L[b])
+    out = []
+    for d in sorted(rows):
+        v = np.array(rows[d])
+        pv = wilcoxon(v, alternative="greater")[1] if len(v) > 5 else float("nan")
+        out.append((d, len(v), float(np.median(v)), float(pv)))
+    return out
+
+
+STRATA = _compute_strata()
+
 ALPHA = 0.05
 
 SIG_COLOR = "#4676c4"
