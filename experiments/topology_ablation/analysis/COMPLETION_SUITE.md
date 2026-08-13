@@ -88,3 +88,38 @@ the clean number is the one to report.
    deployable gain with no discharge and no graph.
 5. **The river network is a liability for this purpose.** Deleting it and using the nearest
    gauges nearly doubles the gain.
+
+---
+
+## 5. Min-separation k-NN — the leakage objection, tested (2026-08-13)
+
+Nearest-gauge selection optimises only for distance, so it can pick a gauge a few km away: 19 of
+366 pairs at k=2 are under 10 km, the nearest 1.6 km. Those may be nested, making the neighbour's
+discharge partly a measurement of the target. Re-run with a floor on neighbour separation.
+
+| condition | connected Δ (3-seed mean) | per-seed | paired vs true network |
+|---|---|---|---|
+| true network | +0.0431 | +0.046 / +0.056 / +0.027 | — |
+| k-NN 2, no floor | +0.0806 | +0.077 / +0.087 / +0.077 | +0.0341 (p=1.4e-24, 72%) |
+| k-NN 2, ≥10 km | +0.0730 | +0.072 / +0.090 / +0.057 | +0.0300 (p=5.1e-19, 69%) |
+| k-NN 2, ≥15 km | +0.0721 | +0.066 / +0.087 / +0.064 | +0.0279 (p=2.3e-17, 68%) |
+
+**Verdict: PASS — the headline survives.** Excluding near-duplicate gauges costs roughly a fifth of
+the margin (+0.034 → +0.028) and none of the conclusion. Nesting between very close gauges is not
+the source of the nearest-gauge advantage.
+
+Scope: this rules out *near-duplicate* gauges. Catchment-boundary overlap at larger separations is
+a different question and remains unmeasured.
+
+## 6. Deployable k-NN — not yet run
+
+The three runs aborted at training start: the feature files were absent in the Colab VM
+(`FileNotFoundError` on `upstream_q_pred_knn2_component0_seed{s}_lag1.p`). The builder depends on
+each seed's full-span eval (`_Lfullspan_eval_seed{s}/test/model_epoch030/test_results.p`), which is
+symlinked in from the previous runs folder; the build did not complete and the notebook proceeded to
+train anyway.
+
+All three features have since been **built locally and verified** (183 basins, `date`-named index),
+and the notebook's build cell now checks the full-span dependency up front and raises if a feature
+does not materialise, rather than falling through to a training run that cannot work. The
+experiment is unchanged and still pending.
