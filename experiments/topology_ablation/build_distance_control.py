@@ -120,7 +120,7 @@ def build_randomclean_graph(basins, fwd, seed=RNG_SEED):
     return G, edges_out
 
 
-def build_knn_graph(basins, fwd, coords, k):
+def build_knn_graph(basins, fwd, coords, k, min_km=0.0):
     """Parents = the k geographically nearest basins, EXCLUDING true parents.
 
     Pure geography with zero topology overlap, defined for every basin including
@@ -137,8 +137,10 @@ def build_knn_graph(basins, fwd, coords, k):
     edges_out = []
     for c in basins:
         forbidden = {c} | true_parents[c]
-        others = sorted((b for b in basins if b not in forbidden),
-                        key=lambda b: haversine(lat[c], lon[c], lat[b], lon[b]))[:k]
+        cand = [b for b in basins if b not in forbidden]
+        if min_km > 0:  # drop near-duplicate / plausibly nested gauges
+            cand = [b for b in cand if haversine(lat[c], lon[c], lat[b], lon[b]) >= min_km]
+        others = sorted(cand, key=lambda b: haversine(lat[c], lon[c], lat[b], lon[b]))[:k]
         for p in others:
             G.add_edge(p, c)
             edges_out.append((p, c))
@@ -194,6 +196,9 @@ def main():
                          "randomclean = random rewire excluding true parents; "
                          "knn = k nearest basins excluding true parents")
     ap.add_argument("--knn-k", type=int, default=4, help="k for --mode knn")
+    ap.add_argument("--knn-min-km", type=float, default=0.0,
+                    help="exclude neighbours closer than this (km) in --mode knn; "
+                         "guards against nested / near-duplicate gauges")
     ap.add_argument("--target-km", type=float, default=None,
                     help="match every substitute edge to this length (km) instead of the "
                          "true edge length; used for the proximity sweep")
@@ -210,8 +215,10 @@ def main():
         G, edges_out = build_randomclean_graph(basins, fwd)
         tag = 'randomclean'
     elif args.mode == 'knn':
-        G, edges_out = build_knn_graph(basins, fwd, coords, args.knn_k)
-        tag = f'knn{args.knn_k}'
+        G, edges_out = build_knn_graph(basins, fwd, coords, args.knn_k,
+                                       min_km=args.knn_min_km)
+        tag = f'knn{args.knn_k}' + ('' if args.knn_min_km <= 0
+                                    else f'min{int(args.knn_min_km)}km')
     else:
         G, edges_out, dist = build_distance_graph(basins, fwd, coords,
                                                   target_km=args.target_km)

@@ -70,10 +70,18 @@ def main():
     ap.add_argument("--network", default="component0")
     ap.add_argument("--lag-days", type=int, default=1)
     ap.add_argument("--seed", type=int, default=11)
+    ap.add_argument("--edge-file", default=None,
+                    help="override the edge CSV (e.g. a kNN edge set) to build a deployable "
+                         "variant of a non-graph neighbour selection")
+    ap.add_argument("--tag", default=None,
+                    help="output filename tag; defaults to the standard predicted-Q name")
     args = ap.parse_args()
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     bf, ef = files_for(args.network)
+    if args.edge_file:
+        ef = ROOT / args.edge_file if not str(args.edge_file).startswith("/") else Path(args.edge_file)
+        print(f"  [override] edge file -> {ef}")
     basins = [l.strip() for l in open(bf) if l.strip()]
     edges = pd.read_csv(ef, dtype={"parent_id": str, "child_id": str})
     area = pd.read_csv(TOPO_TXT, sep=";", dtype={"gauge_id": str}).set_index("gauge_id")["area_gages2"].to_dict()
@@ -109,7 +117,8 @@ def main():
         feats[b] = pd.DataFrame({"upstream_q": agg.values}, index=idx)
         n_conn += 1
 
-    out = OUT_DIR / f"upstream_q_pred_{args.network}_seed{args.seed}_lag{args.lag_days}.p"
+    _tag = f"_{args.tag}" if args.tag else ""
+    out = OUT_DIR / f"upstream_q_pred{_tag}_{args.network}_seed{args.seed}_lag{args.lag_days}.p"
     pickle.dump(feats, open(out, "wb"))
     vals = np.concatenate([np.abs(d["upstream_q"].values) for d in feats.values()])
     print(f"Wrote upstream_q_pred for {len(feats)} basins ({n_conn} with upstream) -> {out}")
