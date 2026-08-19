@@ -123,3 +123,35 @@ All three features have since been **built locally and verified** (183 basins, `
 and the notebook's build cell now checks the full-span dependency up front and raises if a feature
 does not materialise, rather than falling through to a training run that cannot work. The
 experiment is unchanged and still pending.
+
+---
+
+## 6. Deployable k-NN — the oracle advantage does NOT survive prediction (2026-08-19)
+
+Two-stage nearest-gauge input: stage one predicts each basin's discharge from its own forcings over
+the full record, and those predicted series are averaged over the two nearest gauges. No observed
+discharge at inference. Seeds 11/13/17.
+
+| model | connected Δ | all-183 Δ | per-seed | oracle | recovery |
+|---|---|---|---|---|---|
+| network-derived (`L_upQpred`) | **+0.0262** | +0.0218 | +0.034 / +0.030 / +0.015 | +0.0431 | **61%** |
+| nearest-gauge (`L_upQpredknn2`) | **+0.0218** | +0.0210 | +0.023 / +0.030 / +0.013 | +0.0806 | **27%** |
+
+Paired k-NN − network: **−0.0030** pooled (p=0.026), but **not significant at any individual seed**
+(−0.0066, p=0.12; −0.0018, p=0.38; −0.0030, p=0.13) and k-NN is better on 45–47% of basins. Under
+the paper's own weakest-seed rule the two deployable models are **indistinguishable**.
+
+**Verdict: the pre-registered falsification fires.** `D_knn (+0.022) <= D_net (+0.026)`, so the
+nearest-gauge advantage is an oracle-only result. It does not transfer to the deployable setting.
+
+**Why, and this is the interesting part.** The oracle advantage was large (+0.081 vs +0.043) and the
+deployable advantage is zero. The difference is entirely in how much survives stage-one prediction:
+the network-derived feature retains 61% of its oracle value, the nearest-gauge feature only 27%.
+Nearest gauges sit at 46.7 km against the network's 91.6 km, so their observed discharge is more
+informative — but stage-one prediction error is roughly independent of separation, so the closer and
+more informative the neighbour, the larger the share of its signal that prediction destroys. The
+binding constraint on a deployable model is not *which* neighbours you pick, it is how well you can
+predict them.
+
+Scope: this is a limit on the two-stage design, not proof that no deployable nearest-gauge model can
+beat the network. A better stage-one predictor would raise both curves and could reorder them.
