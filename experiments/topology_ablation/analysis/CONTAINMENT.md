@@ -21,17 +21,19 @@ inferred from the separation floors.
 
 ## Stratifying the advantage by nesting risk
 
-| basins | n (basin-seed) | median kNN $-$ network | $p$ |
+| basins | n (distinct) | per-seed median | weakest-seed $p$ |
 |---|---|---|---|
-| nearest pair NOT area-nested | 141 | $+0.0285$ | $4.3e-08$ |
-| nearest pair area-nested | 309 | $+0.0353$ | $9.4e-19$ |
+| nearest pair NOT area-nested | 47 | +0.0241 / +0.0145 / +0.0412 | $0.021$ |
+| nearest pair area-nested | 103 | +0.0278 / +0.0410 / +0.0410 | $0.000$ |
 
-**Containment inflates the advantage but does not create it.** Among basins whose two
-nearest gauges are not area-nested, the nearest-gauge input still beats the network by
-**+0.0285** ($p=4.3e-08$, $n=141$
-basin-seed pairs). The advantage is larger where nesting is present (+0.0353),
-which is the direction containment predicts, so the effect is real and partly inflated
-rather than wholly artifactual.
+**Containment inflates the advantage but does not account for it.** Among the 47
+basins whose two nearest gauges are not area-nested, the nearest-gauge input still beats
+the network at every seed (+0.0241 / +0.0145 / +0.0412, weakest-seed
+$p=0.021$). The advantage is larger where nesting is present
+(+0.0366 cross-seed mean), which is the direction containment predicts, so the
+effect is real and partly inflated rather than wholly artifactual. The weakest-seed
+$p$ is judged by the rule the paper applies elsewhere; pooling the 141 basin-seed pairs
+would give $4\times10^{-8}$ and would treat dependent observations as independent.
 
 Scope: area ratio is a proxy. Catchment-boundary overlap from the CAMELS shapefiles would
 measure containment directly and is the stronger test.

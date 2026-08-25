@@ -96,16 +96,33 @@ def main():
         for b in conn:
             (hi if nested[b] else lo).append(K[b] - G[b])
 
-    L += ["| basins | n (basin-seed) | median kNN $-$ network | $p$ |", "|---|---|---|---|"]
-    for lab, v in [("nearest pair NOT area-nested", lo), ("nearest pair area-nested", hi)]:
-        L.append(f"| {lab} | {len(v)} | ${np.median(v):+.4f}$ | ${wilcoxon(v, alternative='greater')[1]:.1e}$ |")
+    # Per-seed, judged by the weakest seed -- the paper's rule (sec:protocol-compare).
+    # Pooling basin-seed pairs here would treat dependent observations as independent.
+    def per_seed(basin_subset):
+        meds, ps = [], []
+        for s in SEEDS:
+            K, G = nse("L_upQknn2", s), nse("L_upQ", s)
+            d = np.array([K[b] - G[b] for b in basin_subset])
+            meds.append(np.median(d)); ps.append(wilcoxon(d, alternative="greater")[1])
+        return meds, ps
+
+    lo_b = sorted([b for b in conn if not nested[b]])
+    hi_b = sorted([b for b in conn if nested[b]])
+    L += ["| basins | n (distinct) | per-seed median | weakest-seed $p$ |", "|---|---|---|---|"]
+    for lab, bs in [("nearest pair NOT area-nested", lo_b), ("nearest pair area-nested", hi_b)]:
+        meds, ps = per_seed(bs)
+        L.append(f"| {lab} | {len(bs)} | {' / '.join(f'{m:+.4f}' for m in meds)} | ${max(ps):.3f}$ |")
+    lm, lp = per_seed(lo_b)
+    hm, _ = per_seed(hi_b)
     L += ["",
-          f"**Containment inflates the advantage but does not create it.** Among basins whose two",
-          f"nearest gauges are not area-nested, the nearest-gauge input still beats the network by",
-          f"**{np.median(lo):+.4f}** ($p={wilcoxon(lo, alternative='greater')[1]:.1e}$, $n={len(lo)}$",
-          f"basin-seed pairs). The advantage is larger where nesting is present ({np.median(hi):+.4f}),",
-          "which is the direction containment predicts, so the effect is real and partly inflated",
-          "rather than wholly artifactual.\n",
+          f"**Containment inflates the advantage but does not account for it.** Among the {len(lo_b)}",
+          f"basins whose two nearest gauges are not area-nested, the nearest-gauge input still beats",
+          f"the network at every seed ({' / '.join(f'{m:+.4f}' for m in lm)}, weakest-seed",
+          f"$p={max(lp):.3f}$). The advantage is larger where nesting is present",
+          f"({np.mean(hm):+.4f} cross-seed mean), which is the direction containment predicts, so the",
+          "effect is real and partly inflated rather than wholly artifactual. The weakest-seed",
+          "$p$ is judged by the rule the paper applies elsewhere; pooling the 141 basin-seed pairs",
+          "would give $4\\times10^{-8}$ and would treat dependent observations as independent.\n",
           "Scope: area ratio is a proxy. Catchment-boundary overlap from the CAMELS shapefiles would",
           "measure containment directly and is the stronger test."]
     OUT.write_text("\n".join(L) + "\n")
