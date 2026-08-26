@@ -33,3 +33,30 @@ stratum, including where the network averages more parents than the nearest-gaug
 increases. Note the exact in-degree$=2$ stratum holds only 23 basins and is positive at
 every seed but underpowered (weakest-seed $p=0.24$), so the count-matched evidence rests
 on the $\le 2$ grouping rather than an exact match.
+
+---
+
+## Single-neighbour arm (2026-08-26) — averaging ruled out
+
+The in-degree stratification above holds neighbour count fixed on the *network* side, but the
+nearest-gauge input still averages two series inside every stratum, so a two-over-one variance
+advantage is not excluded by it. The k=1 arm removes averaging entirely.
+
+| condition | mean separation | per-seed median vs network | weakest-seed p |
+|---|---|---|---|
+| nearest 2 gauges | 46.7 km | +0.019 / +0.032 / +0.041 | <0.001 |
+| **nearest 1 gauge** | **37.3 km** | **+0.019 / +0.036 / +0.024** | **0.002** |
+
+**Averaging is not required for the advantage.** A single neighbour still beats the true network at
+every seed. The k=1 arm sits ~0.004 below k=2, so averaging may contribute without being the
+mechanism.
+
+**The arms are not nested**, which the pre-registration anticipated: k=1 is both *closer*
+(37.3 vs 46.7 km) and *less averaged* than k=2, and those push in opposite directions. The ~0.004
+gap is therefore ambiguous between "averaging helps a little" and "the second neighbour adds
+distance", and we report both values rather than resolving it.
+
+**Provenance note.** These figures come from the Drive copy of the runs, which holds the *restored*
+`L_upQ` seed-11 oracle (median NSE 0.6931) rather than the original local copy (0.7027) -- see
+JOURNAL 2026-07-16. That shifts the seed-11 column of both arms by the same +0.008 and leaves the
+k1-vs-k2 gap at -0.004 under either copy, so no conclusion depends on which is used.
