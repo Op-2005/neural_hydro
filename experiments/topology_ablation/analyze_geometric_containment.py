@@ -130,3 +130,30 @@ surv=[(i,j) for i,j in flag if gc(i,j)>=15]
 print()
 print(f'geometrically flagged pairs: {len(flag)}; surviving a 15 km floor: {len(surv)}')
 print(f'  -> the floor removes {len(flag)-len(surv)} of them; the controls are not independent')
+
+# --- Gauge-density control ---------------------------------------------------
+# kNN gives every basin a neighbour at its OWN local gauge density, while the
+# network selector is roughly density-blind. If the advantage were an artifact of
+# dense sub-regions, it should concentrate in the dense tercile.
+print()
+print('=== gauge-density control ===')
+dens={i: sorted(gc(i,b) for b in basins if b!=i)[4] for i in conn}   # dist to 5th-nearest
+srt=sorted(conn,key=lambda i: dens[i]); n=len(srt)//3
+for lbl,sel in [('dense tercile',srt[:n]),('middle',srt[n:2*n]),('sparse tercile',srt[2*n:])]:
+    meds=[];ps=[]
+    for s in [11,13,17]:
+        K,G=nse("L_upQknn2",s),nse("L_upQ",s)
+        bs=[b for b in sel if b in K and b in G]
+        d=np.array([K[b]-G[b] for b in bs])
+        meds.append(np.median(d)); ps.append(wilcoxon(d,alternative='greater')[1])
+    print(f'  {lbl:16s} n={len(bs):3d} {[f"{m:+.4f}" for m in meds]} weakest p={max(ps):.2e}')
+from scipy.stats import spearmanr
+adv={}
+for i in conn:
+    v=[]
+    for s in [11,13,17]:
+        K,G=nse("L_upQknn2",s),nse("L_upQ",s)
+        if i in K and i in G: v.append(K[i]-G[i])
+    if v: adv[i]=np.mean(v)
+ks=sorted(adv); r,pv=spearmanr([dens[i] for i in ks],[adv[i] for i in ks])
+print(f'  Spearman(distance to 5th-nearest gauge, advantage) = {r:+.3f} (p={pv:.3f})')
