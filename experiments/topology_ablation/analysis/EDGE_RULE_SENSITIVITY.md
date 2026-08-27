@@ -28,7 +28,7 @@ gauges average ~47 km. A reviewer may object that our area-ratio requirement
 
 ## Why the two selections differ
 
-The two nearest gauges average 39.0 km. For only **62 of 150 (41%)** connected basins does the nearest pair contain a true parent.
+The two nearest gauges average 46.7 km (excluding true parents, as the feature construction does; 39.0 km without that exclusion). For only **62 of 150 (41%)** connected basins does the nearest pair contain a true parent.
 
 The gap is therefore not a threshold artifact. Requiring a neighbour to lie *upstream* is
 a directional constraint, and it excludes most of a basin's nearest gauges because they
