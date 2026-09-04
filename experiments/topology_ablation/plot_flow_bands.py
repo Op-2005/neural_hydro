@@ -114,7 +114,7 @@ for i in (0.5, 1.5):
 
 ax.set_xticks(x)
 ax.set_xticklabels([f"{lbl}\n$p={real_p[b]:.3g}$" for b, lbl in BANDS])
-ax.set_ylabel("RMSE reduction (mm d$^{-1}$), higher is better", fontsize=8.5)
+ax.set_ylabel("RMSE reduction (mm d$^{-1}$) $\\uparrow$", fontsize=9)
 ax.set_xlabel("flow band, set on each basin's own observed quantiles", fontsize=9)
 ax.tick_params(labelsize=8)
 for sp in ("top", "right"):
