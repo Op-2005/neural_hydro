@@ -41,6 +41,7 @@ _spec = importlib.util.spec_from_file_location(
 _afb = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_afb)  # module executes its own report on import
 
+BLUE_ANN = "#1f4e79"
 BANDS = ["low", "mid", "high"]
 LABELS = ["Below median", "Median to 90th", "Above 90th"]
 SEEDS = _afb.SEEDS
@@ -56,34 +57,49 @@ def main():
         "Shuffled null": (_afb.by_band("L_upQshuf"), "#8a8a8a", "^"),
     }
 
-    fig, ax = plt.subplots(figsize=(6.6, 3.1))
+    fig, ax = plt.subplots(figsize=(6.9, 2.9))
     xs = np.arange(len(BANDS))
-    off = {0: -0.22, 1: 0.0, 2: 0.22}
+    off = {0: -0.23, 1: 0.0, 2: 0.23}
 
     for k, (name, ((meds, ps), colour, marker)) in enumerate(series.items()):
         for j, b in enumerate(BANDS):
             vals = np.array(meds[b])
             x = xs[j] + off[k]
-            # per-seed points: the claim is about consistency, so show every seed
-            ax.scatter(np.full_like(vals, x), vals, s=17, color=colour, marker=marker,
-                       zorder=3, linewidths=0, alpha=0.85)
-            # cross-seed mean as a short bar
-            ax.plot([x - 0.075, x + 0.075], [vals.mean()] * 2, color=colour, lw=1.9, zorder=4)
+            # a vertical range bar makes the seed spread the visual signal, since the
+            # claim is about consistency rather than magnitude
+            ax.plot([x, x], [vals.min(), vals.max()], color=colour, lw=1.0,
+                    alpha=0.55, zorder=2, solid_capstyle="round")
+            ax.scatter(np.full_like(vals, x), vals, s=15, color=colour, marker=marker,
+                       zorder=3, linewidths=0)
+            ax.plot([x - 0.085, x + 0.085], [vals.mean()] * 2, color=colour, lw=2.0,
+                    zorder=4, solid_capstyle="butt")
             if j == 0:
                 ax.scatter([], [], s=22, color=colour, marker=marker, label=name)
-            # mark the one band that is significant at the weakest seed
-            if max(ps[b]) < 0.05:
-                ax.text(x, vals.max() + 0.012, "*", ha="center", va="bottom",
-                        fontsize=11, color=colour)
 
     ax.axhline(0, color="black", lw=0.8, zorder=1)
+
+    # Name the reading directly: the only band that is reliable is the low one.
+    low = np.array(series["Neighbour discharge\n(deployable)"][0][0]["low"])
+    hi = np.array(series["Neighbour discharge\n(deployable)"][0][0]["high"])
+    ax.annotate("positive at every seed\n($p=9{\\times}10^{-4}$)",
+                xy=(xs[0] + off[0] - 0.02, low.min()), xytext=(xs[0] - 0.30, -0.045),
+                fontsize=7.2, color=BLUE_ANN, ha="left", linespacing=1.35,
+                arrowprops=dict(arrowstyle="-", color=BLUE_ANN, lw=0.7,
+                                shrinkA=2, shrinkB=3))
+    ax.annotate("larger, but spans a\nsevenfold range ($p=0.19$)",
+                xy=(xs[2] + off[0], hi.max()), xytext=(xs[1] + 0.10, 0.205),
+                fontsize=7.2, color="#6f6f6f", ha="left", linespacing=1.35,
+                arrowprops=dict(arrowstyle="-", color="#9a9a9a", lw=0.7,
+                                shrinkA=2, shrinkB=3))
     ax.set_xticks(xs)
     ax.set_xticklabels(LABELS)
     ax.set_ylabel("RMSE reduction (mm d$^{-1}$)")
     ax.set_xlabel("Flow band, set on each basin's own observed quantiles")
     ax.spines[["top", "right"]].set_visible(False)
-    ax.legend(frameon=False, fontsize=8, loc="upper left", handletextpad=0.4)
+    ax.legend(frameon=False, fontsize=7.6, loc="upper left",
+              bbox_to_anchor=(0.005, 1.02), handletextpad=0.4, labelspacing=0.55)
     ax.margins(x=0.10)
+    ax.set_ylim(-0.075, 0.235)
     fig.tight_layout()
     OUT.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT, bbox_inches="tight")
