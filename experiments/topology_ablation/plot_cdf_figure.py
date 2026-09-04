@@ -7,7 +7,7 @@ condition) so the figure is 3-seed, not seed-11 only.
 Reads the data on disk (no transcription): the CDF needs the full per-basin distribution.
 
 Usage:  python experiments/topology_ablation/plot_cdf_figure.py
-Writes: paper/figures/fig_cdf_nse.pdf   (and prints diagnostics for an honest caption)
+Writes: paper/canonical/figures/fig_cdf_nse.pdf   (and prints diagnostics for an honest caption)
 """
 from pathlib import Path
 import numpy as np
@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parents[2]
 BASE = ROOT / "runs" / "topology_ablation" / "component0"
-OUT = ROOT / "paper" / "figures" / "fig_cdf_nse.pdf"
+OUT = ROOT / "paper" / "canonical" / "figures" / "fig_cdf_nse.pdf"
 SEEDS = [11, 13, 17]
 CONDS = [
     ("L", "L (baseline)", "#999999"),

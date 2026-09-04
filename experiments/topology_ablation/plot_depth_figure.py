@@ -9,14 +9,14 @@ Two fixes over the previous version of this figure:
      weight as depth 1 (n=243).
 
 Usage:  python experiments/topology_ablation/plot_depth_figure.py
-Writes: paper/figures/fig_depth.pdf
+Writes: paper/canonical/figures/fig_depth.pdf
 """
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parents[2]
-OUT = ROOT / "paper" / "figures" / "fig_depth.pdf"
+OUT = ROOT / "paper" / "canonical" / "figures" / "fig_depth.pdf"
 
 # depth, n, median dNSE, p  -- LONGEST-PATH graph_depth (matches Eq. 1 and paper Table tab:depth).
 # Recomputed 2026-08-10 from graph_depth (camels_topology.txt) + stored per-basin realizable deltas,
