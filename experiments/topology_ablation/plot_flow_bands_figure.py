@@ -16,7 +16,8 @@ neighbour-discharge input). Not a variance-normalised score -- low-flow variance
 small, and normalising inflates that band for arithmetic rather than hydrologic reasons.
 
 Usage: python experiments/topology_ablation/plot_flow_bands_figure.py
-Writes: paper/canonical/figures/fig_flow_bands.pdf
+Writes: paper/canonical/figures/fig_flow_bands_xai.pdf (distinct name: another script in
+this directory writes fig_flow_bands.pdf, and the two must not collide).
 """
 import importlib.util
 from pathlib import Path
@@ -32,7 +33,7 @@ matplotlib.rcParams["pdf.fonttype"] = 42
 matplotlib.rcParams["ps.fonttype"] = 42
 
 ROOT = Path(__file__).parent.parent.parent
-OUT = ROOT / "paper" / "canonical" / "figures" / "fig_flow_bands.pdf"
+OUT = ROOT / "paper" / "canonical" / "figures" / "fig_flow_bands_xai.pdf"
 
 # Import the SAME banding implementation the results table uses.
 _spec = importlib.util.spec_from_file_location(
