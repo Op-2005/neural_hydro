@@ -14,29 +14,23 @@ Writes: paper/canonical/figures/fig_concept_xai.pdf
 """
 from pathlib import Path
 
-import matplotlib
-matplotlib.use("Agg")
+import sys
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from matplotlib.patches import FancyArrowPatch
 from scipy.stats import wilcoxon
 
-# Type 42, not matplotlib's default Type 3: NeurIPS-style venues reject Type 3.
-matplotlib.rcParams["pdf.fonttype"] = 42
-matplotlib.rcParams["ps.fonttype"] = 42
+sys.path.insert(0, str(__import__("pathlib").Path(__file__).parent))
+from figstyle import apply as apply_style, LINEWIDTH, INK, BLUE, GREY, WARM
+
+apply_style()
 
 ROOT = Path(__file__).parent.parent.parent
 B = ROOT / "runs" / "topology_ablation" / "component0"
 EDGES = ROOT / "topology_analysis/phase1_network_discovery/outputs/component0_edges.csv"
 OUT = ROOT / "paper" / "canonical" / "figures" / "fig_concept_xai.pdf"
 SEEDS = [11, 13, 17]
-
-INK = "#1a1a1a"
-BLUE = "#1f4e79"
-GREY = "#9a9a9a"
-WARM = "#b8622f"
-
 
 def nse(cond, seed):
     p = B / f"{cond}_component0_seed{seed}" / "test" / "model_epoch030" / "test_metrics.csv"
@@ -73,7 +67,7 @@ def main():
     nearest, _ = contrast("L_upQknn2", "L", conn, "greater")
 
     fig, (axA, axB) = plt.subplots(
-        1, 2, figsize=(7.1, 2.45), gridspec_kw={"width_ratios": [1, 1.12], "wspace": 0.42})
+        1, 2, figsize=(LINEWIDTH, 1.95), gridspec_kw={"width_ratios": [1, 1.18], "wspace": 0.40})
 
     # ---------- (a) encoding ----------
     labels = ["static\ndescriptor", "daily\ndischarge"]
@@ -82,13 +76,18 @@ def main():
     bars = axA.bar([0, 1], vals, width=0.5, color=cols, zorder=3)
     axA.axhline(0, color=INK, lw=0.8, zorder=2)
     for x, v, pv in zip([0, 1], vals, [p_static, p_dyn]):
-        tag = "n.s." if pv >= 0.05 else f"$p$={pv:.0e}".replace("e-0", "e$-$")
+        if pv >= 0.05:
+            tag = "n.s."
+        else:
+            exp = int(np.floor(np.log10(pv)))
+            mant = pv / 10 ** exp
+            tag = rf"$p\!=\!{mant:.0f}\times10^{{{exp}}}$"
         axA.text(x, v + 0.0022, f"{v:+.3f}\n{tag}", ha="center", va="bottom",
-                 fontsize=7.4, color=INK, linespacing=1.35)
-    axA.set_xticks([0, 1]); axA.set_xticklabels(labels, fontsize=8)
-    axA.set_ylabel("$\\Delta$NSE vs baseline", fontsize=8)
-    axA.set_title("(a) one network, two encodings", fontsize=8.6, color=INK, pad=7)
-    axA.set_ylim(-0.004, max(vals) * 1.42)
+                 color=INK, fontsize=7.2, linespacing=1.3)
+    axA.set_xticks([0, 1]); axA.set_xticklabels(labels, fontsize=7.5)
+    axA.set_ylabel("$\\Delta$NSE vs baseline", fontsize=7.5)
+    axA.set_title("(a) one network, two encodings", fontsize=8.2, color=INK, pad=5)
+    axA.set_ylim(-0.0022, max(vals) * 1.30)
     axA.tick_params(labelsize=7.5)
     axA.spines[["top", "right"]].set_visible(False)
 
@@ -101,27 +100,18 @@ def main():
     axB.barh(y, vv, height=0.5, color=cc, zorder=3)
     for yy, v, d in zip(y, vv, dd):
         axB.text(v + 0.0022, yy, f"{v:+.3f}   ({d:.0f} km)", va="center",
-                 fontsize=7.4, color=INK)
-    axB.set_yticks(y); axB.set_yticklabels(names, fontsize=7.6)
-    axB.set_xlabel("$\\Delta$NSE vs baseline", fontsize=8)
-    axB.set_title("(b) one encoding, three neighbour sets", fontsize=8.6, color=INK, pad=7)
-    axB.set_xlim(0, max(vv) * 1.44)
+                 fontsize=7.2, color=INK)
+    axB.set_yticks(y); axB.set_yticklabels(names, fontsize=7.2)
+    axB.set_xlabel("$\\Delta$NSE vs baseline", fontsize=7.5)
+    axB.set_title("(b) one encoding, three neighbour sets", fontsize=8.2, color=INK, pad=5)
+    axB.set_xlim(0, max(vv) * 1.32)
     axB.tick_params(labelsize=7.5)
     axB.spines[["top", "right"]].set_visible(False)
 
-    # The reading: the middle bar shares the network's distance but none of its edges,
-    # and matches it. Bracket those two rows specifically.
-    xb = max(vv) * 1.255
-    axB.annotate("", xy=(xb, y[1]), xytext=(xb, y[2]),
-                 arrowprops=dict(arrowstyle="-", color=GREY, lw=0.9))
-    for yy in (y[1], y[2]):
-        axB.annotate("", xy=(xb - max(vv) * 0.022, yy), xytext=(xb, yy),
-                     arrowprops=dict(arrowstyle="-", color=GREY, lw=0.9))
-    axB.text(xb + max(vv) * 0.02, (y[1] + y[2]) / 2,
-             "matched distance,\nno shared edges", fontsize=6.9, color=GREY,
-             va="center", linespacing=1.3)
+    # No bracket: the caption already states that the matched-distance control shares
+    # no edges with the network, and the annotation crowded the right margin.
 
-    fig.subplots_adjust(left=0.085, right=0.985, top=0.86, bottom=0.20, wspace=0.42)
+    fig.subplots_adjust(left=0.095, right=0.985, top=0.86, bottom=0.235, wspace=0.40)
     OUT.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT, bbox_inches="tight")
 
