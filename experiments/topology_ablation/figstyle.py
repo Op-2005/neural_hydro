@@ -13,7 +13,7 @@ module matches the body text instead:
 
 Import and call `apply()` before creating any figure.
 
-    from figstyle import apply, LINEWIDTH, INK, BLUE, WARM, GREY
+    from figstyle import apply, LINEWIDTH, INK, BLUE, WARM, SLATE
     apply()
 """
 import matplotlib
@@ -27,11 +27,11 @@ LINEWIDTH = 5.5
 
 # Palette: one accent for the condition under test, one for its control, grey for
 # the reference. Distinguishable in greyscale by lightness as well as hue.
-INK = "#1a1a1a"
-BLUE = "#1f4e79"   # the condition being argued for
-WARM = "#b8622f"   # the control that matches it
-GREY = "#8e8e8e"   # baseline / reference
-
+INK   = "#1B2430"   # text and axes
+BLUE  = "#2F6690"   # the condition being argued for
+WARM  = "#C05746"   # the control that matches it
+SLATE = "#6B7B8C"   # baseline / reference / null
+GREY  = SLATE       # backwards-compatible alias
 
 def apply():
     """Set rcParams so figures match the paper's typography."""
@@ -58,11 +58,11 @@ def apply():
         "axes.spines.top": False,
         "axes.spines.right": False,
         "axes.linewidth": 0.6,
-        "axes.edgecolor": "#4a4a4a",
+        "axes.edgecolor": "#8C97A3",
         "axes.labelcolor": INK,
         "text.color": INK,
-        "xtick.color": "#4a4a4a",
-        "ytick.color": "#4a4a4a",
+        "xtick.color": "#8C97A3",
+        "ytick.color": "#8C97A3",
         "xtick.labelcolor": INK,
         "ytick.labelcolor": INK,
         "xtick.major.width": 0.6,

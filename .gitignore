@@ -12,6 +12,7 @@ __pycache__/
 **/train_data/
 **/img_log/
 **/output.log
+runs/_*.log
 
 # Generated feature pickles (regenerable from builders)
 experiments/topology_ablation/features/*.p

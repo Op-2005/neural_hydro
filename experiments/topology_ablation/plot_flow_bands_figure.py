@@ -34,6 +34,8 @@ apply_style()
 
 ROOT = Path(__file__).parent.parent.parent
 OUT = ROOT / "paper" / "canonical" / "figures" / "fig_flow_bands_xai.pdf"
+# the XAI4Science submission keeps its own copy so all its figures sit together
+XAI_OUT = ROOT / "paper" / "workshops" / "xai4science" / "figures" / "fig_flow_bands_xai.pdf"
 
 # Import the SAME banding implementation the results table uses.
 _spec = importlib.util.spec_from_file_location(
@@ -56,7 +58,7 @@ def main():
         "Shuffled null": (_afb.by_band("L_upQshuf"), GREY, "^"),
     }
 
-    fig, ax = plt.subplots(figsize=(LINEWIDTH, 2.35))
+    fig, ax = plt.subplots(figsize=(LINEWIDTH, 2.05))
     xs = np.arange(len(BANDS))
     off = {0: -0.23, 1: 0.0, 2: 0.23}
 
@@ -80,28 +82,20 @@ def main():
     # Name the reading directly: the only band that is reliable is the low one.
     low = np.array(series["Neighbour discharge"][0][0]["low"])
     hi = np.array(series["Neighbour discharge"][0][0]["high"])
-    ax.annotate("positive at every seed\n($p=9{\\times}10^{-4}$)",
-                xy=(xs[0] + off[0] - 0.02, low.min()), xytext=(xs[0] - 0.32, -0.052),
-                fontsize=6.9, color=BLUE, ha="left", linespacing=1.35,
-                arrowprops=dict(arrowstyle="-", color=BLUE, lw=0.7,
-                                shrinkA=2, shrinkB=3))
-    ax.annotate("larger, but spans a\nsevenfold range ($p=0.19$)",
-                xy=(xs[2] + off[0], hi.max()), xytext=(xs[1] + 0.16, 0.228),
-                fontsize=6.9, color="#6f6f6f", ha="left", linespacing=1.35,
-                arrowprops=dict(arrowstyle="-", color="#9a9a9a", lw=0.7,
-                                shrinkA=2, shrinkB=3))
     ax.set_xticks(xs)
     ax.set_xticklabels(LABELS)
     ax.set_ylabel("RMSE reduction (mm d$^{-1}$)")
     ax.set_xlabel("Flow band, set on each basin's own observed quantiles")
     ax.spines[["top", "right"]].set_visible(False)
-    ax.legend(frameon=False, fontsize=7.2, loc="upper left",
+    ax.legend(frameon=False, fontsize=8.0, loc="upper left",
               bbox_to_anchor=(0.005, 1.02), handletextpad=0.4, labelspacing=0.55)
     ax.margins(x=0.10)
     ax.set_ylim(-0.085, 0.265)
     fig.tight_layout()
     OUT.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(OUT, bbox_inches="tight")
+    XAI_OUT.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(XAI_OUT, bbox_inches="tight")
 
     # Diagnostics for an honest caption -- printed, never hardcoded into the figure.
     print(f"\nwrote {OUT}\n")

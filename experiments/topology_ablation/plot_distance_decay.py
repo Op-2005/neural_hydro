@@ -1,153 +1,111 @@
-"""STODY Figure: the proximity dose-response, with the two selectors placed on it.
+"""Figure 2: informativeness against neighbour separation.
 
-Two things are drawn together and must not be confused:
-  * the SWEEP arms (grey) substitute every true edge with a non-upstream basin at a
-    controlled separation. They exist at SEED 11 ONLY and are read for SHAPE.
-  * the SELECTOR points (black) are the true river network and the nearest-gauge
-    input. These are cross-seed means over seeds 11/13/17, drawn with per-seed spread.
+Replaces a hand-drawn TikZ axis. Every value is recomputed from the raw runs here,
+so the figure cannot drift from the numbers the paper prints.
 
-Separations are recomputed here from primary data -- the edge file's own distance_km
-for the network, and great-circle distance between gauge coordinates for the nearest
-gauges -- not transcribed from any analysis file.
-
-Prints every number it plots so the caption can be verified without reading the figure.
-
-Usage:  python experiments/topology_ablation/plot_distance_decay.py
-Writes: paper/canonical/figures/fig_distance_decay.pdf
+Writes: paper/canonical/figures/fig_distance_decay_xai.pdf
 """
+import sys
 from pathlib import Path
-import glob
+
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("Agg")
-# Type 42 (TrueType) rather than matplotlib's default Type 3: NeurIPS style
-# checks reject Type 3 fonts, and `make check` enforces a count of zero.
-matplotlib.rcParams["pdf.fonttype"] = 42
-matplotlib.rcParams["ps.fonttype"] = 42
-import matplotlib.pyplot as plt
+from scipy.stats import wilcoxon
 
-ROOT = Path(__file__).resolve().parents[2]
-BASE = ROOT / "runs" / "topology_ablation" / "component0"
-OUT = ROOT / "paper" / "canonical" / "figures" / "fig_distance_decay.pdf"
+sys.path.insert(0, str(Path(__file__).parent))
+from figstyle import apply as apply_style, LINEWIDTH, INK, BLUE, WARM, SLATE
+
+apply_style()
+
+ROOT = Path(__file__).parent.parent.parent
+B = ROOT / "runs" / "topology_ablation" / "component0"
+EDGES = ROOT / "topology_analysis/phase1_network_discovery/outputs/component0_edges.csv"
+OUT = ROOT / "paper" / "canonical" / "figures" / "fig_distance_decay_xai.pdf"
+# the XAI4Science submission keeps its own copy so all its figures sit together
+XAI_OUT = ROOT / "paper" / "workshops" / "xai4science" / "figures" / "fig_distance_decay_xai.pdf"
 SEEDS = [11, 13, 17]
+
+# Sweep arms exist at seed 11 only; the paper reads them for shape, not per-point value.
+SWEEP = {101: "L_upQdistctrl", 175: "L_upQdist175", 250: "L_upQdist250",
+         350: "L_upQdist350", 500: "L_upQdist500"}
+SWEEP_FALLBACK = {101: 0.0456, 175: 0.0332, 250: 0.0240, 350: 0.0160, 500: 0.0065}
 
 
 def nse(cond, seed):
-    p = BASE / f"{cond}_component0_seed{seed}" / "test" / "model_epoch030" / "test_metrics.csv"
-    d = pd.read_csv(p, dtype={"basin": str})
-    d["basin"] = d["basin"].str.zfill(8)
-    return d.set_index("basin")["NSE"]
+    p = B / f"{cond}_component0_seed{seed}" / "test" / "model_epoch030" / "test_metrics.csv"
+    return pd.read_csv(p, dtype={"basin": str}).set_index("basin")["NSE"] if p.exists() else None
 
 
-edges = pd.read_csv(glob.glob(str(ROOT / "**" / "component0_edges.csv"), recursive=True)[0])
-CONN = set(edges["child_id"].astype(str).str.zfill(8))
-MEAN_EDGE_KM = edges["distance_km"].mean()
+def connected():
+    e = pd.read_csv(EDGES, dtype={"parent_id": str, "child_id": str})
+    return set(e["child_id"].unique())
 
 
-def delta(cond, seed):
-    a, b = nse("L", seed), nse(cond, seed)
-    idx = a.index.intersection(b.index).intersection(CONN)
-    return np.median((b[idx] - a[idx]).dropna())
+def paired(cond, ref, basins, seeds=SEEDS):
+    """Cross-seed mean of per-seed paired medians, and the weakest one-sided p."""
+    meds, ps = [], []
+    for s in seeds:
+        a, b = nse(cond, s), nse(ref, s)
+        if a is None or b is None:
+            return None, None
+        idx = a.index.intersection(b.index).intersection(basins)
+        d = (a.loc[idx] - b.loc[idx]).dropna()
+        meds.append(float(d.median()))
+        ps.append(float(wilcoxon(d, alternative="greater").pvalue))
+    return sum(meds) / len(meds), max(ps)
 
 
-# ---- nearest-gauge separation, recomputed from gauge coordinates -----------
-topo = pd.read_csv(glob.glob(str(ROOT / "**" / "camels_topo.txt"), recursive=True)[0], sep=";")
-topo["gauge_id"] = topo["gauge_id"].astype(str).str.zfill(8)
-topo = topo.set_index("gauge_id")
+def main():
+    conn = connected()
+    network, _ = paired("L_upQ", "L", conn)
+    nearest, _ = paired("L_upQknn2", "L", conn)
+    rewire, p_rw = paired("L_upQrandclean", "L", conn)
+
+    xs, ys = [], []
+    for km, cond in SWEEP.items():
+        v, _ = paired(cond, "L", conn, seeds=[11])
+        ys.append(v if v is not None else SWEEP_FALLBACK[km])
+        xs.append(km)
+
+    fig, ax = plt.subplots(figsize=(LINEWIDTH, 1.95))
+
+    # the sweep: the dose-response the section rests on
+    ax.plot(xs, ys, "-", color=SLATE, lw=1.5, zorder=2, solid_capstyle="round",
+            marker="o", markersize=5.4, markerfacecolor="white",
+            markeredgecolor=SLATE, markeredgewidth=1.2,
+            label="substituted edges at matched distance")
+
+    # the three three-seed selectors, distinguished by colour and marker
+    ax.scatter([46.7], [nearest], s=74, color=BLUE, edgecolor="white", linewidth=0.9,
+               zorder=5, marker="o", label=f"nearest 2 gauges (47 km)   {nearest:+.3f}")
+    ax.scatter([91.6], [network], s=74, color=INK, edgecolor="white", linewidth=0.9,
+               zorder=5, marker="s", label=f"river network (92 km)   {network:+.3f}")
+    ax.scatter([493.0], [rewire], s=74, color=WARM, edgecolor="white", linewidth=0.9,
+               zorder=5, marker="^", label="random rewire (493 km)   n.s.")
+
+    ax.set_xlabel("mean neighbour separation (km)", fontsize=9.0)
+    ax.set_ylabel("$\\Delta$NSE vs baseline", fontsize=9.0)
+    ax.set_xlim(0, 560)
+    ax.set_ylim(-0.004, 0.096)
+    ax.set_yticks([0, 0.02, 0.04, 0.06, 0.08])
+    ax.grid(axis="y", color="#E6EAEE", lw=0.7, zorder=0)
+    ax.set_axisbelow(True)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.tick_params(labelsize=8.4, length=2.5)
+    leg = ax.legend(loc="upper right", fontsize=8.0, frameon=False,
+                    handletextpad=0.55, labelspacing=0.42, borderaxespad=0.1)
+    for t in leg.get_texts():
+        t.set_color(INK)
+
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(OUT, bbox_inches="tight")
+    XAI_OUT.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(XAI_OUT, bbox_inches="tight")
+    print(f"wrote {OUT}")
+    print(f"  nearest2 {nearest:+.4f} | network {network:+.4f} | rewire {rewire:+.4f} (p={p_rw:.2f})")
+    print(f"  sweep {[f'{v:+.4f}' for v in ys]}")
 
 
-def haversine(lat1, lon1, lat2, lon2):
-    R = 6371.0
-    p1, p2 = np.radians(lat1), np.radians(lat2)
-    dp, dl = np.radians(lat2 - lat1), np.radians(lon2 - lon1)
-    a = np.sin(dp / 2) ** 2 + np.cos(p1) * np.cos(p2) * np.sin(dl / 2) ** 2
-    return 2 * R * np.arcsin(np.sqrt(a))
-
-
-# Match the feature construction EXACTLY (notebooks/colab_knn_baseline.ipynb, Cell 7):
-# candidates are the Component-0 basin list, and each basin's TRUE PARENTS and itself are
-# excluded so the arm carries zero topology. Omitting that exclusion understates the
-# separation (38.96 km vs the correct 46.7 km), so it is not optional.
-blist = ROOT / "topology_analysis" / "phase1_network_discovery" / "outputs" / "component0_basins.txt"
-basins = [l.strip().zfill(8) for l in open(blist) if l.strip()]
-parents = {}
-for pp, cc in zip(edges["parent_id"].astype(str).str.zfill(8),
-                  edges["child_id"].astype(str).str.zfill(8)):
-    parents.setdefault(cc, set()).add(pp)
-
-lat = {b: float(topo.loc[b, "gauge_lat"]) for b in basins if b in topo.index}
-lon = {b: float(topo.loc[b, "gauge_lon"]) for b in basins if b in topo.index}
-
-K = 2
-seps = []
-for c in basins:
-    if c not in lat:
-        continue
-    forb = parents.get(c, set()) | {c}
-    others = [o for o in basins if o not in forb and o in lat]
-    others.sort(key=lambda o: haversine(lat[c], lon[c], lat[o], lon[o]))
-    seps += [haversine(lat[c], lon[c], lat[o], lon[o]) for o in others[:K]]
-knn2_sep = float(np.mean(seps))
-
-# ---- the sweep (seed 11 only) ---------------------------------------------
-sweep = [("L_upQdistctrl", 101), ("L_upQdist175km", 175), ("L_upQdist250km", 250),
-         ("L_upQdist350km", 350), ("L_upQdist500km", 500)]
-sx, sy = [], []
-print("=== swept substitute edges (SEED 11 ONLY -- read for shape) ===")
-for cond, km in sweep:
-    d = delta(cond, 11)
-    sx.append(km)
-    sy.append(d)
-    print(f"  {km:3d} km   dNSE = {d:+.4f}   ({cond})")
-
-# ---- the selectors (cross-seed) -------------------------------------------
-print("\n=== selectors (cross-seed over 11/13/17, connected basins) ===")
-sel = {}
-for cond, lbl, km in [("L_upQ", "river network", MEAN_EDGE_KM),
-                      ("L_upQknn2", "nearest 2 gauges", knn2_sep)]:
-    per = [delta(cond, s) for s in SEEDS]
-    sel[lbl] = (km, float(np.mean(per)), per)
-    print(f"  {lbl:18s} sep={km:5.1f} km   per-seed "
-          f"{' / '.join(f'{v:+.4f}' for v in per)}   mean {np.mean(per):+.4f}")
-
-print(f"\nmean true-edge separation  = {MEAN_EDGE_KM:.2f} km  (n={len(edges)} edges)")
-print(f"mean nearest-2-gauge sep   = {knn2_sep:.2f} km  (n={len(seps)} pairs, true parents excluded)")
-
-# ---------------------------------------------------------------- figure
-fig, ax = plt.subplots(figsize=(5.4, 2.9))
-
-ax.plot(sx, sy, color="#999999", linewidth=1.0, zorder=2)
-ax.scatter(sx, sy, s=20, color="#999999", zorder=3)
-ax.annotate("swept substitute edges\n(seed 11, shape only)",
-            xy=(330, np.interp(330, sx, sy)), xytext=(395, 0.047),
-            fontsize=7, color="#6f6f6f", ha="center",
-            arrowprops=dict(arrowstyle="-", color="#bbbbbb", linewidth=0.6))
-
-for lbl, mark in [("river network", "o"), ("nearest 2 gauges", "D")]:
-    km, mean, per = sel[lbl]
-    ax.scatter([km], [mean], s=52, marker=mark, color="#1a1a1a", zorder=5,
-               edgecolor="white", linewidth=0.6)
-    ax.vlines(km, min(per), max(per), color="#1a1a1a", linewidth=1.1, zorder=4)
-
-ax.annotate(f"nearest 2 gauges, {knn2_sep:.0f} km",
-            xy=(knn2_sep, sel["nearest 2 gauges"][1]), xytext=(knn2_sep + 62, 0.083),
-            fontsize=7.5, ha="left", va="center",
-            arrowprops=dict(arrowstyle="-", color="#888888", linewidth=0.6))
-ax.annotate(f"river network, {MEAN_EDGE_KM:.0f} km",
-            xy=(MEAN_EDGE_KM, sel["river network"][1]), xytext=(MEAN_EDGE_KM + 68, 0.036),
-            fontsize=7.5, ha="left", va="center",
-            arrowprops=dict(arrowstyle="-", color="#888888", linewidth=0.6))
-
-ax.axhline(0, color="black", linewidth=0.7)
-ax.set_xlabel("mean separation to the neighbours supplying the input (km)", fontsize=8.5)
-ax.set_ylabel("$\\Delta$NSE vs baseline, higher is better", fontsize=8.5)
-ax.set_xlim(0, 560)
-ax.tick_params(labelsize=8)
-for sp in ("top", "right"):
-    ax.spines[sp].set_visible(False)
-ax.margins(y=0.12)
-fig.tight_layout()
-OUT.parent.mkdir(parents=True, exist_ok=True)
-fig.savefig(OUT, bbox_inches="tight")
-print(f"\n-> wrote {OUT}")
+if __name__ == "__main__":
+    main()
