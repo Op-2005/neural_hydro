@@ -56,32 +56,4 @@ The rewire figure settles a cross-paper conflict: **492.8 km is correct**; 511 k
 |---|---|---|
 | "XAI suppresses a failed gate: shuffled null seed 13 p=0.0035" | **REJECTED** | For a null, weakest = LARGEST p = 0.471, which the paper prints. 0.0035 is the most *permissive* seed. The reviewer inverted the rule. |
 | "One of the two papers' re-derivations is wrong" | **REJECTED** | Both are real computations differing only by tail. See the both-tails columns above. |
-| "Random rewire separation conflict (492.8 vs 511)" | **RESOLVED** | 492.8 km over 624/624 edges. XAI correct, STODY stale. |
-
-## Alternative metrics (added 2026-09-05, from METRIC_HONESTY.md; derived cells computed here)
-
-| quantity | per-seed 11/13/17 | note |
-|---|---|---|
-| KGE, deployable − L (median per condition) | +0.0064 / **−0.0046** / +0.0138 | **sign-flips at seed 13 → does NOT replicate under the weakest-seed rule** |
-| KGE correlation term r, deployable − L | +0.0179 / +0.0209 / +0.0049 | improves at every seed; timing is where the gain lives |
-| KGE bias β, deployable − L | +0.0219 / −0.0361 / −0.0489 | mixed; part of the damage |
-| KGE variability γ, deployable − L | +0.0070 / −0.0356 / +0.0240 | mixed; part of the damage |
-| log-NSE, deployable − L | +0.0292 (ε=1e-2) → +0.0325 (ε=1e-4) | positive at every ε; null negative throughout |
-
-Paper prints these to 3 dp: KGE +0.006 / −0.005 / +0.014; r +0.018 / +0.021 / +0.005;
-log-NSE range +0.029 to +0.033 (0.0325 rounds half-up).
-
-## Derived geometry (added 2026-09-05)
-
-| quantity | value | source |
-|---|---|---|
-| nearest-2 mean separation, true parents excluded (as built) | **46.7 km** | EDGE_RULE_SENSITIVITY.md |
-| nearest-2 mean separation, no exclusion | **39.0 km** | same — exclusion is CONSERVATIVE, pushes kNN farther |
-| connected basins whose nearest pair contains a true parent | 62 of 150 (41%) | same |
-| stage-1 in-sample NSE, seed 13 | **0.906** (not 0.901) | STAGE1_GAP.md:16 |
-
-## Register addition — REJECTED 2026-09-05
-
-| finding | verdict | why |
-|---|---|---|
-| "7.6e-6 has two provenances: weakest-of-three in one table, seed-11 in another" | **REJECTED** | Same contrast (L_upQ vs L, connected). Its weakest seed *is* seed 11 (7.603e-06), so both labels describe the same number. Not an inconsistency. |
+| "Random rewire separation conflict (492.8 vs 511)" | **RESOLVED** | 492.8 km over 624/624 edges; 511 km is the stale L_upQrand value. |

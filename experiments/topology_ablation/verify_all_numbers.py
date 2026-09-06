@@ -137,7 +137,7 @@ def main():
             "| \"One of the two papers' re-derivations is wrong\" | **REJECTED** | "
             "Both are real computations differing only by tail. See the both-tails columns above. |\n",
             "| \"Random rewire separation conflict (492.8 vs 511)\" | **RESOLVED** | "
-            "492.8 km over 624/624 edges. XAI correct, STODY stale. |\n"]
+            "492.8 km over 624/624 edges; 511 km is the stale L_upQrand value. |\n"]
 
     OUT.write_text("".join(out))
     print(f"wrote {OUT}")

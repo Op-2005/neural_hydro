@@ -33,7 +33,7 @@ as potentially nested:
 | 3 | 39 | +0.0285 / +0.0257 / +0.0276 | 3.2e-02 |
 | 4 | 31 | +0.0265 / +0.0275 / +0.0276 | 1.4e-01 |
 
-The e=4 row is recorded here because the STODY submission cites it (2026-09-04). Note where the
+The e=4 row is recorded here as the conservative elongation case (2026-09-04). Note where the
 weakest-seed rule bites: the effect size is flat across all four elongations (+0.027 to +0.035)
 while significance is lost at e=4, so the binding constraint there is power (n=31), not signal.
 Any text citing the sweep must say that rather than implying significance holds throughout.
