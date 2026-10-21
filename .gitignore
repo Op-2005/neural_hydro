@@ -52,6 +52,10 @@ paper/
 # Paper-review agent: will become its own repo (see review_agent/README.md)
 /review_agent/
 
+# Review tooling for the paper: cross-vendor prompts and setup. Local only.
+# Untracked on 2026-10-21 via `git rm -r --cached scripts/review/` (files NOT deleted).
+/scripts/review/
+
 # Superseded work + pre-prune doc backups. Kept local for provenance, not published.
 # Untracked on 2026-10-20 via `git rm -r --cached archive/` (files were NOT deleted).
 archive/
