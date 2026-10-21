@@ -1,13 +1,13 @@
 # Step C — Metric-Honesty Pass (log-NSE eps-sensitivity + KGE decomposition)
 
-Zero training. Per-timestep obs/sim from `test_results.p`. Pre-reg: `preregistration_hardening_chain.md`.
+Zero training. Per-timestep obs/sim from `test_results.p`. Pre-reg: `../preregistrations/hardening_chain.md`.
 
 > **Oracle-column note (2026-07-16):** the oracle (`L_upQ`) seed-11 `test_results.p` was lost in a
-> drive merge and restored via `notebooks/colab_oracle_seed11_restore.ipynb` (verified on Drive).
+> drive merge and restored via `../notebooks/colab_oracle_completion_and_k2.ipynb` (verified on Drive).
 > The oracle log-NSE column below and the seed-11 oracle KGE row are transcribed from that verified
 > Colab re-run; the restored file lives on Drive (not this Mac), so those specific cells are not
 > yet locally regenerable — everything else is. Re-train reproduced seed-11 oracle NSE within
-> cross-environment noise (0.693 vs recorded 0.703; see `preregistration_baseline_completion_and_k2.md`).
+> cross-environment noise (0.693 vs recorded 0.703; see `../preregistrations/baseline_completion_and_k2.md`).
 
 ## C1 — log-NSE realizable Δ vs eps (stability of the +0.027 headline)
 

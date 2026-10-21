@@ -219,7 +219,7 @@ def main():
         print(f"  {bid}: " + "  ".join(f"{n}={row[n]:+.3f}" for n in preds if n != "basin"))
 
     # Output CSV
-    df.to_csv(ROOT / "experiments" / "analysis_outputs" / "ensemble_analysis.csv", index=False)
+    df.to_csv(ROOT / "experiments" / "analysis" / "outputs" / "ensemble_analysis.csv", index=False)
 
 
 if __name__ == "__main__":

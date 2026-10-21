@@ -1,6 +1,6 @@
 # Depth-Gradient Confound Check — routing (n_upstream) vs size (area)
 
-Per-basin realizable Δ pooled over seeds [11, 13, 17] (n=549 basin×seed). Pre-reg: `preregistration_confound_check.md`.
+Per-basin realizable Δ pooled over seeds [11, 13, 17] (n=549 basin×seed). Pre-reg: `../preregistrations/confound_check.md`.
 
 ## T1 — gain vs n_upstream (the routing variable)
 

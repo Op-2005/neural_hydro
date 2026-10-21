@@ -12,6 +12,6 @@ Production output folder for the 5-condition × 3-seed factorial. **15 run folde
 
 **Cross-reference:** the same runs are symlinked into `../../runs/5cond_factorial/` so that `experiments/analysis/compare_5conditions.py` can discover them via its expected `RUN_ROOT`. Either path resolves to the same files.
 
-**Headline results:** see `../../5cond_run_analysis.md` (results digest) and `../../experiments/analysis_outputs/5cond_component0/RESULTS.md` (auto-generated, full statistical tables + figures).
+**Headline results:** see `../analysis/5cond_run_analysis.md` (results digest) and `../../../experiments/analysis/outputs/5cond_component0/RESULTS.md` (auto-generated, full statistical tables + figures).
 
 **Reproduction:** Colab notebook `../notebooks/colab_5cond_run.ipynb` on T4 GPU. Each graph variant takes ~30–90 min per seed; L runs ~3 min per seed.

@@ -17,9 +17,9 @@ was head-orthogonality, not true state-space recovery — a weaker but
 still useful finding.
 
 Outputs:
-  experiments/analysis_outputs/e0/state_space_recovery.png
-  experiments/analysis_outputs/e0/state_space_recovery.csv
-  experiments/analysis_outputs/e0/state_space_decision.json
+  experiments/analysis/outputs/e0/state_space_recovery.png
+  experiments/analysis/outputs/e0/state_space_recovery.csv
+  experiments/analysis/outputs/e0/state_space_decision.json
 """
 import json
 import sys
@@ -45,7 +45,7 @@ from e0_self_stabilization import warm_start_from_baseline_ckpt, step_forward
 
 BASELINE_DIR = ROOT / "runs" / "05_lstm_23basin_strong_baseline"
 BASIN_FILE = ROOT / "experiments" / "basin_lists" / "study_network_basins.txt"
-OUT_DIR = ROOT / "experiments" / "analysis_outputs" / "dynamical_systems_probes" / "e0"
+OUT_DIR = ROOT / "experiments" / "analysis" / "outputs" / "dynamical_systems_probes" / "e0"
 HIDDEN_SIZE = 64
 DROPOUT = 0.4
 DEVICE = torch.device("cpu")

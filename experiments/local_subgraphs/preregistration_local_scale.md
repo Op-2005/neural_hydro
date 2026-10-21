@@ -1,7 +1,7 @@
 # Pre-registration — Local-Scale Test (does graph signal reappear below 183 basins?)
 
 **Status:** Pre-registered 2026-06-20, before observing any local-subgraph results.
-**Framework:** `../5cond_factorial/analysis/post_meeting_plan.md` Phases 2–3.
+**Framework:** `5cond_run_analysis.md` Phases 2–3.
 **Author session:** `/crs` 2026-06-20.
 
 ---

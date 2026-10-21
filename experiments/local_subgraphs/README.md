@@ -1,103 +1,21 @@
-# Local-Subgraph Batch — Finding the Right Scale
+# local_subgraphs — was the network simply too large?
 
-**Created:** 2026-05-13 (post-professor-meeting).
-**Status:** methodology step toward the paper. Colab/GPU for the full sweep (~30–60 min on T4); CPU-local for quick single-subgraph iteration.
+After the 5-condition factorial found that graph features and message passing *hurt* at 183-basin
+scale, the natural objection was scale itself: 183 basins span several HUC regions, so a graph
+signal might wash out across that heterogeneity. This experiment tested that by rebuilding the
+same comparison on smaller, climatically coherent regional subgraphs.
 
-## The hypothesis
+**What it settled: scale was not the explanation.** The same pattern appeared on single regional
+subgraphs, which pointed at the experimental design rather than the size of the network. Together
+with the architecture post-mortem, that is what triggered the restart as a controlled
+input-only ablation.
 
-The 5-condition factorial on 183 basins (spanning 6 HUC regions) found that graph
-features and message passing *hurt* relative to a plain LSTM. The meeting takeaway:
+- `build_local_subgraphs.py` partitions the study network into regional subgraphs and writes the
+  basin and edge lists under `basin_lists/`, with `subgraph_manifest.csv` as the inventory.
+- `run_subgraph_sweep.py` (and `run_all_local.sh`) trains the conditions per subgraph.
+- `analyze_subgraphs.py` compares them; `analysis/INVARIANT.md` records what held across subgraphs.
+- `preregistration_local_scale.md` is the hypothesis as written before the runs.
 
-> **183 basins may be fundamentally too large** for the LSTM to benefit from graph
-> structure. The signal washes out across a heterogeneous, multi-region network.
-> Test on small, locally-coherent subgraphs where graph structure should matter.
-
-This batch builds the optimized small-scale testing environment to find the scale
-at which graph signal reappears (if it does). That's the methodology path: establish
-the right unit of analysis *before* committing GPU time to large runs.
-
-## How to run — Colab (GPU, recommended) or local (CPU)
-
-The DirectedGraphLSTM forward pass is a per-timestep Python loop, which GPU
-accelerates heavily — the full 54-training batch is ~30–60 min on a T4 vs several
-hours on CPU. **Use the Colab notebook** (`notebooks/colab_local_subgraphs_run.ipynb`)
-for the full sweep; it's the same connect-GitHub → Run all → save-to-Drive workflow
-as the 5cond run.
-
-CPU-local (`run_all_local.sh`) is kept for quick single-subgraph iteration when you
-don't want to spin up Colab.
-
-## The tracked invariant
-
-Per the professor: report the **loss distribution across 3 seeds** as the stable
-quantity. Concretely: per-seed median NSE → **mean ± std across seeds**. As we revise
-the model and the data, the mean should improve while the std stays roughly constant.
-`analyze_subgraphs.py` computes this.
-
-The single number that answers the paper question: **G+T+M − L** (paired per-basin
-median ΔNSE) per subgraph. Positive ⇒ graph features beat the standard LSTM there.
-
-## The 6 subgraphs
-
-Built by a shortest-path walker on the basin distance graph (the professor's
-prescription: "make the basin graph with distances, use a shortest-path walker,
-choose a node, trim within shortest-path distance — guaranteed local geography").
-Seeds are pre-committed (fixed standard test set, not re-randomized per run).
-
-| Subgraph | Basins | HUCs | Seed basin |
-|---|---|---|---|
-| sg_midatlantic | 16 | 02/05 | 01594950 |
-| sg_ohio | 15 | 02/05 | 03026500 |
-| sg_tennessee | 15 | 03/06 | 03455500 |
-| sg_southeast | 13 | 02/03 | 02055100 |
-| sg_northeast | 16 | 02/04 | 01516500 |
-| sg_texas_pilot | 23 | 12 (one region) | historical pilot |
-
-`sg_texas_pilot` is the climate-coherent anchor where the original +0.078 NSE was seen.
-
-## Conditions (minimal informative set)
-
-| ID | What |
-|---|---|
-| L | NH cudalstm baseline (field standard) |
-| G | DirectedGraphLSTM, empty edges (architecture-matched control) |
-| G+T+M | DirectedGraphLSTM, full edges + topology features (the full model) |
-
-G+T and G+M are dropped from the default to keep iteration fast; add them back per
-subgraph via `--conditions L G G_T G_M G_T_M` once a subgraph is chosen for a deeper dive.
-
-## How to run (local)
-
-```bash
-# All 6 subgraphs, 3 conditions, 3 seeds (~15-30 min on CPU):
-bash experiments/local_subgraphs/run_all_local.sh
-
-# One subgraph:
-bash experiments/local_subgraphs/run_all_local.sh sg_northeast
-
-# Override knobs:
-SEEDS="11 13" CONDITIONS="L G" bash experiments/local_subgraphs/run_all_local.sh
-```
-
-Idempotent — completed runs skip. Outputs land in `runs/local_subgraphs/<sg>/<cond>_seed<N>/`.
-
-## Files
-
-| File | Purpose |
-|---|---|
-| `build_local_subgraphs.py` | Shortest-path-walker subgraph generator. Writes `basin_lists/`. |
-| `run_subgraph_sweep.py` | Trains L + graph conditions for one subgraph × seeds. CPU by default. |
-| `run_all_local.sh` | One-command local entry point: build → sweep all → analyze. |
-| `analyze_subgraphs.py` | Computes the 3-seed loss-distribution invariant + G+T+M−L contrast. Writes `analysis/INVARIANT.md`. |
-| `basin_lists/` | The 6 subgraph basin/edge files + `subgraph_manifest.csv`. |
-| `configs/` | Auto-generated per-subgraph L configs. |
-| `analysis/` | Invariant table, contrasts, INVARIANT.md. |
-| `notebooks/colab_local_subgraphs_run.ipynb` | Colab GPU sweep — connect GitHub, Run all, saves to Drive. The recommended path for the full batch. |
-
-## Where this sits in the paper methodology
-
-1. 5cond factorial (183 basins) → graph hurts. **[done]**
-2. **This batch: does graph help at local scale? Find the right unit of analysis. [now]**
-3. If yes → deepen the factorial + architectural revisions on the winning scale (Phase 4 of `../5cond_factorial/analysis/post_meeting_plan.md`).
-4. Scale the winning config back up (Colab/GPU) → confirm it holds.
-5. Robustness (NHDPlus edges, seed expansion, out-of-time) → paper.
+The subgraph basin and edge lists are still read by some feature builders in
+`../topology_ablation/` when a non-`component0` network is requested. The paper uses `component0`
+only, so that branch is never taken for any reported result.

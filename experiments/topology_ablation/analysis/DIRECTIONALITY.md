@@ -1,6 +1,6 @@
 # Directionality & Topology-Specificity Controls (the Kirschstein mirror test)
 
-Seed 11, observed discharge, lag 1, stock cudalstm; only the edge set defining `upstream_q` changes. Δ paired vs L on the forward-connected basins (n=150). Pre-reg: `preregistration_directionality_controls.md`.
+Seed 11, observed discharge, lag 1, stock cudalstm; only the edge set defining `upstream_q` changes. Δ paired vs L on the forward-connected basins (n=150). Pre-reg: `../preregistrations/directionality_controls.md`.
 
 ## Δ vs L by edge set
 

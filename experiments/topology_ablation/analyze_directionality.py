@@ -6,7 +6,7 @@ river TOPOLOGY, or is it generic spatial correlation? (Kirschstein 2024: GNNs ar
 direction-insensitive — the failure mode. If our feature is direction-sensitive, we exhibit
 the property whose absence explains the GNN null.)
 
-Pre-reg: preregistration_directionality_controls.md.
+Pre-reg: preregistrations/directionality_controls.md.
 Writes analysis/DIRECTIONALITY.md.
 """
 import pickle
@@ -55,7 +55,7 @@ def main():
     md = ["# Directionality & Topology-Specificity Controls (the Kirschstein mirror test)", "",
           f"Seed {SEED}, observed discharge, lag 1, stock cudalstm; only the edge set defining "
           f"`upstream_q` changes. Δ paired vs L on the forward-connected basins (n={len(conn)}). "
-          "Pre-reg: `preregistration_directionality_controls.md`.", "",
+          "Pre-reg: `preregistrations/directionality_controls.md`.", "",
           "## Δ vs L by edge set", "",
           "| edge set | aggregates | median Δ NSE | frac>0 | Wilcoxon p vs L |",
           "|---|---|---|---|---|"]

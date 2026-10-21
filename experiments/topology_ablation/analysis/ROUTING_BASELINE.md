@@ -1,6 +1,6 @@
 # Step A — No-ML Routing Baseline (the reviewer baseline)
 
-Zero training. Least-squares routing coefficients fit on TRAIN 1990-1999, applied to TEST 2005-2008 (no test-period fitting). Seed 11 (fullspan eval available). Connected basins only (those with upstream). Pre-reg: `preregistration_routing_baseline_chain.md`.
+Zero training. Least-squares routing coefficients fit on TRAIN 1990-1999, applied to TEST 2005-2008 (no test-period fitting). Seed 11 (fullspan eval available). Connected basins only (those with upstream). Pre-reg: `../preregistrations/routing_baseline_chain.md`.
 
 ## Median test NSE on connected basins (n=150)
 

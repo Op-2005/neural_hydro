@@ -45,11 +45,11 @@ Pre-registered success criterion (idea1.md §E0):
                  after T.
 
 Outputs:
-    experiments/analysis_outputs/e0/probe_a_recovery.csv
-    experiments/analysis_outputs/e0/probe_b_forcing.csv
-    experiments/analysis_outputs/e0/probe_a_recovery.png
-    experiments/analysis_outputs/e0/probe_b_forcing.png
-    experiments/analysis_outputs/e0/decision_record.json
+    experiments/analysis/outputs/e0/probe_a_recovery.csv
+    experiments/analysis/outputs/e0/probe_b_forcing.csv
+    experiments/analysis/outputs/e0/probe_a_recovery.png
+    experiments/analysis/outputs/e0/probe_b_forcing.png
+    experiments/analysis/outputs/e0/decision_record.json
 
 Usage:
     /Applications/anaconda3/envs/nh/bin/python experiments/probes/e0_self_stabilization.py
@@ -79,7 +79,7 @@ from train_graph_lstm import DirectedGraphLSTM, load_basin_data
 
 DEFAULT_BASELINE_DIR = ROOT / "runs" / "05_lstm_23basin_strong_baseline"
 BASIN_FILE = ROOT / "experiments" / "basin_lists" / "study_network_basins.txt"
-OUT_DIR = ROOT / "experiments" / "analysis_outputs" / "dynamical_systems_probes" / "e0"
+OUT_DIR = ROOT / "experiments" / "analysis" / "outputs" / "dynamical_systems_probes" / "e0"
 
 HIDDEN_SIZE = 64
 DROPOUT = 0.4

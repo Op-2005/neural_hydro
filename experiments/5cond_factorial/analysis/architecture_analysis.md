@@ -1,7 +1,7 @@
 # Architecture Analysis — Why Our Advanced Features Underperform
 
 **Date:** 2026-05-12
-**Scope:** Deep technical critique of (a) the DirectedGraphLSTM model, (b) the 5 topology static features, (c) the message-passing mechanism, (d) the training pipeline that produces all 4 graph variants. Companion to `5cond_run_analysis.md` (results) and `testing_framework_proposal.md` (fix plan).
+**Scope:** Deep technical critique of (a) the DirectedGraphLSTM model, (b) the 5 topology static features, (c) the message-passing mechanism, (d) the training pipeline that produces all 4 graph variants. Companion to `5cond_run_analysis.md` (results) and `architecture_analysis.md` (fix plan).
 
 **Central question:** the paper claim is "our added features outperform a standard LSTM on discharge prediction." Currently we have G+T+M < G+M ≈ G+T < G < L. We are losing on *both* axes: against the architecture-matched control (G) AND against the cudalstm reference baseline (L). This document audits *each component* of the design and identifies the load-bearing defects.
 
@@ -153,7 +153,7 @@ Result: the topology features are *redundant signal in low-dimensional drag-alon
 
 **With basin one-hot encoding ON: topology features are redundant ⇒ G+T − G ≈ 0 (confirmed).**
 
-**Predicted behavior with basin one-hot encoding OFF (an experiment we haven't run): topology features should become non-redundant and provide a *real* lift.** This is testable cheaply (see `testing_framework_proposal.md` Step 2).
+**Predicted behavior with basin one-hot encoding OFF (an experiment we haven't run): topology features should become non-redundant and provide a *real* lift.** This is testable cheaply (see `architecture_analysis.md` Step 2).
 
 ---
 

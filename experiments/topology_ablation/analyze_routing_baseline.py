@@ -107,7 +107,7 @@ def main():
           "Zero training. Least-squares routing coefficients fit on TRAIN 1990-1999, applied to "
           "TEST 2005-2008 (no test-period fitting). Seed 11 (fullspan eval available). "
           "Connected basins only (those with upstream). Pre-reg: "
-          "`preregistration_routing_baseline_chain.md`.", ""]
+          "`preregistrations/routing_baseline_chain.md`.", ""]
     md += [f"## Median test NSE on connected basins (n={len(common)})", "",
            "| predictor | median NSE | note |", "|---|---|---|",
            f"| **R1 — pure routing** (a·upstream_q + b) | {r1.median():+.4f} | no ML, upstream flow only |",

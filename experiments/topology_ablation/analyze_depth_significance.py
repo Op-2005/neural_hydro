@@ -45,7 +45,7 @@ def main():
     md = ["# Step B — Per-Depth Significance of the Realizable Gain", "",
           f"Zero training. Realizable per-basin Δ (L+upQ_pred − L) pooled seeds {SEEDS} "
           f"(n={len(df)} basin×seed). Per-depth paired Wilcoxon signed-rank, one-sided "
-          f"(H1: Δ>0). Pre-reg: `preregistration_routing_baseline_chain.md`.", "",
+          f"(H1: Δ>0). Pre-reg: `preregistrations/routing_baseline_chain.md`.", "",
           "| depth | n | median Δ | Wilcoxon p (1-sided) | significant (p<0.05) |",
           "|---|---|---|---|---|"]
     sig = {}

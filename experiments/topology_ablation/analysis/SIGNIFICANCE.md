@@ -1,6 +1,6 @@
 # Step A — Statistical Significance of the Deployable Gain
 
-Zero training. Paired per-basin NSE deltas, pooled seeds [11,13,17], Component 0. Wilcoxon signed-rank, one-sided (H1: realizable improves). Pre-reg: `preregistration_hardening_chain.md`.
+Zero training. Paired per-basin NSE deltas, pooled seeds [11,13,17], Component 0. Wilcoxon signed-rank, one-sided (H1: realizable improves). Pre-reg: `../preregistrations/hardening_chain.md`.
 
 ## Pooled tests (n=549 basin×seed)
 

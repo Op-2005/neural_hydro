@@ -3,7 +3,7 @@
 Zero training compute. Reads stored per-basin NSE (test_metrics.csv) for
 L / L_upQpred / L_upQshuf across seeds [11,13,17], Component 0.
 
-Tests (pre-registered in preregistration_hardening_chain.md):
+Tests (pre-registered in preregistrations/hardening_chain.md):
   - realizable-vs-L: paired Wilcoxon signed-rank on per-basin (upQpred - L), pooled seeds.
   - realizable-vs-null: paired Wilcoxon on per-basin ((upQpred-L) - (upQshuf-L)) = (upQpred-upQshuf).
   - effect size: median Δ, fraction positive, bootstrap 95% CI on the median.
@@ -79,7 +79,7 @@ def main():
     md.append("")
     md.append("Zero training. Paired per-basin NSE deltas, pooled seeds [11,13,17], Component 0. "
               "Wilcoxon signed-rank, one-sided (H1: realizable improves). "
-              "Pre-reg: `preregistration_hardening_chain.md`.")
+              "Pre-reg: `preregistrations/hardening_chain.md`.")
     md.append("")
     md.append("## Pooled tests (n={} basin×seed)".format(len(real_minus_L)))
     md.append("")

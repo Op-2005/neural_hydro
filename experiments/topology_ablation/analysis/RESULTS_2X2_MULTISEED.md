@@ -3,7 +3,7 @@
 Seeds 11/13/17, stock cudalstm, Component 0 (183 basins). Supersedes the single-seed `RESULTS.md`
 2×2 for the paper. The 2×2 varies only `use_basin_id_encoding` (one-hot on/off) and the 5 topology
 static features (graph_depth, n_upstream, total_upstream_area, in_degree, frac_upstream_area).
-Pre-reg: `preregistration_upstream_signal.md` context + the original 2×2 pre-reg.
+Pre-reg: `../preregistrations/upstream_signal.md` context + the original 2×2 pre-reg.
 
 ## Per-condition median NSE (per seed)
 

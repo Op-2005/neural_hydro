@@ -8,7 +8,7 @@ effect", not routing).
 feature magnitude := per-basin mean |upstream_q| from the lag-1 PREDICTED feature pickle
 (the realizable feature actually fed to the model).
 
-Checks (pre-registered in preregistration_hardening_chain.md):
+Checks (pre-registered in preregistrations/hardening_chain.md):
   - depth>=2 median Delta vs depth0 median Delta WITHIN each feature-magnitude tercile.
   - Spearman corr(Delta, depth), and PARTIAL corr(Delta, depth | area, feature-magnitude).
   - clarifies the CONFOUND.md tension: depth vs raw n_upstream vs feature magnitude.
@@ -84,7 +84,7 @@ def main():
     md = ["# Step B — Routing vs Feature-Magnitude Confound", "",
           f"Zero training. Per-basin realizable Delta pooled seeds {SEEDS} (n={len(df)} basin×seed). "
           "feature magnitude = per-basin mean |upstream_q| (lag-1 predicted feature). "
-          "Pre-reg: `preregistration_hardening_chain.md`.", ""]
+          "Pre-reg: `preregistrations/hardening_chain.md`.", ""]
 
     # --- feature-magnitude terciles among basins WITH upstream (fmag>0) ---
     connected = df[df.fmag > 0].copy()

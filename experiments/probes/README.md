@@ -1,40 +1,26 @@
-# Probes
+# probes — does the trained LSTM behave as a self-stabilizing system?
 
-Diagnostic scripts that probe **trained-model behavior** as a dynamical
-system, distinct from the analysis scripts in `../analysis/` (which
-compare aggregated metrics across runs). Probes do not produce new runs;
-they re-evaluate existing checkpoints under controlled perturbations to
-test specific claims about how the model behaves at inference.
+Diagnostic scripts that probe a **trained model's behaviour**, as opposed to the metric comparisons
+in `../analysis/`. They create no runs: each re-evaluates an existing checkpoint under a controlled
+perturbation. Outputs land under `../analysis/outputs/dynamical_systems_probes/`.
 
-| File | What it tests | Pre-registered in | Outputs |
-|---|---|---|---|
-| `e0_self_stabilization.py` | Whether the trained baseline LSTM exhibits self-stabilizing dynamics — the load-bearing claim of the dynamical-systems framing in `../../idea1.md`. Two probes: hidden-state perturbation recovery (Probe A) and forcing replacement (Probe B). | `idea1.md` §E0 | `../analysis_outputs/e0/` (decision_record.json, CSVs, PNGs) — see `../analysis_outputs/e0/NOTES.md` |
+## Why these exist
 
-## How probes differ from analysis scripts
+They came out of the April 2026 PI meeting, whose framing was that a rolled-out LSTM tends to settle
+into its own self-consistent dynamics, so the interesting question is what *external* information
+can knock it out of that regime.
 
-| | `analysis/` | `probes/` |
-|---|---|---|
-| Reads | `runs/<n>/test_metrics.csv` | `runs/<n>/model_*.pt` (weights) |
-| Operates on | Aggregated per-basin metrics | Live model rollouts at inference |
-| Tests | "Did model A beat model B?" | "How does model A *behave*?" |
-| Result form | Comparison tables, correlation matrices, hydrographs | Decision records, behavior curves |
+**What they found: the model is strongly self-stabilizing** — perturbations to the hidden state are
+absorbed within a step or two. That result is why the project stopped asking whether the graph could
+be injected into the model's internals and started asking which external input the model can
+actually use, which is the question the current study answers.
 
-If you are adding a new diagnostic experiment that loads a checkpoint and
-runs the model in a custom way (perturbation injection, ablation in the
-forward pass, intervention on hidden states), it goes here. If you are
-adding a new way to *summarize* metrics across existing runs, it goes in
-`../analysis/`.
+## The probes
 
-## Running probes
+| Script | What it perturbs |
+|---|---|
+| `e0_self_stabilization.py` | The hidden state (does the trajectory recover?) and the meteorological forcings (does the model track them or its own momentum?). |
+| `e0_state_space_recovery.py` | Whether the state trajectory returns to its attractor, and how fast. |
 
-From the repo root:
-
-```bash
-# E0 — self-stabilization on the strong baseline (run-05)
-/Applications/anaconda3/envs/nh/bin/python experiments/probes/e0_self_stabilization.py
-```
-
-The script's perturbation σ is set at the top of the file
-(`PERTURB_SIGMA_FRAC`). The pre-registered canonical run is σ=0.5; a
-sensitivity check at σ=2.0 has also been run and saved with `_sigma_2_0`
-suffixes in `../analysis_outputs/e0/`.
+The `run_e0_multiseed.sh` and `run_e0_5_multiseed.sh` wrappers sweep seeds. The output folder's
+`NOTES.md` records what each probe concluded.

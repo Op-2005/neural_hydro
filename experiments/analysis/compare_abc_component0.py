@@ -3,7 +3,7 @@
 Reads the test_metrics.csv files from runs 14 (Condition A), 15 (Condition B),
 and 16 (Condition C — pending) and produces:
 
-  experiments/analysis_outputs/abc_component0/
+  experiments/analysis/outputs/abc_component0/
     summary.json                    cross-condition median NSE + per-basin Δ stats
     per_basin_long.csv              one row per (condition, seed, basin)
     per_basin_deltas.csv            wide table with A, B, C per-basin NSE + B-A, C-A, C-B
@@ -31,7 +31,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).parent.parent.parent
-OUT_DIR = ROOT / "experiments" / "analysis_outputs" / "abc_component0"
+OUT_DIR = ROOT / "experiments" / "analysis" / "outputs" / "abc_component0"
 
 # Glob patterns: {seed} fills in seed number. Each pattern picks up either the
 # numbered run (run 14/15/16) for seed=42, OR the multi-seed-suffix runs added later.

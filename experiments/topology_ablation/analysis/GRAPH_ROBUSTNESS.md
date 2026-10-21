@@ -1,6 +1,6 @@
 # Graph-Robustness Chain — is the routing signal an over-connectivity artifact?
 
-ZERO training. upstream_q rebuilt on alternative graphs from observed discharge; signal strength scored via no-ML lstsq routing baseline (R1: Qhat=a·upstream_q+b, fit TRAIN 1990-99, scored TEST 2005-08, median over connected basins). Pre-reg: `preregistration_graph_robustness_chain.md`.
+ZERO training. upstream_q rebuilt on alternative graphs from observed discharge; signal strength scored via no-ML lstsq routing baseline (R1: Qhat=a·upstream_q+b, fit TRAIN 1990-99, scored TEST 2005-08, median over connected basins). Pre-reg: `../preregistrations/graph_robustness_chain.md`.
 
 **Full graph** (624 edges, in-degree mean 4.16 / max 15): R1 median test-NSE = **+0.3250** (n=150 connected basins).
 

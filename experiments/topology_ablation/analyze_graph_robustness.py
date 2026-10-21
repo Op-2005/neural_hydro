@@ -12,7 +12,7 @@ Step A: prune to k nearest (or largest-area) parents per child; does R1 NSE surv
 Step B: does the depth hierarchy survive k=2 pruning?
 Step C: random edge-dropout sensitivity (5 draws, 20% and 40%).
 
-Pre-reg: preregistration_graph_robustness_chain.md.
+Pre-reg: preregistrations/graph_robustness_chain.md.
 Writes analysis/GRAPH_ROBUSTNESS.md.
 """
 import pickle
@@ -119,7 +119,7 @@ def main():
           "ZERO training. upstream_q rebuilt on alternative graphs from observed discharge; "
           "signal strength scored via no-ML lstsq routing baseline (R1: Qhat=a·upstream_q+b, "
           "fit TRAIN 1990-99, scored TEST 2005-08, median over connected basins). "
-          "Pre-reg: `preregistration_graph_robustness_chain.md`.", ""]
+          "Pre-reg: `preregistrations/graph_robustness_chain.md`.", ""]
 
     # ---------- baseline: full graph ----------
     feats_full, G_full = build_upstream_q(edges, basins, obs, area)

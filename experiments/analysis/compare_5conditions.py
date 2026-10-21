@@ -4,7 +4,7 @@ Reads the 15 runs from `runs/5cond_factorial/` (5 conditions × 3 seeds), recomp
 NSE / KGE / log-NSE consistently from raw predictions for every condition, then
 produces:
 
-  experiments/analysis_outputs/5cond_component0/
+  experiments/analysis/outputs/5cond_component0/
     summary.json                  cross-seed medians + bootstrap 95% CIs per (condition, metric)
     per_basin_long.csv            one row per (condition, seed, basin, metric)
     per_basin_wide.csv            wide table: per-basin NSE/KGE/logNSE for all 5 conditions
@@ -34,7 +34,7 @@ import pandas as pd
 
 ROOT = Path(__file__).parent.parent.parent
 RUN_ROOT = ROOT / "runs" / "5cond_factorial"
-OUT_DIR = ROOT / "experiments" / "analysis_outputs" / "5cond_component0"
+OUT_DIR = ROOT / "experiments" / "analysis" / "outputs" / "5cond_component0"
 DEPTH_FILE = ROOT / "topology_analysis" / "phase1_network_discovery" / "outputs" / "component0_depth.csv"
 
 # Condition definitions: (cond_id, run-folder-prefix, source)

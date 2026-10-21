@@ -63,7 +63,7 @@ def detect_baseline(graph_run_dir):
         return STRONG_BASELINE
     return Path(baseline_str) if baseline_str else STRONG_BASELINE
 
-OUT_DIR = ROOT / "experiments" / "analysis_outputs"
+OUT_DIR = ROOT / "experiments" / "analysis" / "outputs"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 DEVICE = torch.device("cpu")

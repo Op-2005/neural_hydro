@@ -1,7 +1,7 @@
 # Pre-registration — Step 1: Matched-Budget L Control
 
 **Status:** Pre-registered 2026-05-12, before any data is observed.
-**Framework reference:** `experiments/5cond_factorial/analysis/testing_framework_proposal.md` §3, Step 1.
+**Framework reference:** `architecture_analysis.md` §3, Step 1.
 **Author session:** `/crs-unleashed` 2026-05-12.
 
 ---
@@ -58,7 +58,7 @@ Re-run seed 11 with a **different effective batch size** that produces 420 steps
 ## Reporting protocol
 
 - Append results to this file under a "Results (post-run)" section, dated.
-- Update `experiments/analysis_outputs/5cond_component0/RESULTS.md` with the L_420 row.
+- Update `experiments/analysis/outputs/5cond_component0/RESULTS.md` with the L_420 row.
 - Append concise audit entry to `CURRENT_STATE.md`.
 - Append result-and-interpretation entry to `JOURNAL.md`.
 - Commit and push (`eff54e2`-style commit message).

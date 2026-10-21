@@ -62,7 +62,7 @@ def kge_components(o, s):
 def main():
     md = ["# Step C — Metric-Honesty Pass (log-NSE eps-sensitivity + KGE decomposition)", "",
           "Zero training. Per-timestep obs/sim from `test_results.p`. "
-          "Pre-reg: `preregistration_hardening_chain.md`.", ""]
+          "Pre-reg: `preregistrations/hardening_chain.md`.", ""]
 
     # ---------- (1) log-NSE eps sweep ----------
     md += ["## C1 — log-NSE realizable Δ vs eps (stability of the +0.027 headline)", "",

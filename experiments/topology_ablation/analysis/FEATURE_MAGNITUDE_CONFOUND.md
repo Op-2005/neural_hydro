@@ -1,6 +1,6 @@
 # Step B — Routing vs Feature-Magnitude Confound
 
-Zero training. Per-basin realizable Delta pooled seeds [11, 13, 17] (n=549 basin×seed). feature magnitude = per-basin mean |upstream_q| (lag-1 predicted feature). Pre-reg: `preregistration_hardening_chain.md`.
+Zero training. Per-basin realizable Delta pooled seeds [11, 13, 17] (n=549 basin×seed). feature magnitude = per-basin mean |upstream_q| (lag-1 predicted feature). Pre-reg: `../preregistrations/hardening_chain.md`.
 
 ## T1 — feature magnitude vs depth (structural direction check)
 

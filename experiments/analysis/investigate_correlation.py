@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 ROOT = Path(__file__).parent.parent.parent
 
 # Load per-basin data
-df = pd.read_csv(ROOT / "experiments" / "analysis_outputs" / "per_basin_analysis.csv",
+df = pd.read_csv(ROOT / "experiments" / "analysis" / "outputs" / "per_basin_analysis.csv",
                   dtype={"basin": str})
 edges = pd.read_csv(ROOT / "topology_analysis/phase1_network_discovery/outputs/study_network_edges.csv",
                      dtype={"parent_id": str, "child_id": str})

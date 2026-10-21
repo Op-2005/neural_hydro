@@ -11,8 +11,25 @@ supplied.
 |---|---|
 | `analysis/VERIFIED_NUMBERS.md` | **Every load-bearing number, with both tails.** Generated, not hand-written. Cite a row rather than recomputing. |
 | `verify_all_numbers.py` | Regenerates that file from the raw runs. Run this after any change to `runs/`. |
-| `analysis/*.md` | One file per result, each naming the script that produces it. |
-| `preregistration_*.md` | Hypotheses and falsification criteria, written before the runs. |
+| `analysis/README.md` | What each result file establishes — **and which carry an interpretation we later retired.** Read it before quoting any single one. |
+| `preregistrations/` | Hypotheses and falsification criteria, one per experiment, written before its runs. |
+
+## Finding your way around the scripts
+
+They are named by what they do, so the prefix is the index:
+
+| Prefix | Role |
+|---|---|
+| `build_*` | Construct an input feature file from the committed basin and edge lists. One per input family. |
+| `run_*` | Train and evaluate a condition: writes its config, trains, renames the run to its canonical name, evaluates. Idempotent — an finished run is skipped. |
+| `analyze_*` | Read stored run outputs and write one `analysis/*.md`. Train nothing, so they are cheap and safe to re-run. |
+| `plot_*` | Build a paper figure, recomputing its values from the raw runs at plot time. |
+| `verify_all_numbers.py` | Regenerate `analysis/VERIFIED_NUMBERS.md`, the single source of truth. |
+| `recompute_xai4science.py` | Regenerate the submission's numbers directly from run metrics. |
+| `validate_edges_nhdplus.py` | Check the inferred edges against NHDPlus via USGS NLDI. |
+
+`features/` holds the generated input files (large, gitignored, rebuilt by the `build_*` scripts);
+`configs/` the generated run configs; `notebooks/` the Colab notebooks that ran the GPU work.
 
 ## Conditions
 
@@ -55,7 +72,8 @@ cannot drift from the numbers it reports. Shared typography and palette live in
 
 ## Scope
 
-183 eastern-US CAMELS basins forming one connected component of an inferred river network.
-Edges are heuristic — area ratio ≥ 1.5, decreasing elevation, within 150 km — not surveyed
-hydrography such as NHDPlus. Three seeds. Effects are a few hundredths of NSE. These bounds
+One connected component of an inferred river network in the eastern United States. The edges are
+heuristic — inferred from drainage area, elevation and a distance cap rather than surveyed
+hydrography; `topology_analysis/` defines the rule and `analysis/NHDPLUS_VALIDATION.md` measures how
+much real connectivity it recovers. Three seeds. Effects are a few hundredths of NSE. These bounds
 are real and are stated wherever the results are reported.

@@ -1,6 +1,6 @@
 # k=2 Pruned-Graph LSTM Check — the definitive (model-level) graph result
 
-Colab-trained runs on the **in-degree≤2 nearest-parent pruned graph** (266 edges vs 624; hydrography-realistic — real confluences join 2-3 tributaries), seeds [11, 13, 17]. This confirms at the LSTM level what the 2026-07-14 GRAPH_ROBUSTNESS chain showed for the R1 lstsq proxy. Pre-reg: `preregistration_baseline_completion_and_k2.md` (Part 3). *3-seed re-analysis (2026-08): the seeds 13/17 runs were already on disk; this is a zero-training re-run, no GPU.*
+Colab-trained runs on the **in-degree≤2 nearest-parent pruned graph** (266 edges vs 624; hydrography-realistic — real confluences join 2-3 tributaries), seeds [11, 13, 17]. This confirms at the LSTM level what the 2026-07-14 GRAPH_ROBUSTNESS chain showed for the R1 lstsq proxy. Pre-reg: `../preregistrations/baseline_completion_and_k2.md` (Part 3). *3-seed re-analysis (2026-08): the seeds 13/17 runs were already on disk; this is a zero-training re-run, no GPU.*
 
 ## Paired Δ vs L, connected basins (n=150), 3 seeds
 

@@ -2,7 +2,7 @@
 
 Seeds 11/13/17, observed/predicted-Q as noted, stock cudalstm. Supersedes the single-seed
 `DIRECTIONALITY.md` and `K2_GRAPH_CHECK.md` framings. Pre-reg:
-`preregistration_multiseed_mechanism.md`. Δ = paired vs L on the relevant connected set.
+`../preregistrations/multiseed_mechanism.md`. Δ = paired vs L on the relevant connected set.
 
 ## 1. Directionality & topology-specificity (forward-connected basins, n=150/seed)
 
@@ -14,7 +14,7 @@ Seeds 11/13/17, observed/predicted-Q as noted, stock cudalstm. Supersedes the si
 | **random** (rewired, ~511 km edges) | +0.014 / +0.019 / +0.003 | +0.012 | 8.7e-04 |
 
 ### Topology-specificity — FALSIFIED (2026-08-10). The driver is PROXIMITY, not the true topology.
-The distance-preserving control (`preregistration_distance_control.md`, notebook `colab_distance_control.ipynb`)
+The distance-preserving control (`../preregistrations/distance_control.md`, notebook `colab_distance_control.ipynb`)
 substitutes each true edge with the nearest-distance NON-upstream basin: in-degree preserved exactly,
 0% edge overlap, edge length 101 km vs true 92 km (vs 511 km for the random rewire). Pre-registered
 prediction: if the gain needs the true upstream topology, the distance control falls to the random

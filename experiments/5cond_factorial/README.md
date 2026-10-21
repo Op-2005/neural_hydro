@@ -6,7 +6,7 @@ to the single-seed A/B/C run from May 2026 (`runs/14_*`, `15_*`, `16_*`),
 designed to eliminate the architecture confound and the missing-combination-
 cell limitations of that earlier run.
 
-For the research direction and full protocol see `../../idea1.md`
+For the research direction and full protocol see the project research log
 §"Revised Framework — 5-Condition Factorial Ablation (2026-05-06)".
 
 ## Conditions
@@ -64,9 +64,9 @@ distributions, depth-stratified medians, area-stratified medians,
 outlier-trimmed means.
 
 Output of the analysis script (`../analysis/compare_5conditions.py`) lands at
-`../analysis_outputs/5cond_component0/` and includes a slideshow-ready
+`../analysis/outputs/5cond_component0/` and includes a slideshow-ready
 `RESULTS.md`.
 
 ## Status tracker
 
-See `RUN_PLAN.md` — gets updated as each phase completes.
+See `README.md` — gets updated as each phase completes.

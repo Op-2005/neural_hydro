@@ -7,7 +7,7 @@ Question: does the routing gain survive at the LSTM level (not just the R1 lstsq
 2026-07-14 GRAPH_ROBUSTNESS chain) when the over-connected heuristic graph is pruned to
 hydrography-realistic connectivity?
 
-Pre-reg: preregistration_baseline_completion_and_k2.md (Part 3).
+Pre-reg: preregistrations/baseline_completion_and_k2.md (Part 3).
 Writes analysis/K2_GRAPH_CHECK.md.
 """
 import pickle
@@ -68,7 +68,7 @@ def main():
           "(266 edges vs 624; hydrography-realistic — real confluences join 2-3 tributaries), "
           "seeds [11, 13, 17]. This confirms at the LSTM level what the 2026-07-14 GRAPH_ROBUSTNESS "
           "chain showed for the R1 lstsq proxy. Pre-reg: "
-          "`preregistration_baseline_completion_and_k2.md` (Part 3). "
+          "`preregistrations/baseline_completion_and_k2.md` (Part 3). "
           "*3-seed re-analysis (2026-08): the seeds 13/17 runs were already on disk; this is a "
           "zero-training re-run, no GPU.*", ""]
 

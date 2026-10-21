@@ -1,6 +1,6 @@
 # Part 1 — 3-Seed No-ML Routing Baseline
 
-ZERO training. R1 (a·upQ+b) and R2 (a·upQ+c·L_sim+b) fit on TRAIN 1990-99, scored TEST 2005-08, per seed. Uses the fullspan L-sim available for all 3 seeds. Pre-reg: `preregistration_baseline_completion_and_k2.md` (Part 1).
+ZERO training. R1 (a·upQ+b) and R2 (a·upQ+c·L_sim+b) fit on TRAIN 1990-99, scored TEST 2005-08, per seed. Uses the fullspan L-sim available for all 3 seeds. Pre-reg: `../preregistrations/baseline_completion_and_k2.md` (Part 1).
 
 ## Median test NSE, mean ± std across seeds [11,13,17] (connected basins)
 

@@ -1,7 +1,7 @@
 """Depth-gradient confound check: is the realizable upstream-Q gain driven by upstream
 contribution (routing) or by basin size (area)?
 
-Pre-registered in preregistration_confound_check.md. Zero compute — re-analyzes committed
+Pre-registered in preregistrations/confound_check.md. Zero compute — re-analyzes committed
 runs. Per-basin realizable Δ = (L+upQ_pred − L) pooled over all 3 measured seeds 11/13/17.
 
 Tests:
@@ -57,7 +57,7 @@ def main():
 
     md = ["# Depth-Gradient Confound Check — routing (n_upstream) vs size (area)", "",
           f"Per-basin realizable Δ pooled over seeds {SEEDS} (n={len(df)} basin×seed). "
-          "Pre-reg: `preregistration_confound_check.md`.", ""]
+          "Pre-reg: `preregistrations/confound_check.md`.", ""]
 
     # T1 — n_upstream buckets
     def bucket_nup(n):

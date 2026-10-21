@@ -1,7 +1,7 @@
 # Pre-registration — Step 2: Basin-Encoding Ablation
 
 **Status:** Pre-registered 2026-05-12, before any data is observed. *Conditional* on Step 1 outcome (gates whether this experiment is the right next step).
-**Framework reference:** `experiments/5cond_factorial/analysis/testing_framework_proposal.md` §3, Step 2.
+**Framework reference:** `architecture_analysis.md` §3, Step 2.
 **Depends on:** Step 1 (`preregistration_step1.md`) — must complete before launching.
 
 ---

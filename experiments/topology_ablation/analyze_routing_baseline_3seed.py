@@ -3,7 +3,7 @@
 Extends analyze_routing_baseline.py (single-seed) to all 3 seeds, using the fullspan L-sim
 that exists for every seed. R1/R2 coefficients fit on TRAIN 1990-99 per seed, scored TEST.
 
-Pre-reg: preregistration_baseline_completion_and_k2.md (Part 1).
+Pre-reg: preregistrations/baseline_completion_and_k2.md (Part 1).
 Writes analysis/ROUTING_BASELINE_3SEED.md.
 """
 import pickle
@@ -93,7 +93,7 @@ def main():
     md = ["# Part 1 — 3-Seed No-ML Routing Baseline", "",
           "ZERO training. R1 (a·upQ+b) and R2 (a·upQ+c·L_sim+b) fit on TRAIN 1990-99, scored "
           "TEST 2005-08, per seed. Uses the fullspan L-sim available for all 3 seeds. "
-          "Pre-reg: `preregistration_baseline_completion_and_k2.md` (Part 1).", "",
+          "Pre-reg: `preregistrations/baseline_completion_and_k2.md` (Part 1).", "",
           "## Median test NSE, mean ± std across seeds [11,13,17] (connected basins)", "",
           "| predictor | mean ± std | per-seed (11/13/17) | note |", "|---|---|---|---|"]
     labels = {"R1": ("R1 — pure routing", "no ML, upstream only"),

@@ -1,79 +1,42 @@
-# Experiments — Index
+# Experiments
 
-This folder holds everything needed to **run** or **audit** any experiment in
-this fork. Nothing here produces *new* claims — it produces the artifacts
-(runs, figures, CSVs) that the markdown docs in the repo root argue from.
+Every experiment this project ran, in the order it ran them. Each folder holds the **setup** — the
+configs, feature builders, runners and pre-registrations — plus the analysis that reads the results
+back. Training outputs live under `runs/`, not here.
 
-If you want to find something, start here:
+Each folder has its own README covering what the experiment asked, what it showed, and how to
+reproduce it. Read that rather than this file for anything specific.
 
-| I want to… | Go to |
+## The current study
+
+| Folder | What it asks |
 |---|---|
-| See *what experiments exist* and *what each one showed* | `runs/README.md` (run-by-run table) + each `runs/<N>_*/NOTES.md` (brief per-run writeup) |
-| See the *current research plan* | `../idea1.md` |
-| See the *alternative plan set aside* | `../idea2/README.md` |
-| Train the **LSTM baseline** for a given setting | [`configs/`](configs/) — pick a YAML + `python neuralhydrology/nh_run.py train --config-file <path>` |
-| Train the **graph-LSTM** (or its ablation variants) | [`training/`](training/) — `train_graph_lstm.py`, `train_graph_ungauged.py`, `train_graph_component0.py` |
-| **Compare** a baseline run with one or more graph-variant runs | [`analysis/compare_results.py`](analysis/compare_results.py) |
-| Generate **hydrographs** / weight-inspection plots / per-basin deltas | [`analysis/analyze_results.py`](analysis/analyze_results.py) |
-| Re-run any **post-hoc analysis** described in `INSIGHTS.md` | [`analysis/`](analysis/) |
-| Inspect the **basin IDs** used by a run | [`basin_lists/`](basin_lists/) |
-| Inspect the **figures / CSVs already produced** | [`analysis_outputs/`](analysis_outputs/) |
+| `topology_ablation/` | **The paper.** Does a streamflow LSTM actually use the river network it is given? Stock `cudalstm` held fixed; only the spatial input varies. Start at its README, then `topology_ablation/analysis/VERIFIED_NUMBERS.md` for any number. |
 
-## Subfolder layout
+## Earlier experiments, and what each one settled
 
-```
-experiments/
-├── configs/           NH-format YAML configs. Each produces one named run.
-├── basin_lists/       USGS gauge-ID lists referenced by configs & training scripts.
-├── training/          Training scripts (LSTM baselines + graph-LSTM variants).
-├── analysis/          Post-hoc analysis scripts run against completed runs.
-├── analysis_outputs/  Results produced by analysis scripts (CSVs, PNGs, JSON).
-└── README.md          (this file)
-```
+These ran before the current design and are kept because each one changed the direction of the
+project. Their results are superseded as *interpretations* in some cases — the folder READMEs say
+which — but the measurements stand and the reasoning is why the current study looks the way it does.
 
-## Running anything from here
+| Folder | What it asked | What it settled |
+|---|---|---|
+| `configs/`, `basin_lists/` | — | The NH configs and gauge lists for the early baselines. The current study's own configs live under `topology_ablation/`. |
+| `training/` | Can a custom graph-LSTM beat a plain multi-basin LSTM? | Built the `DirectedGraphLSTM` and its ablation variants. The architecture was abandoned; see `5cond_factorial/analysis/` for why. |
+| `analysis/` | — | Post-hoc comparison scripts for those early runs, with the artifacts they produced under `analysis/outputs/` (pilot, dynamical-systems probes, the first scaled A/B/C result). |
+| `probes/` | Does the trained LSTM behave as a self-stabilizing dynamical system? | Yes — hidden-state perturbations are absorbed within a step or two. This came out of the April 2026 PI meeting and motivated asking what *external* signal the model can actually use. |
+| `5cond_factorial/` | Do graph features and message passing help at 183-basin scale? | **No — and the comparison turned out to be unusable.** Three confounds (training budget, basin-one-hot redundancy, from-scratch noise) made every negative uninterpretable. Diagnosing that is what produced the current design: hold the model fixed, change only the input. `5cond_factorial/analysis/architecture_analysis.md` is the post-mortem. |
+| `local_subgraphs/` | Was 183 basins simply too large a network for the graph signal to survive? | No — the same pattern appeared on single regional subgraphs, which confirmed the problem was the design rather than the scale. |
 
-All commands below assume you are in the repo root and have
-`conda activate nh` (or equivalent) done.
+## Conventions
 
-```bash
-# 1. Train the 23-basin strong baseline (produces a run under runs/lstm_study_network_strong_*)
-python neuralhydrology/nh_run.py train --config-file experiments/configs/lstm_study_network_strong.yaml
-
-# 2. Train the headline graph-LSTM (edit flags at top of script to change variant)
-python experiments/training/train_graph_lstm.py
-
-# 3. Compare strong baseline vs any graph variant
-python experiments/analysis/compare_results.py \
-    --baseline runs/05_lstm_23basin_strong_baseline/test/model_epoch030/test_metrics.csv \
-    --baseline-label "Strong LSTM" \
-    --graph runs/06_graph_edge_warm_full/test_metrics.csv:Edge+Warm \
-            runs/11_graph_edge_pruned_edges/test_metrics.csv:Pruned
-
-# 4. Train the scaled Component-0 baseline (not yet run — waiting on compute decision)
-python neuralhydrology/nh_run.py train --config-file experiments/configs/lstm_component0_baseline.yaml
-python experiments/training/train_graph_component0.py --variant warm --seed 42 --epochs 15
-```
-
-## Audit trail — pilot
-
-Follow this chain to audit any pilot claim from the 23-basin experiment:
-
-1. Find the *claim* in [`../INSIGHTS.md`](../INSIGHTS.md) (e.g. "Aggregation-
-   family variants all converge").
-2. Identify which runs it rests on via [`../runs/README.md`](../runs/README.md)
-   (for this example: runs 06, 08, 09, 10).
-3. Open each run's `NOTES.md` for a brief per-run writeup.
-4. Open `test_metrics.csv` in each run for per-basin numbers.
-5. Reproduce the aggregated view with
-   `experiments/analysis/compare_results.py` passing those metric files.
-
-## Audit trail — scaling
-
-For the Component-0 scale-up plan (not yet run):
-
-1. Plan lives in [`../idea1.md`](../idea1.md).
-2. Basin list: `topology_analysis/phase1_network_discovery/outputs/component0_basins.txt`.
-3. Edge list: `topology_analysis/phase1_network_discovery/outputs/component0_edges.csv`.
-4. Baseline config: `configs/lstm_component0_baseline.yaml`.
-5. Graph trainer: `training/train_graph_component0.py --variant {warm,frozen,gcn_lowpass} --seed <n>`.
+- **Pre-registration before runs.** Each experiment records its hypothesis, success criterion and falsification
+  condition before the runs exist — in `topology_ablation/preregistrations/`, or a
+  `preregistration_*.md` beside the older experiments. A pre-registration records intent at the time of writing, never current status.
+- **Numbers come from the runs.** `topology_ablation/analysis/VERIFIED_NUMBERS.md` is generated from
+  the raw metrics and is the single source of truth for every reported value. Cite a row; do not
+  recompute or transcribe.
+- **Three seeds, judged by the weakest.** Significance is never pooled across seeds. For a null,
+  the weakest seed is the one with the largest p.
+- **Results are read back from disk.** The analysis scripts here train nothing; they re-analyse
+  stored run outputs, so they are cheap to re-run and safe to trust.
