@@ -31,11 +31,11 @@ OUT = Path(__file__).parent / "analysis" / "VERIFIED_NUMBERS.md"
 SEEDS = [11, 13, 17]
 
 
-def nse(cond, seed):
+def nse(cond, seed, metric="NSE"):
     p = BASE / f"{cond}_component0_seed{seed}" / "test" / "model_epoch030" / "test_metrics.csv"
     if not p.exists():
         return None
-    return pd.read_csv(p, dtype={"basin": str}).set_index("basin")["NSE"]
+    return pd.read_csv(p, dtype={"basin": str}).set_index("basin")[metric]
 
 
 def connected():
@@ -43,11 +43,11 @@ def connected():
     return set(e["child_id"].unique())
 
 
-def contrast(cond, ref="L", basins=None):
+def contrast(cond, ref="L", basins=None, metric="NSE"):
     """Return per-seed medians and BOTH tails. Weakest = max(p) per project rule."""
     meds, p1, p2 = [], [], []
     for s in SEEDS:
-        a, b = nse(cond, s), nse(ref, s)
+        a, b = nse(cond, s, metric), nse(ref, s, metric)
         if a is None or b is None:
             return None
         idx = a.index.intersection(b.index)
@@ -73,6 +73,34 @@ def mean_separation(edge_csv):
                 math.sin((la2 - la1) / 2) ** 2
                 + math.cos(la1) * math.cos(la2) * math.sin((lo2 - lo1) / 2) ** 2)))
     return len(e), len(ds), sum(ds) / len(ds)
+
+
+def low_flow_band(cond, ref):
+    """Below-median RMSE reduction, from the SAME by_band() that produced the paper's C9."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "analyze_flow_bands", Path(__file__).parent / "analyze_flow_bands.py")
+    fb = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(fb)
+    meds, ps = fb.by_band(cond, base=ref)
+    return dict(meds=meds["low"], cross=sum(meds["low"]) / 3, w1=max(ps["low"]), w2=float("nan"))
+
+
+def nhdplus_check():
+    """Counts from the saved NLDI query (analysis/nldi_upstream.json); no network access."""
+    import json
+    up = json.loads((Path(__file__).parent / "analysis" / "nldi_upstream.json").read_text())
+    e = pd.read_csv(EDGES, dtype={"parent_id": str, "child_id": str})
+    e["parent_id"], e["child_id"] = e["parent_id"].str.zfill(8), e["child_id"].str.zfill(8)
+    true = e[[p in set(up.get(c) or []) for p, c in zip(e["parent_id"], e["child_id"])]]
+    basins = set(e["parent_id"]) | set(e["child_id"])
+    pairs = {(p, c) for c, s in up.items() if s for p in s if p in basins and p != c}
+    inferred = set(zip(e["parent_id"], e["child_id"]))
+    sep = float(true["distance_km"].astype(float).mean()) if "distance_km" in e else float("nan")
+    return dict(queried=len(up), failed=sum(v is None for v in up.values()), edges=len(e),
+                confirmed=len(true), children_true=len({c for _, c in pairs}),
+                true_pairs=len(pairs), recovered=len(pairs & inferred), sep_true=sep,
+                sep_all=float(e["distance_km"].astype(float).mean()))
 
 
 def row(label, c, note=""):
@@ -120,6 +148,39 @@ def main():
             ("discharge over precipitation", "L_upQpred", "L_upPrecip",
              "**body/Holm clash: pick one tail**")]:
         out.append(row(lbl, contrast(a, b, conn), note))
+
+
+    allb = None  # all 183 basins
+    out += ["\n## Own lagged discharge (camera-ready; pre-registered in `preregistrations/own_lag.md`)\n\n",
+            "Reference conditions: `L_selfQ` = own discharge q_i(t-1); `L_selfQ_upQ` / `L_selfQ_knn2` add "
+            "network / nearest-2 neighbour discharge on top of it.\n\n", H]
+    for lbl, a, b, bs, note, metric in [
+            ("own discharge vs L, all 183", "L_selfQ", "L", allb, "directional", "NSE"),
+            ("network on top of own discharge, all 183", "L_selfQ_upQ", "L_selfQ", allb, "directional", "NSE"),
+            ("nearest-2 on top of own discharge, all 183", "L_selfQ_knn2", "L_selfQ", allb, "directional", "NSE"),
+            ("own discharge vs L, connected", "L_selfQ", "L", conn, "directional", "NSE"),
+            ("network on top of own discharge, connected", "L_selfQ_upQ", "L_selfQ", conn, "directional", "NSE"),
+            ("nearest-2 on top of own discharge, connected", "L_selfQ_knn2", "L_selfQ", conn, "directional", "NSE"),
+            ("nearest-2 - network, given own discharge, connected", "L_selfQ_knn2", "L_selfQ_upQ", conn,
+             "NULL -> 2-sided", "NSE"),
+            ("KGE: network on top of own discharge, connected", "L_selfQ_upQ", "L_selfQ", conn, "directional", "KGE"),
+            ("KGE: nearest-2 on top of own discharge, connected", "L_selfQ_knn2", "L_selfQ", conn, "directional", "KGE")]:
+        out.append(row(lbl, contrast(a, b, bs, metric), note))
+    out += ["\n**Low-flow band** (below each basin's median observed flow; RMSE reduction in mm/d, "
+            "positive = added input helps; same `by_band()` as the paper's C9; 1-sided only):\n\n", H]
+    for lbl, a, b in [("realizable vs L (paper C9, reproduction check)", "L_upQpred", "L"),
+                      ("own discharge vs L", "L_selfQ", "L"),
+                      ("network on top of own discharge", "L_selfQ_upQ", "L_selfQ")]:
+        out.append(row(lbl, low_flow_band(a, b), "1-sided"))
+
+    k = nhdplus_check()
+    out += ["\n## Inferred edges against NHDPlus (USGS NLDI upstream navigation; from `analysis/nldi_upstream.json`)\n\n",
+            "| quantity | value |\n|---|---|\n",
+            f"| child gauges queried / failed | {k['queried']} / {k['failed']} |\n",
+            f"| inferred edges confirmed as true upstream relations | **{k['confirmed']} of {k['edges']}** |\n",
+            f"| connected basins with >=1 truly upstream study gauge | **{k['children_true']} of {k['queried']}** |\n",
+            f"| true upstream pairs among study basins recovered by the rule | {k['recovered']} of {k['true_pairs']} |\n",
+            f"| mean separation, confirmed edges / all edges | **{k['sep_true']:.1f} km / {k['sep_all']:.1f} km** |\n"]
 
     out += ["\n## Derived geometry (recomputed from edge artifacts + camels_topo.txt)\n\n",
             "| edge set | edges | matched | mean separation |\n|---|---|---|---|\n"]

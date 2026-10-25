@@ -1,6 +1,6 @@
 """Recompute every load-bearing number for the XAI4Science submission from raw runs.
 
-This is the step-1 gate of paper/workshops/xai4science/PLAN.md: no sentence of the
+This is the step-1 gate of paper/xai4science/revisions.md (formerly PLAN.md): no sentence of the
 submission is written until its number appears in this script's output. Nothing here
 reads a paper, a summary, or another workshop version -- only
 runs/topology_ablation/component0/<cond>_component0_seed<s>/test/model_epoch030/test_metrics.csv

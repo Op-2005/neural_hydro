@@ -34,6 +34,7 @@ headings below mark what each one still supports. The two reversals that matter:
 | `COMPLETION_SUITE.md` | The 2026-08-12 suite: distance sweep, k-nearest-gauge selectors, precipitation decomposition, clean random rewire |
 | `INDEGREE_CONFOUND.md` | Neighbour count does not explain the kNN advantage (in-degree-stratified) |
 | `GEOMETRIC_CONTAINMENT.md` | Nesting bounded geometrically from gauge coordinates and areas (**supersedes** `CONTAINMENT.md`, which used an area proxy) |
+| `OWN_LAG.md` | **New for the camera-ready.** The own-lagged-discharge test the reviewers asked for: own flow is worth ~3x the network, and the neighbour increment over it is not significant. Confirms the storage reading; leaves C1/C5/C6 untouched. |
 | `NHDPLUS_VALIDATION.md` | **New for the camera-ready.** Validates the inferred edges against NHDPlus via USGS NLDI: under 2% are genuine upstream relations, and real connectivity is far more local than our rule. Strengthens the proximity reading. |
 | `EDGE_RULE_SENSITIVITY.md` | Mean edge length barely moves as the area ratio is swept — the length is set by the distance cap, *not* the area threshold |
 | `METRIC_HONESTY.md` | log-NSE ε-sensitivity and the KGE decomposition (the gain does **not** replicate under KGE) |

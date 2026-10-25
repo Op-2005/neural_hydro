@@ -31,7 +31,7 @@ B = ROOT / "runs" / "topology_ablation" / "component0"
 EDGES = ROOT / "topology_analysis/phase1_network_discovery/outputs/component0_edges.csv"
 OUT = ROOT / "paper" / "canonical" / "figures" / "fig_concept_xai.pdf"
 # the XAI4Science submission keeps its own copy so all its figures sit together
-XAI_OUT = ROOT / "paper" / "workshops" / "xai4science" / "figures" / "fig_concept_xai.pdf"
+XAI_OUT = ROOT / "paper" / "xai4science" / "figures" / "fig_concept_xai.pdf"
 SEEDS = [11, 13, 17]
 
 def nse(cond, seed):

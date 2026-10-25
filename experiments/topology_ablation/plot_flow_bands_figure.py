@@ -35,7 +35,7 @@ apply_style()
 ROOT = Path(__file__).parent.parent.parent
 OUT = ROOT / "paper" / "canonical" / "figures" / "fig_flow_bands_xai.pdf"
 # the XAI4Science submission keeps its own copy so all its figures sit together
-XAI_OUT = ROOT / "paper" / "workshops" / "xai4science" / "figures" / "fig_flow_bands_xai.pdf"
+XAI_OUT = ROOT / "paper" / "xai4science" / "figures" / "fig_flow_bands_xai.pdf"
 
 # Import the SAME banding implementation the results table uses.
 _spec = importlib.util.spec_from_file_location(

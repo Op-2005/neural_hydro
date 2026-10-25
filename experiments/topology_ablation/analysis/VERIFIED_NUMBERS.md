@@ -41,6 +41,40 @@ Connected basins (>=1 upstream parent): **150**
 | distance-matched - network | -0.0036 / -0.0017 / +0.0033 | -0.0007 | 0.607 | 0.786 | NULL -> 2-sided |
 | discharge over precipitation | +0.0211 / +0.0143 / +0.0126 | +0.0160 | 0.00444 | 0.00889 | **body/Holm clash: pick one tail** |
 
+## Own lagged discharge (camera-ready; pre-registered in `preregistrations/own_lag.md`)
+
+Reference conditions: `L_selfQ` = own discharge q_i(t-1); `L_selfQ_upQ` / `L_selfQ_knn2` add network / nearest-2 neighbour discharge on top of it.
+
+| contrast | per-seed medians | cross-seed | weakest **1-sided** | weakest **2-sided** | note |
+|---|---|---|---|---|---|
+| own discharge vs L, all 183 | +0.1243 / +0.1503 / +0.1253 | +0.1333 | 1.99e-27 | 3.99e-27 | directional |
+| network on top of own discharge, all 183 | +0.0041 / +0.0007 / +0.0073 | +0.0041 | 0.675 | 0.651 | directional |
+| nearest-2 on top of own discharge, all 183 | +0.0023 / -0.0014 / +0.0057 | +0.0022 | 0.906 | 0.633 | directional |
+| own discharge vs L, connected | +0.1295 / +0.1504 / +0.1269 | +0.1356 | 3.86e-23 | 7.72e-23 | directional |
+| network on top of own discharge, connected | +0.0042 / +0.0027 / +0.0087 | +0.0052 | 0.294 | 0.587 | directional |
+| nearest-2 on top of own discharge, connected | +0.0007 / +0.0001 / +0.0065 | +0.0024 | 0.749 | 0.573 | directional |
+| nearest-2 - network, given own discharge, connected | -0.0028 / +0.0031 / -0.0037 | -0.0011 | 0.963 | 0.951 | NULL -> 2-sided |
+| KGE: network on top of own discharge, connected | -0.0001 / -0.0020 / -0.0100 | -0.0040 | 0.977 | 0.516 | directional |
+| KGE: nearest-2 on top of own discharge, connected | +0.0019 / -0.0005 / -0.0249 | -0.0079 | 1 | 0.768 | directional |
+
+**Low-flow band** (below each basin's median observed flow; RMSE reduction in mm/d, positive = added input helps; same `by_band()` as the paper's C9; 1-sided only):
+
+| contrast | per-seed medians | cross-seed | weakest **1-sided** | weakest **2-sided** | note |
+|---|---|---|---|---|---|
+| realizable vs L (paper C9, reproduction check) | +0.0146 / +0.0430 / +0.0585 | +0.0387 | 0.000912 | nan | 1-sided |
+| own discharge vs L | +0.2214 / +0.1907 / +0.1725 | +0.1949 | 1.71e-25 | nan | 1-sided |
+| network on top of own discharge | +0.0063 / -0.0011 / +0.0140 | +0.0064 | 0.431 | nan | 1-sided |
+
+## Inferred edges against NHDPlus (USGS NLDI upstream navigation; from `analysis/nldi_upstream.json`)
+
+| quantity | value |
+|---|---|
+| child gauges queried / failed | 150 / 0 |
+| inferred edges confirmed as true upstream relations | **11 of 624** |
+| connected basins with >=1 truly upstream study gauge | **14 of 150** |
+| true upstream pairs among study basins recovered by the rule | 11 of 15 |
+| mean separation, confirmed edges / all edges | **31.9 km / 91.6 km** |
+
 ## Derived geometry (recomputed from edge artifacts + camels_topo.txt)
 
 | edge set | edges | matched | mean separation |
