@@ -89,7 +89,7 @@ def main():
                  color="0.42", fontsize=6.6)
     axA.set_xticks([0, 1]); axA.set_xticklabels(labels, fontsize=7.4)
     axA.set_ylabel("$\\Delta$NSE vs baseline", fontsize=7.4)
-    axA.set_title("(a) one network, two encodings", fontsize=8.0, color=INK, pad=6)
+    axA.set_title("(a) static descriptor vs. daily discharge", fontsize=8.0, color=INK, pad=6)
     axA.set_ylim(-0.0026, max(vals) * 1.42)
     axA.tick_params(labelsize=7.2, length=2.5)
     axA.grid(axis="y", color="0.90", lw=0.5, zorder=0)
@@ -101,7 +101,7 @@ def main():
     # statistically indistinguishable arms adjacently, then the one that differs.
     # Colours follow the shared roles in figstyle: GREY reference, WARM matched
     # control, BLUE the condition argued for. Same meanings as Figure 2.
-    names = ["true river\nnetwork", "distance-matched\nnon-upstream", "nearest 2 gauges"]
+    names = ["inferred river\nnetwork", "distance-matched\nnon-upstream", "nearest 2 gauges"]
     vv = [network, matched, nearest]
     dd = [91.6, 100.6, 46.7]
     cc = [GREY, WARM, BLUE]
@@ -114,7 +114,7 @@ def main():
                  fontsize=6.5, color="0.42")
     axB.set_yticks(y); axB.set_yticklabels(names, fontsize=7.2)
     axB.set_xlabel("$\\Delta$NSE vs baseline", fontsize=7.4)
-    axB.set_title("(b) one encoding, three neighbour sets", fontsize=8.0, color=INK, pad=6)
+    axB.set_title("(b) three neighbour sets", fontsize=8.0, color=INK, pad=6)
     axB.set_xlim(0, max(vv) * 1.56)
     axB.tick_params(labelsize=7.2, length=2.5)
     axB.grid(axis="x", color="0.90", lw=0.5, zorder=0)
@@ -143,7 +143,7 @@ def main():
     print(f"  daily discharge     {dynamic:+.4f}  weakest one-sided p={p_dyn:.2e}")
     print(f"  nearest 2 gauges    {nearest:+.4f}  (46.7 km)")
     print(f"  distance-matched    {matched:+.4f}  (100.6 km)")
-    print(f"  true river network  {network:+.4f}  (91.6 km)")
+    print(f"  inferred network    {network:+.4f}  (91.6 km)")
     print(f"  distance-matched vs network: paired two-sided weakest p = {p_matched_vs_net:.3f}")
 
 
